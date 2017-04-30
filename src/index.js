@@ -16,6 +16,8 @@ import {
   DEFAULT_USE_POSITION,
   DEFAULT_USE_STATIC_SIZE,
   DEFAULT_USE_TRANSLATE_3D,
+  REMEASURE_OPTIONS,
+  REMEASURE_PROPERTIES,
   VALID_AXIS_VALUES,
   VALID_TYPES,
   VALID_TYPE_VALUES
@@ -30,7 +32,9 @@ import {
   createGetSizeOfListItem,
   createGetSpaceBefore,
   createGetStartAndEnd,
+  createGetVisibleRange,
   createRenderItems,
+  createScrollAround,
   createScrollTo,
   createSetScroll,
   createSetStateIfAppropriate,
@@ -55,21 +59,21 @@ import {
 import {
   getContainerStyle,
   defaultItemRenderer,
-  defaultItemsRenderer,
+  defaultContainerRenderer,
   getListContainerStyle
 } from './utils';
 
-@measure(['height', 'width'])
+@measure(REMEASURE_PROPERTIES, REMEASURE_OPTIONS)
 class WindowedList extends PureComponent {
   static displayName = 'WindowedList';
 
   static propTypes = {
     axis: PropTypes.oneOf(VALID_AXIS_VALUES).isRequired,
+    containerRenderer: PropTypes.func.isRequired,
     initialIndex: PropTypes.number,
     itemRenderer: PropTypes.func.isRequired,
     itemSizeEstimator: PropTypes.func,
     itemSizeGetter: PropTypes.func,
-    itemsRenderer: PropTypes.func.isRequired,
     length: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     scrollParentGetter: PropTypes.func,
@@ -82,8 +86,8 @@ class WindowedList extends PureComponent {
 
   static defaultProps = {
     axis: DEFAULT_AXIS,
+    containerRenderer: defaultContainerRenderer,
     itemRenderer: defaultItemRenderer,
-    itemsRenderer: defaultItemsRenderer,
     length: DEFAULT_LENGTH,
     pageSize: DEFAULT_PAGE_SIZE,
     threshold: DEFAULT_THRESHOLD,
@@ -117,7 +121,9 @@ class WindowedList extends PureComponent {
   getSizeOfListItem = createGetSizeOfListItem(this);
   getSpaceBefore = createGetSpaceBefore(this);
   getStartAndEnd = createGetStartAndEnd(this);
+  getVisibleRange = createGetVisibleRange(this);
   renderItems = createRenderItems(this);
+  scrollAround = createScrollAround(this);
   scrollTo = createScrollTo(this);
   setScroll = createSetScroll(this);
   setStateIfAppropriate = createSetStateIfAppropriate(this);

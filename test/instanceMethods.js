@@ -734,11 +734,43 @@ test('if createGetStartAndEnd will calculate start and end when hasDeterminateSi
   });
 });
 
-test('if createRenderItems will call itemRenderer for the length of size, and call itemsRenderer with the result', (t) => {
+test('if createGetVisibleRange will return the first and last indices of visible items', (t) => {
+  const itemSize = 30;
+  const instance = {
+    getSizeOfListItem: sinon.stub().returns(itemSize),
+    getSpaceBefore: sinon.stub().callsFake((index) => {
+      return index * itemSize;
+    }),
+    getStartAndEnd: sinon.stub().returns({
+      end: 1000,
+      start: 15
+    }),
+    state: {
+      from: 5,
+      size: 100
+    }
+  };
+
+  const getVisibleRange = methods.createGetVisibleRange(instance);
+
+  t.true(_.isFunction(getVisibleRange));
+
+  const result = getVisibleRange();
+
+  const viewport = 1000 - 15;
+  const items = Math.round(viewport / itemSize);
+
+  t.deepEqual(result, [
+    instance.state.from,
+    items
+  ]);
+});
+
+test('if createRenderItems will call itemRenderer for the length of size, and call containerRenderer with the result', (t) => {
   const instance = {
     props: {
       itemRenderer: sinon.spy(),
-      itemsRenderer: sinon.spy()
+      containerRenderer: sinon.spy()
     },
     state: {
       from: 5,
@@ -761,9 +793,9 @@ test('if createRenderItems will call itemRenderer for the length of size, and ca
     ]);
   });
 
-  t.true(instance.props.itemsRenderer.calledOnce);
+  t.true(instance.props.containerRenderer.calledOnce);
 
-  const itemsArgs = instance.props.itemsRenderer.firstCall.args;
+  const itemsArgs = instance.props.containerRenderer.firstCall.args;
 
   t.is(itemsArgs.length, 2);
 
@@ -771,6 +803,31 @@ test('if createRenderItems will call itemRenderer for the length of size, and ca
   t.is(itemsArgs[0].length, instance.state.size);
 
   t.true(_.isFunction(itemsArgs[1]));
+});
+
+test('if createScrollAround will call setScroll with the correct value', (t) => {
+  const index = 4;
+  const scrollOffset = 100;
+  const listItemSize = 30;
+  const spaceBefore = 650;
+  const viewportSize = 500;
+
+  const instance = {
+    getScrollOffset: sinon.stub().returns(scrollOffset),
+    getSizeOfListItem: sinon.stub().returns(listItemSize),
+    getSpaceBefore: sinon.stub().returns(spaceBefore),
+    getViewportSize: sinon.stub().returns(viewportSize),
+    setScroll: sinon.spy()
+  };
+
+  const scrollAround = methods.createScrollAround(instance);
+
+  t.true(_.isFunction(scrollAround));
+
+  scrollAround(index);
+
+  t.true(instance.setScroll.calledOnce);
+  t.true(instance.setScroll.calledWith(spaceBefore - viewportSize + listItemSize));
 });
 
 test('if createScrollTo will call setScroll if initialIndex is a number', (t) => {

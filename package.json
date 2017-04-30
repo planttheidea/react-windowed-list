@@ -24,7 +24,7 @@
     "raf": "^3.3.0",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
-    "remeasure": "^2.2.1"
+    "remeasure": "^2.3.0"
   },
   "description": "A fast, versatile virtual-render list component for React",
   "devDependencies": {

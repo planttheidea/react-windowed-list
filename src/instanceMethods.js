@@ -256,6 +256,51 @@ export const createGetStartAndEnd = (instance) => {
   };
 };
 
+export const createGetVisibleRange = (instance) => {
+  /**
+   * @function getVisibleRange
+   *
+   * @description
+   * get the indices of the first and last items that are visible in the viewport
+   *
+   * @returns {Array<number>} the first and last index of the visible items
+   */
+  return () => {
+    const {
+      from,
+      size
+    } = instance.state;
+    const {
+      end,
+      start
+    } = instance.getStartAndEnd(0);
+
+    const cache = {};
+
+    let first, last, itemStart, itemEnd,
+        index = from - 1,
+        length = from + size;
+
+    while (++index < length) {
+      itemStart = instance.getSpaceBefore(index, cache);
+      itemEnd = itemStart + instance.getSizeOfListItem(index);
+
+      if (isUndefined(first) && itemEnd > start) {
+        first = index;
+      }
+
+      if (!isUndefined(first) && itemStart < end) {
+        last = index;
+      }
+    }
+
+    return [
+      first,
+      last
+    ];
+  };
+};
+
 export const createRenderItems = (instance) => {
   /**
    * @function renderItems
@@ -268,7 +313,7 @@ export const createRenderItems = (instance) => {
   return () => {
     const {
       itemRenderer,
-      itemsRenderer
+      containerRenderer
     } = instance.props;
     const {
       from,
@@ -283,9 +328,35 @@ export const createRenderItems = (instance) => {
       items[index] = itemRenderer(from + index, index);
     }
 
-    return itemsRenderer(items, (containerRef) => {
+    return containerRenderer(items, (containerRef) => {
       return instance.items = containerRef;
     });
+  };
+};
+
+export const createScrollAround = (instance) => {
+  /**
+   * @function scrollAround
+   *
+   * @description
+   * scroll to a point that the item is within the window, but not necessarily at the top
+   *
+   * @param {number} index the index to scroll to in the window
+   * @returns {void}
+   */
+  return (index) => {
+    const bottom = instance.getSpaceBefore(index);
+    const top = bottom - instance.getViewportSize() + instance.getSizeOfListItem(index);
+
+    const min = Math.min(top, bottom);
+    const max = Math.max(top, bottom);
+    const current = instance.getScrollOffset();
+
+    if (current <= min) {
+      return instance.setScroll(min);
+    } else if (current > max) {
+      return instance.setScroll(max);
+    }
   };
 };
 
@@ -295,14 +366,18 @@ export const createScrollTo = (instance) => {
    *
    * @description
    * scroll the element to the requested initialIndex
+   *
+   * @param {number} index the index to scroll to
    */
-  return () => {
+  return (index) => {
     const {
       initialIndex
     } = instance.props;
 
-    if (isNumber(initialIndex)) {
-      instance.setScroll(instance.getSpaceBefore(initialIndex));
+    const indexToScrollTo = isNumber(index) ? index : initialIndex;
+
+    if (isNumber(indexToScrollTo)) {
+      instance.setScroll(instance.getSpaceBefore(indexToScrollTo));
     }
   };
 };

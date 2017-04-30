@@ -14,8 +14,8 @@ exports[`if WindowedList renders correctly when type is not simple 1`] = `
   >
     <WindowedList
       axis="y"
+      containerRenderer={[Function]}
       itemRenderer={[Function]}
-      itemsRenderer={[Function]}
       length={1000}
       pageSize={10}
       size={
@@ -34,6 +34,7 @@ exports[`if WindowedList renders correctly when type is not simple 1`] = `
         style={
           Object {
             "height": "100%",
+            "maxHeight": "inherit",
             "width": "100%",
           }
         }

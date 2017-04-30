@@ -6,7 +6,7 @@ exports[`if defaultItemRenderer will render the item 1`] = `
 </div>
 `;
 
-exports[`if defaultItemsRenderer will render the item 1`] = `
+exports[`if defaultContainerRenderer will render the item 1`] = `
 <div>
   foo
   bar

@@ -106,7 +106,7 @@ export const SIZE_KEYS = {
  * @constant {string} UNSTABLE_MESSAGE
  * @default
  */
-export const UNSTABLE_MESSAGE = 'ReactList failed to reach a stable state.';
+export const UNSTABLE_MESSAGE = 'WindowedList failed to reach a stable state.';
 
 /**
  * @constant {number} MAX_SYNC_UPDATES
@@ -156,6 +156,7 @@ export const DEFAULT_AXIS = VALID_AXES.Y;
  */
 export const OUTER_CONTAINER_STYLE = {
   height: '100%',
+  maxHeight: 'inherit',
   width: '100%'
 };
 
@@ -207,3 +208,22 @@ export const DEFAULT_USE_STATIC_SIZE = false;
  * @default
  */
 export const DEFAULT_USE_TRANSLATE_3D = false;
+
+/**
+ * @constant {Array<string>} REMEASURE_OPTIONS
+ */
+export const REMEASURE_OPTIONS = {
+  inheritedMethods: [
+    'getVisibleRange',
+    'scrollAround',
+    'scrollTo'
+  ]
+};
+
+/**
+ * @constant {Array<string>} REMEASURE_PROPERTIES
+ */
+export const REMEASURE_PROPERTIES = [
+  'height',
+  'width'
+];

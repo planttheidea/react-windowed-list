@@ -47,7 +47,7 @@ test('if defaultItemRenderer will render the item', (t) => {
   t.snapshot(toJson(wrapper));
 });
 
-test('if defaultItemsRenderer will render the item', (t) => {
+test('if defaultContainerRenderer will render the item', (t) => {
   const items = [
     'foo',
     'bar',
@@ -55,7 +55,7 @@ test('if defaultItemsRenderer will render the item', (t) => {
   ];
   const ref = sinon.spy();
 
-  const element = utils.defaultItemsRenderer(items, ref);
+  const element = utils.defaultContainerRenderer(items, ref);
   const wrapper = shallow(element);
 
   t.snapshot(toJson(wrapper));

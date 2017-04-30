@@ -241,7 +241,9 @@ class Example extends PureComponent {
               className="component"
               style={visibiltyToggledStyle}
             >
-              <WindowedList {...hiddenProps} />
+              <WindowedList
+                {...hiddenProps}
+              />
             </div>
           </div>
 

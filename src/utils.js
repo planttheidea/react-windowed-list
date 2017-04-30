@@ -65,7 +65,7 @@ export const defaultItemRenderer = (index, key) => {
 };
 
 /**
- * @function defaultItemsRenderer
+ * @function defaultContainerRenderer
  *
  * @description
  * the default method to create the list container
@@ -74,7 +74,7 @@ export const defaultItemRenderer = (index, key) => {
  * @param {function} ref the ref to provide to the list container
  * @returns {ReactElement} the generated element
  */
-export const defaultItemsRenderer = (items, ref) => {
+export const defaultContainerRenderer = (items, ref) => {
   return (
     <div ref={ref}>
       {items}
