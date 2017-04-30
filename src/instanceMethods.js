@@ -1,5 +1,6 @@
 // external dependencies
 import isFunction from 'lodash/isFunction';
+import isNumber from 'lodash/isNumber';
 import isUndefined from 'lodash/isUndefined';
 import noop from 'lodash/noop';
 import {
@@ -17,6 +18,7 @@ import {
 
 // utils
 import {
+  areStateValuesEqual,
   getCalculatedElementEnd,
   getCalculatedItemSizeAndItemsPerRow,
   getCalculatedSpaceBefore,
@@ -26,8 +28,7 @@ import {
   getScrollSize,
   getViewportSize,
   hasDeterminateSize,
-  setCacheSizes,
-  shouldSetState
+  setCacheSizes
 } from './utils';
 
 export const createGetDomNode = (instance) => {
@@ -120,19 +121,19 @@ export const createGetScrollParent = (instance) => {
       scrollParentGetter
     } = instance.props;
 
-    if (scrollParentGetter) {
+    if (isFunction(scrollParentGetter)) {
       return scrollParentGetter();
     }
 
     const overflowKey = OVERFLOW_KEYS[axis];
 
-    let element = findDOMNode(instance),
-        overflowStyleKey;
+    let element = instance.getDomNode(),
+        overflowValue;
 
     while (element = element.parentElement) {
-      overflowStyleKey = window.getComputedStyle(element)[overflowKey];
+      overflowValue = window.getComputedStyle(element)[overflowKey];
 
-      if (overflowStyleKey === 'auto' || overflowStyleKey === 'scroll' || overflowStyleKey === 'overlay') {
+      if (overflowValue === 'auto' || overflowValue === 'scroll' || overflowValue === 'overlay') {
         return element;
       }
     }
@@ -154,8 +155,8 @@ export const createGetSizeOfListItem = (instance) => {
   return (index) => {
     const {
       axis,
-      itemSizeGetter,
       itemSizeEstimator,
+      itemSizeGetter,
       type
     } = instance.props;
     const {
@@ -189,11 +190,9 @@ export const createGetSizeOfListItem = (instance) => {
     }
 
     // Try the itemSizeEstimator.
-    if (itemSizeEstimator) {
+    if (isFunction(itemSizeEstimator)) {
       return itemSizeEstimator(index, instance.cache);
     }
-
-    return 0;
   };
 };
 
@@ -302,7 +301,7 @@ export const createScrollTo = (instance) => {
       initialIndex
     } = instance.props;
 
-    if (!isUndefined(initialIndex)) {
+    if (isNumber(initialIndex)) {
       instance.setScroll(instance.getSpaceBefore(initialIndex));
     }
   };
@@ -344,14 +343,14 @@ export const createSetStateIfAppropriate = (instance) => {
    * @function setStateIfAppropriate
    *
    * @description
-   * set the state if shouldSetState returns true
+   * set the state if areStateValuesEqual returns true
    *
    * @param {Object} nextState the possible next state of the instance
    * @param {function} callback the callback to call once the state is set
    * @returns {void}
    */
   return (nextState, callback) => {
-    if (shouldSetState(instance.state, nextState)) {
+    if (areStateValuesEqual(instance.state, nextState)) {
       return callback();
     }
 

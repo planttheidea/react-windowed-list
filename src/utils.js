@@ -20,46 +20,30 @@ import {
 } from './constants';
 
 /**
- * @function getFromAndSize
+ * @function areStateValuesEqual
  *
  * @description
- * calculate the from and size values based on the number of items per row
+ * should the state be updated based on the values of nextPossibleState being different
  *
- * @param {number} currentFrom the current from in state
- * @param {number} currentSize the current size in state
- * @param {number} itemsPerRow the number of items per row in state
- * @param {number} length the total number of items
- * @param {string} type the type of list
- * @returns {{from: number, size: number}} the from and size propertioes
+ * @param {Object} currentState the current state of the instance
+ * @param {Object} nextPossibleState the state to apply
+ * @returns {boolean} should the state be updated
  */
-export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {length, type}) => {
-  let size = currentSize;
+export const areStateValuesEqual = (currentState, nextPossibleState) => {
+  const nextStateKeys = keys(nextPossibleState);
 
-  if (type === VALID_TYPES.UNIFORM) {
-    size = Math.max(size, 1);
+  let index = 0,
+      key = nextStateKeys[0];
+
+  while (index < nextStateKeys.length) {
+    if (currentState[key] !== nextPossibleState[key]) {
+      return false;
+    }
+
+    key = nextStateKeys[++index];
   }
 
-  let mod = size % itemsPerRow;
-
-  if (mod) {
-    size += itemsPerRow - mod;
-  }
-
-  if (size > length) {
-    size = length;
-  }
-
-  let from = type === VALID_TYPES.SIMPLE || !currentFrom ? 0 : Math.max(Math.min(currentFrom, length - size), 0);
-
-  if (mod = from % itemsPerRow) {
-    from -= mod;
-    size += mod;
-  }
-
-  return {
-    from,
-    size
-  };
+  return true;
 };
 
 /**
@@ -168,7 +152,7 @@ export const getCalculatedSpaceBefore = (cache, length, getSizeOfListItem) => {
     cache[index] = space;
     itemSize = getSizeOfListItem(index);
 
-    if (itemSize === null) {
+    if (isUndefined(itemSize)) {
       break;
     }
 
@@ -200,7 +184,7 @@ export const getCalculatedItemSizeAndItemsPerRow = (elements, axis, currentItemS
   const firstElSize = firstEl[OFFSET_SIZE_KEYS[axis]];
   const delta = Math.abs(firstElSize - currentItemSize);
 
-  let itemSize = isNAN(delta) || delta >= 1 ? firstElSize : currentItemSize;
+  let itemSize = isNAN(delta) || delta > 0 ? firstElSize : currentItemSize;
 
   if (!itemSize) {
     return {};
@@ -256,6 +240,49 @@ export const getContainerStyle = ({axis, length}, {itemsPerRow}, getSpaceBefore)
   }
 
   return style;
+};
+
+/**
+ * @function getFromAndSize
+ *
+ * @description
+ * calculate the from and size values based on the number of items per row
+ *
+ * @param {number} currentFrom the current from in state
+ * @param {number} currentSize the current size in state
+ * @param {number} itemsPerRow the number of items per row in state
+ * @param {number} length the total number of items
+ * @param {string} type the type of list
+ * @returns {{from: number, size: number}} the from and size propertioes
+ */
+export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {length, type}) => {
+  let size = currentSize;
+
+  if (type === VALID_TYPES.UNIFORM) {
+    size = Math.max(size, 1);
+  }
+
+  let mod = size % itemsPerRow;
+
+  if (mod) {
+    size += itemsPerRow - mod;
+  }
+
+  if (size > length) {
+    size = length;
+  }
+
+  let from = type === VALID_TYPES.SIMPLE || !currentFrom ? 0 : Math.max(Math.min(currentFrom, length - size), 0);
+
+  if (mod = from % itemsPerRow) {
+    from -= mod;
+    size += mod;
+  }
+
+  return {
+    from,
+    size
+  };
 };
 
 /**
@@ -395,32 +422,6 @@ export const hasDeterminateSize = (type, itemSizeGetter) => {
 };
 
 /**
- * @function renderItems
- *
- * @description
- * render the items in the list, starting at the from index for length of size
- *
- * @param {number} from the starting index to render
- * @param {number} size the length of items to render
- * @param {function} itemRenderer the function to render the item with
- * @param {function} itemsRenderer the function to render the list container with
- * @returns {ReactElement} the rendered list of items
- */
-export const renderItems = (from, size, itemRenderer, itemsRenderer) => {
-  const items = [];
-
-  let index = -1;
-
-  while (++index < size) {
-    items[index] = itemRenderer(from + index, index);
-  }
-
-  return itemsRenderer(items, (c) => {
-    return this.items = c;
-  });
-};
-
-/**
  * @function setCacheSizes
  *
  * @description
@@ -440,31 +441,4 @@ export const setCacheSizes = (from, element, axis, cache) => {
   while (++index < itemElements.length) {
     cache[from + index] = itemElements[index][sizeKey];
   }
-};
-
-/**
- * @function shouldSetState
- *
- * @description
- * should the state be updated based on the values of nextPossibleState being different
- *
- * @param {Object} currentState the current state of the instance
- * @param {Object} nextPossibleState the state to apply
- * @returns {boolean} should the state be updated
- */
-export const shouldSetState = (currentState, nextPossibleState) => {
-  const nextStateKeys = keys(nextPossibleState);
-
-  let index = 0,
-      key = nextStateKeys[0];
-
-  while (index < nextStateKeys.length) {
-    if (currentState[key] !== nextPossibleState[key]) {
-      return false;
-    }
-
-    key = nextStateKeys[++index];
-  }
-
-  return true;
 };

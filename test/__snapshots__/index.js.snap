@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`if WindowedList renders correctly when type is not simple 1`] = `
+<div
+  style={
+    Object {
+      "height": 500,
+    }
+  }
+>
+  <Measured(WindowedList)
+    length={1000}
+    type="uniform"
+  >
+    <WindowedList
+      axis="y"
+      itemRenderer={[Function]}
+      itemsRenderer={[Function]}
+      length={1000}
+      pageSize={10}
+      size={
+        Object {
+          "height": 0,
+          "width": 0,
+        }
+      }
+      threshold={100}
+      type="uniform"
+      usePosition={false}
+      useStaticSize={false}
+      useTranslate3d={false}
+    >
+      <div
+        style={
+          Object {
+            "position": "relative",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "WebkitTransform": "translate(0px, 0px)",
+              "msTransform": "translate(0px, 0px)",
+              "transform": "translate(0px, 0px)",
+            }
+          }
+        >
+          <div>
+            <div>
+              0
+            </div>
+          </div>
+        </div>
+      </div>
+    </WindowedList>
+  </Measured(WindowedList)>
+</div>
+`;
+
+exports[`if WindowedList renders correctly with default props 1`] = `
+<div
+  style={
+    Object {
+      "height": 500,
+    }
+  }
+>
+  <Measured(WindowedList)
+    length={1000}
+  />
+</div>
+`;

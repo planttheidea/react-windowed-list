@@ -46,7 +46,8 @@ import {
   createComponentDidUpdate,
   createComponentWillMount,
   createComponentWillReceiveProps,
-  createComponentWillUnmount
+  createComponentWillUnmount,
+  getInitialState
 } from './lifecycleMethods';
 
 // utils
@@ -91,11 +92,8 @@ class WindowedList extends PureComponent {
     useTranslate3d: DEFAULT_USE_TRANSLATE_3D
   };
 
-  state = {
-    from: 0,
-    itemsPerRow: 0,
-    size: 0
-  };
+  // initial state
+  state = getInitialState();
 
   // lifecycle methods
   componentWillMount = createComponentWillMount(this);

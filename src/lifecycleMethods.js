@@ -14,6 +14,22 @@ import {
   getFromAndSize
 } from './utils';
 
+/**
+ * @function getInitialState
+ *
+ * @description
+ * get the initial state of the instance
+ *
+ * @returns {{from: number, itemsPerRow: number, size: number}} the initial state
+ */
+export const getInitialState = () => {
+  return {
+    from: 0,
+    itemsPerRow: 0,
+    size: 0
+  };
+};
+
 export const createComponentDidMount = (instance) => {
   /**
    * @function componentDidMount
@@ -23,7 +39,7 @@ export const createComponentDidMount = (instance) => {
    */
   return () => {
     raf(() => {
-      instance.updateFrame(instance.scrollTo());
+      instance.updateFrame(instance.scrollTo);
     });
   };
 };

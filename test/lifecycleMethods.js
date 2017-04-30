@@ -34,7 +34,7 @@ test('if createComponentDidMount will create a method that will fire updateFrame
   await waitForRaf();
 
   t.true(instance.updateFrame.calledOnce);
-  t.true(instance.scrollTo.calledOnce);
+  t.true(instance.updateFrame.calledWith(instance.scrollTo));
 });
 
 test('if createComponentDidUpdate will not fire anything if unstable', async (t) => {
@@ -280,4 +280,14 @@ test('if createComponentWillUnmount will call removeEventListener on the scroll 
     noop,
     constants.ADD_EVENT_LISTENER_OPTIONS
   ]);
+});
+
+test('if getInitialState returns the correct state', (t) => {
+  const result = methods.getInitialState();
+
+  t.deepEqual(result, {
+    from: 0,
+    itemsPerRow: 0,
+    size: 0
+  });
 });

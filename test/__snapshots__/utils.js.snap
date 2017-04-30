@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`if defaultItemRenderer will render the item 1`] = `
+<div>
+  2
+</div>
+`;
+
+exports[`if defaultItemsRenderer will render the item 1`] = `
+<div>
+  foo
+  bar
+  baz
+</div>
+`;

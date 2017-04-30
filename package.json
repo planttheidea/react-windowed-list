@@ -5,7 +5,8 @@
     "concurrency": 5,
     "failFast": true,
     "files": [
-      "test/*.js"
+      "test/*.js",
+      "!test/helpers/setup-browser-env.js"
     ],
     "require": [
       "babel-register",
@@ -85,8 +86,9 @@
     "prepublish": "in-publish && npm run prepublish:compile || echo ''",
     "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified",
     "start": "npm run dev",
-    "test": "NODE_PATH=. NODE_ENV=test ava",
+    "test": "NODE_PATH=. NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
+    "test:update": "NODE_PATH=. NODE_ENV=test ava --update-snapshots",
     "test:watch": "NODE_PATH=. NODE_ENV=test ava --watch",
     "transpile": "NODE_ENV=production babel src --out-dir lib"
   },
