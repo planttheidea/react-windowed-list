@@ -27,7 +27,7 @@ module.exports = {
       commonjs2: 'react-dom',
       root: 'ReactDOM'
     },
-    'remeasure': {
+    remeasure: {
       amd: 'remeasure',
       commonjs: 'remeasure',
       commonjs2: 'remeasure',
@@ -60,7 +60,7 @@ module.exports = {
           env: {
             production: {
               plugins: [
-                "transform-react-remove-prop-types"
+                'transform-react-remove-prop-types'
               ]
             }
           },
