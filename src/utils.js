@@ -310,7 +310,7 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
   while (from < maxFrom) {
     const itemSize = getSizeOfListItem(from);
 
-    if (!itemSize || space + itemSize > start) {
+    if (isUndefined(itemSize) || space + itemSize > start) {
       break;
     }
 

@@ -124,6 +124,7 @@ const examples = [
     axis: 'x',
     length: 10000,
     itemRenderer: renderVariableWidthItem,
+    threshold: 250,
     type: 'variable'
   },
   {

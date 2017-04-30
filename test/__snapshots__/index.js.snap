@@ -8,7 +8,7 @@ exports[`if WindowedList renders correctly when type is not simple 1`] = `
     }
   }
 >
-  <Measured(WindowedList)
+  <WindowedList
     length={1000}
     type="uniform"
   >
@@ -64,7 +64,7 @@ exports[`if WindowedList renders correctly when type is not simple 1`] = `
         </div>
       </div>
     </WindowedList>
-  </Measured(WindowedList)>
+  </WindowedList>
 </div>
 `;
 
@@ -76,7 +76,7 @@ exports[`if WindowedList renders correctly with default props 1`] = `
     }
   }
 >
-  <Measured(WindowedList)
+  <WindowedList
     length={1000}
   />
 </div>
