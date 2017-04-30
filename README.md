@@ -4,7 +4,7 @@ A fast, versatile virtual-render list component for React.
 
 This component was originally forked from [ReactList](https://github.com/orgsync/react-list), so credit for the core functionality all goes to [orgsync](https://github.com/orgsync). I have re-architected it to be more modular, fixed some of the rendering issues, added additional options, and added code coverage.
 
-If you are migrating from `ReactList`, the only prop that has changed is `itemsRenderer`, which has been renamed to `containerRenderer`.
+If you are migrating from `ReactList`, the only prop that has changed is `itemsRenderer`, which has been renamed to `containerRenderer`. The list itself now uses `PureComponent` instead of `Component` for optimized performance, so if you are relying on mutated props causing render updates, you may be impacted. The simple solution to that is to create new objects instead of mutating the current ones.
 
 ### Table of contents
 * [Installation](#installation)
