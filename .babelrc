@@ -1,0 +1,26 @@
+{
+  "env": {
+    "production": {
+      "plugins": [
+        "transform-react-remove-prop-types"
+      ]
+    }
+  },
+  "plugins": [
+    "transform-decorators-legacy",
+    "add-module-exports"
+  ],
+  "presets": [
+    ["env", {
+      "loose": true,
+      "targets": {
+        "browsers": [
+          "last 2 versions",
+          "ie 11"
+        ]
+      }
+    }],
+    "react",
+    "stage-2"
+  ]
+}
