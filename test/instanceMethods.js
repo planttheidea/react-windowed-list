@@ -4,7 +4,6 @@ import test from 'ava';
 // src
 import * as methods from 'src/instanceMethods';
 
-test.todo('createCacheSizes');
 test.todo('createGetDomNode');
 test.todo('createGetItemSizeAndItemsPerRow');
 test.todo('createGetScrollOffsetl');

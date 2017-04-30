@@ -183,13 +183,19 @@ export const DEFAULT_THRESHOLD = 100;
 export const DEFAULT_TYPE = VALID_TYPES.SIMPLE;
 
 /**
- * @constant {number} DEFAULT_USE_STATIC_SIZE
+ * @constant {boolean} DEFAULT_USE_POSITION
+ * @default
+ */
+export const DEFAULT_USE_POSITION = false;
+
+/**
+ * @constant {boolean} DEFAULT_USE_STATIC_SIZE
  * @default
  */
 export const DEFAULT_USE_STATIC_SIZE = false;
 
 /**
- * @constant {number} DEFAULT_USE_TRANSLATE_3D
+ * @constant {boolean} DEFAULT_USE_TRANSLATE_3D
  * @default
  */
 export const DEFAULT_USE_TRANSLATE_3D = false;

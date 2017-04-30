@@ -2,14 +2,17 @@
   "author": "tony.quetano@planttheidea.com",
   "ava": {
     "babel": "inherit",
+    "concurrency": 5,
     "failFast": true,
     "files": [
       "test/*.js"
     ],
     "require": [
       "babel-register",
+      "babel-polyfill",
       "test/helpers/setup-browser-env.js"
-    ]
+    ],
+    "verbose": true
   },
   "bugs": {
     "url": "https://github.com/planttheidea/react-windowed-list/issues"

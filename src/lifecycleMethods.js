@@ -97,8 +97,8 @@ export const createComponentWillReceiveProps = (instance) => {
   return (nextProps) => {
     const {
       from,
-      size,
-      itemsPerRow
+      itemsPerRow,
+      size
     } = instance.state;
 
     instance.setStateIfAppropriate(getFromAndSize(from, size, itemsPerRow, nextProps), noop);

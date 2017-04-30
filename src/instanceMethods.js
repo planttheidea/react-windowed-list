@@ -30,30 +30,6 @@ import {
   shouldSetState
 } from './utils';
 
-
-export const createCacheSizes = (instance) => {
-  /**
-   * @function cacheSizes
-   *
-   * @description
-   * cache the size of each element on the instance
-   */
-  return () => {
-    const {
-      from
-    } = instance.state;
-
-    const itemElements = instance.getDomNode('items').children;
-    const sizeKey = OFFSET_SIZE_KEYS[instance.props.axis];
-
-    let index = -1;
-
-    while (++index < itemElements.length) {
-      instance.cache[from + index] = itemElements[index][sizeKey];
-    }
-  };
-};
-
 export const createGetDomNode = (instance) => {
   /**
    * @function getDomNode

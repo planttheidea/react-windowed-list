@@ -320,17 +320,27 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
  *
  * @param {Object} props the current props of the component
  * @param {string} props.axis the axis of the component
+ * @param {string} props.usePosition should position be used instead of the transform
  * @param {string} props.useTranslate3d should translate3d be used for the transform
  * @param {Object} state the current state of the component
  * @param {number} state.from the first item to show in the window
  * @param {function} getSpaceBefore the method to get the space before
  * @returns {Object} the style object for the list container
  */
-export const getListContainerStyle = ({axis, useTranslate3d}, {from}, getSpaceBefore) => {
+export const getListContainerStyle = ({axis, usePosition, useTranslate3d}, {from}, getSpaceBefore) => {
   const offset = getSpaceBefore(from, {});
 
   const x = axis === VALID_AXES.X ? offset : 0;
   const y = axis === VALID_AXES.Y ? offset : 0;
+
+  if (usePosition) {
+    return {
+      left: x,
+      position: 'relative',
+      top: y
+    };
+  }
+
   const transform = useTranslate3d ? `translate3d(${x}px, ${y}px, 0)` : `translate(${x}px, ${y}px)`;
 
   return {
@@ -425,7 +435,9 @@ export const setCacheSizes = (from, element, axis, cache) => {
   const itemElements = element.children;
   const sizeKey = OFFSET_SIZE_KEYS[axis];
 
-  for (let index = 0, l = itemElements.length; index < l; ++index) {
+  let index = -1;
+
+  while (++index < itemElements.length) {
     cache[from + index] = itemElements[index][sizeKey];
   }
 };

@@ -100,6 +100,22 @@ style.textContent = `
     .even {
       background: linear-gradient(#ddd, #ccc);
     }
+
+    .button {
+      -webkit-appearance: none;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      color: #5d5d5d;
+      cursor: pointer;
+      outline: none;
+      padding: 10px 15px;
+    }
+
+    .button:hover {
+      background-color: #f0f0f0;
+      box-shadow: 0 0 3px #ccc;
+    }
 `;
 
 const renderApp = (container, length = 1000) => {

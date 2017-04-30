@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {
+  PureComponent
+} from 'react';
 import WindowedList from '../src';
 
 const renderItem = (index, key) => {
@@ -60,6 +62,7 @@ const renderVariableHeightItem = (index, key) => {
     </div>
   );
 };
+
 renderVariableHeightItem.toJSON = () => {
   return renderVariableHeightItem.toString();
 };
@@ -77,17 +80,22 @@ const renderVariableWidthItem = (index, key) => {
     </div>
   );
 };
-renderVariableWidthItem.toJSON = () => renderVariableWidthItem.toString();
+
+renderVariableWidthItem.toJSON = () => {
+  return renderVariableWidthItem.toString();
+};
 
 const renderGridLine = (row, key) => {
+  const gridLineItemRenderer = (column, key) => {
+    return renderSquareItem(column + (10000 * row), key);
+  };
+
   return (
     <WindowedList
       axis="x"
+      itemRenderer={gridLineItemRenderer}
       key={key}
       length={10000}
-      itemRenderer={
-        (column, key) => renderSquareItem(column + (10000 * row), key)
-      }
       type="uniform"
     />
   );
@@ -166,41 +174,107 @@ const examples = [
     itemRenderer: renderGridLine,
     type: 'uniform',
     useTranslate3d: true
+  },
+  {
+    length: 10000,
+    itemRenderer: renderGridLine,
+    type: 'uniform',
+    usePosition: true
   }
 ];
 
-const Example = () => {
-  return (
-    <div className="index">
-      <div className="header">
-        WindowedList
-      </div>
-
-      <div className="examples">
-        {examples.map((props, key) => {
-          return (
-            <div key={key} className={`example axis-${props.axis}`}>
-              <strong>
-                Props
-              </strong>
-
-              <pre className="props">
-                {JSON.stringify(props, null, 2)}
-              </pre>
-
-              <strong>
-                Component
-              </strong>
-
-              <div className="component">
-                <WindowedList {...props} />
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+const hiddenProps = {
+  length: 10000,
+  itemRenderer: renderItem,
+  type: 'uniform'
 };
+
+class Example extends PureComponent {
+  state = {
+    isVisible: false
+  };
+
+  onClickToggleIsVisible = () => {
+    this.setState(({isVisible: wasVisible}) => {
+      return {
+        isVisible: !wasVisible
+      };
+    });
+  };
+
+  render() {
+    const visibiltyToggledStyle = this.state.isVisible ? {} : {
+      display: 'none'
+    };
+
+    return (
+      <div className="index">
+        <div className="header">
+          WindowedList
+        </div>
+
+        <div className="examples">
+          <div className="example axis-y">
+            <strong>
+              Props
+            </strong>
+
+            <pre className="props">
+              {JSON.stringify(hiddenProps, null, 2)}
+            </pre>
+
+            <strong>
+              Component
+            </strong>
+
+            <div>
+              <button
+                className="button"
+                onClick={this.onClickToggleIsVisible}
+                type="button"
+              >
+                Toggle visibility
+              </button>
+            </div>
+
+            <div
+              className="component"
+              style={visibiltyToggledStyle}
+            >
+              <WindowedList {...hiddenProps} />
+            </div>
+          </div>
+
+          {examples.map((props, index) => {
+            const key = `example-${index}`;
+
+            return (
+              <div
+                className={`example axis-${props.axis}`}
+                key={key}
+              >
+                <strong>
+                  Props
+                </strong>
+
+                <pre className="props">
+                  {JSON.stringify(props, null, 2)}
+                </pre>
+
+                <strong>
+                  Component
+                </strong>
+
+                <div className="component">
+                  <WindowedList {...props} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+}
 
 export default Example;

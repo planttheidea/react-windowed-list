@@ -12,6 +12,7 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_THRESHOLD,
   DEFAULT_TYPE,
+  DEFAULT_USE_POSITION,
   DEFAULT_USE_STATIC_SIZE,
   DEFAULT_USE_TRANSLATE_3D,
   VALID_AXIS_VALUES,
@@ -21,7 +22,6 @@ import {
 
 // instance methods
 import {
-  createCacheSizes,
   createGetDomNode,
   createGetItemSizeAndItemsPerRow,
   createGetScrollOffset,
@@ -73,6 +73,7 @@ class WindowedList extends PureComponent {
     scrollParentGetter: PropTypes.func,
     threshold: PropTypes.number.isRequired,
     type: PropTypes.oneOf(VALID_TYPE_VALUES).isRequired,
+    usePosition: PropTypes.bool.isRequired,
     useStaticSize: PropTypes.bool.isRequired,
     useTranslate3d: PropTypes.bool.isRequired
   };
@@ -85,6 +86,7 @@ class WindowedList extends PureComponent {
     pageSize: DEFAULT_PAGE_SIZE,
     threshold: DEFAULT_THRESHOLD,
     type: DEFAULT_TYPE,
+    usePosition: DEFAULT_USE_POSITION,
     useStaticSize: DEFAULT_USE_STATIC_SIZE,
     useTranslate3d: DEFAULT_USE_TRANSLATE_3D
   };
@@ -109,7 +111,6 @@ class WindowedList extends PureComponent {
   updateCounter = 0;
 
   // instance methods
-  cacheSizes = createCacheSizes(this);
   getDomNode = createGetDomNode(this);
   getItemSizeAndItemsPerRow = createGetItemSizeAndItemsPerRow(this);
   getScrollOffset = createGetScrollOffset(this);
