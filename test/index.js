@@ -33,7 +33,13 @@ test('if WindowedList renders correctly when type is not simple', (t) => {
 
   t.snapshot(toJson(wrapper));
 
-  const listContainer = wrapper.children().children();
+  const container = wrapper.children().children();
+
+  t.deepEqual(container.prop('style'), utils.getContainerStyle({}, {}, () => {
+    return 0;
+  }));
+
+  const listContainer = container.children();
 
   t.deepEqual(listContainer.prop('style'), utils.getListContainerStyle({}, {}, () => {
     return 0;

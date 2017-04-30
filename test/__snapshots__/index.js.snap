@@ -33,22 +33,31 @@ exports[`if WindowedList renders correctly when type is not simple 1`] = `
       <div
         style={
           Object {
-            "position": "relative",
+            "height": "100%",
+            "width": "100%",
           }
         }
       >
         <div
           style={
             Object {
-              "WebkitTransform": "translate(0px, 0px)",
-              "msTransform": "translate(0px, 0px)",
-              "transform": "translate(0px, 0px)",
+              "position": "relative",
             }
           }
         >
-          <div>
+          <div
+            style={
+              Object {
+                "WebkitTransform": "translate(0px, 0px)",
+                "msTransform": "translate(0px, 0px)",
+                "transform": "translate(0px, 0px)",
+              }
+            }
+          >
             <div>
-              0
+              <div>
+                0
+              </div>
             </div>
           </div>
         </div>

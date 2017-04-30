@@ -9,6 +9,7 @@ import measure from 'remeasure';
 import {
   DEFAULT_AXIS,
   DEFAULT_LENGTH,
+  OUTER_CONTAINER_STYLE,
   DEFAULT_PAGE_SIZE,
   DEFAULT_THRESHOLD,
   DEFAULT_TYPE,
@@ -141,9 +142,11 @@ class WindowedList extends PureComponent {
     const listStyle = getListContainerStyle(this.props, this.state, this.getSpaceBefore);
 
     return (
-      <div style={style}>
-        <div style={listStyle}>
-          {items}
+      <div style={OUTER_CONTAINER_STYLE}>
+        <div style={style}>
+          <div style={listStyle}>
+            {items}
+          </div>
         </div>
       </div>
     );

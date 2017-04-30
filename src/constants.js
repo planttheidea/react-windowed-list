@@ -152,6 +152,14 @@ export const VALID_TYPE_VALUES = keys(VALID_TYPES).map((key) => {
 export const DEFAULT_AXIS = VALID_AXES.Y;
 
 /**
+ * @constant {Object} OUTER_CONTAINER_STYLE
+ */
+export const OUTER_CONTAINER_STYLE = {
+  height: '100%',
+  width: '100%'
+};
+
+/**
  * @constant {Object} DEFAULT_CONTAINER_STYLE
  */
 export const DEFAULT_CONTAINER_STYLE = {
