@@ -14,6 +14,7 @@ If you are migrating from `ReactList`, the only prop that has changed is `itemsR
   * [containerRenderer](#containerrenderer)
   * [debounceReconciler](#debouncereconciler)
   * [initialIndex](#initialindex)
+  * [isLazy](#islazy)
   * [itemRenderer](#itemrenderer)
   * [length](#length)
   * [pageSize](#pageSize)
@@ -122,6 +123,10 @@ Internally, `updateFrame` is called upon all scroll actions, and upon component 
 #### initialIndex
 
 The index to scroll to after mounting.
+
+#### isLazy
+
+Enables lazier loading of list items within the view container. This can improve performance, but can also produce unwanted visual side effects (such as not enough list items rendering), so use at your discretion.
 
 #### itemRenderer
 

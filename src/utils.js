@@ -251,18 +251,17 @@ export const getContainerStyle = ({axis, length}, {itemsPerRow}, getSpaceBefore)
  * @param {number} currentFrom the current from in state
  * @param {number} currentSize the current size in state
  * @param {number} itemsPerRow the number of items per row in state
+ * @param {boolean} isLazy is the list lazily loaded
  * @param {number} length the total number of items
+ * @param {number} pageSize the size of batches to render
  * @param {string} type the type of list
  * @returns {{from: number, size: number}} the from and size propertioes
  */
-export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {length, type}) => {
-  let size = currentSize;
+export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {isLazy, length, pageSize, type}) => {
+  const comparator = isLazy && type === VALID_TYPES.UNIFORM ? 1 : pageSize;
 
-  if (type === VALID_TYPES.UNIFORM) {
-    size = Math.max(size, 1);
-  }
-
-  let mod = size % itemsPerRow;
+  let size = Math.max(currentSize, comparator),
+      mod = size % itemsPerRow;
 
   if (mod) {
     size += itemsPerRow - mod;
