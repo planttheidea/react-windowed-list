@@ -111,6 +111,7 @@ test('if createComponentDidUpdate will set the updateCounterTimeoutId if is fals
   const initialUpdateCounterTimeoutId = null;
 
   const instance = {
+    reconcileFrameAfterUpdate: sinon.spy(),
     unstable: false,
     updateCounter: initialUpdateCounter,
     updateCounterTimeoutId: initialUpdateCounterTimeoutId,
@@ -135,9 +136,8 @@ test('if createComponentDidUpdate will set the updateCounterTimeoutId if is fals
   t.is(instance.updateCounter, 0);
   t.not(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
 
-  await waitForRaf();
-
-  t.true(instance.updateFrame.calledOnce);
+  t.true(instance.reconcileFrameAfterUpdate.calledOnce);
+  t.true(instance.reconcileFrameAfterUpdate.calledWith(instance.updateFrame));
 });
 
 test('if createComponentDidUpdate will just call updateFrame if there is an updateCounterTimeoutId', async (t) => {
@@ -145,6 +145,7 @@ test('if createComponentDidUpdate will just call updateFrame if there is an upda
   const initialUpdateCounterTimeoutId = 2;
 
   const instance = {
+    reconcileFrameAfterUpdate: sinon.spy(),
     unstable: false,
     updateCounter: initialUpdateCounter,
     updateCounterTimeoutId: initialUpdateCounterTimeoutId,
@@ -169,9 +170,8 @@ test('if createComponentDidUpdate will just call updateFrame if there is an upda
   t.is(instance.updateCounter, initialUpdateCounter + 1);
   t.is(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
 
-  await waitForRaf();
-
-  t.true(instance.updateFrame.calledOnce);
+  t.true(instance.reconcileFrameAfterUpdate.calledOnce);
+  t.true(instance.reconcileFrameAfterUpdate.calledWith(instance.updateFrame));
 });
 
 test('if createComponentWillMount will call setState with the right object', (t) => {
@@ -179,6 +179,7 @@ test('if createComponentWillMount will call setState with the right object', (t)
     props: {
       initialIndex: 0
     },
+    setReconcileFrameAfterUpdate: sinon.spy(),
     setState: sinon.spy()
   };
 
@@ -210,10 +211,13 @@ test('if createComponentWillMount will call setState with the right object', (t)
       itemsPerRow: 1
     }
   ]);
+
+  t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
 });
 
 test('if createComponentWillReceiveProps will fire setStateIfAppropriate with the result from getFromAndSize', (t) => {
   const instance = {
+    props: {},
     setStateIfAppropriate: sinon.spy(),
     state: {
       from: 'foo',
@@ -244,6 +248,47 @@ test('if createComponentWillReceiveProps will fire setStateIfAppropriate with th
     instance.state.itemsPerRow, nextProps));
 
   getFromAndSizeStub.restore();
+
+  t.true(instance.setStateIfAppropriate.calledOnce);
+  t.true(instance.setStateIfAppropriate.calledWith(fromAndSize));
+});
+
+test('if createComponentWillReceiveProps will fire setReconcileFrameAfterUpdate if debounceReconciler has changed', (t) => {
+  const instance = {
+    props: {},
+    setReconcileFrameAfterUpdate: sinon.spy(),
+    setStateIfAppropriate: sinon.spy(),
+    state: {
+      from: 'foo',
+      itemsPerRow: 'bar',
+      size: 'baz'
+    }
+  };
+
+  const componentWillReceiveProps = methods.createComponentWillReceiveProps(instance);
+
+  t.true(_.isFunction(componentWillReceiveProps));
+
+  const fromAndSize = {
+    from: 'foo',
+    size: 'baz'
+  };
+
+  const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
+
+  const nextProps = {
+    debounceReconciler: 123
+  };
+
+  componentWillReceiveProps(nextProps);
+
+  t.true(getFromAndSizeStub.calledOnce);
+  t.true(getFromAndSizeStub.calledWith(instance.state.from, instance.state.size,
+    instance.state.itemsPerRow, nextProps));
+
+  getFromAndSizeStub.restore();
+
+  t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
 
   t.true(instance.setStateIfAppropriate.calledOnce);
   t.true(instance.setStateIfAppropriate.calledWith(fromAndSize));

@@ -2,6 +2,7 @@
 import test from 'ava';
 import _ from 'lodash';
 import noop from 'lodash/noop';
+import raf from 'raf';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
 
@@ -871,6 +872,43 @@ test('if createScrollTo will do nothing if initialIndex is not a number', (t) =>
 
   t.true(instance.getSpaceBefore.notCalled);
   t.true(instance.setScroll.notCalled);
+});
+
+test('if createSetReconcileFrameAfterUpdate will assign raf when debounceReconciler is not a number', (t) => {
+  const instance = {
+    props: {
+      debounceReconciler: 'foo'
+    },
+    reconcileFrameAfterUpdate: null,
+    updateFrame() {}
+  };
+
+  const setReconcileFrameAfterUpdate = methods.createSetReconcileFrameAfterUpdate(instance);
+
+  t.true(_.isFunction(setReconcileFrameAfterUpdate));
+
+  setReconcileFrameAfterUpdate();
+
+  t.is(instance.reconcileFrameAfterUpdate, raf);
+});
+
+test('if createSetReconcileFrameAfterUpdate will assign a debounced method when debounceReconciler is a number', (t) => {
+  const instance = {
+    props: {
+      debounceReconciler: 123
+    },
+    reconcileFrameAfterUpdate: null,
+    updateFrame() {}
+  };
+
+  const setReconcileFrameAfterUpdate = methods.createSetReconcileFrameAfterUpdate(instance);
+
+  t.true(_.isFunction(setReconcileFrameAfterUpdate));
+
+  setReconcileFrameAfterUpdate();
+
+  t.not(instance.reconcileFrameAfterUpdate, raf);
+  t.is(instance.reconcileFrameAfterUpdate.name, 'debounced');
 });
 
 test('if createSetScroll will return immediately if there is no scrollParent', (t) => {

@@ -107,6 +107,7 @@ renderGridLine.toJSON = () => {
 
 const examples = [
   {
+    debounceReconciler: 1000,
     length: 10000,
     itemRenderer: renderVariableHeightItem
   },

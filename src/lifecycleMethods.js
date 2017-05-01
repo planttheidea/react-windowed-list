@@ -74,9 +74,7 @@ export const createComponentDidUpdate = (instance) => {
       });
     }
 
-    raf(() => {
-      instance.updateFrame();
-    });
+    instance.reconcileFrameAfterUpdate(instance.updateFrame);
   };
 };
 
@@ -93,6 +91,8 @@ export const createComponentWillMount = (instance) => {
     } = instance.props;
     const itemsPerRow = 1;
     const fromAndSize = getFromAndSize(initialIndex, 0, itemsPerRow, instance.props);
+
+    instance.setReconcileFrameAfterUpdate();
 
     instance.setState({
       ...fromAndSize,
@@ -112,10 +112,17 @@ export const createComponentWillReceiveProps = (instance) => {
    */
   return (nextProps) => {
     const {
+      debounceReconciler
+    } = instance.props;
+    const {
       from,
       itemsPerRow,
       size
     } = instance.state;
+
+    if (nextProps.debounceReconciler !== debounceReconciler) {
+      instance.setReconcileFrameAfterUpdate();
+    }
 
     instance.setStateIfAppropriate(getFromAndSize(from, size, itemsPerRow, nextProps), noop);
   };
