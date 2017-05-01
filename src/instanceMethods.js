@@ -1,8 +1,10 @@
 // external dependencies
+import debounce from 'lodash/debounce';
 import isFunction from 'lodash/isFunction';
 import isNumber from 'lodash/isNumber';
 import isUndefined from 'lodash/isUndefined';
 import noop from 'lodash/noop';
+import raf from 'raf';
 import {
   findDOMNode
 } from 'react-dom';
@@ -379,6 +381,25 @@ export const createScrollTo = (instance) => {
     if (isNumber(indexToScrollTo)) {
       instance.setScroll(instance.getSpaceBefore(indexToScrollTo));
     }
+  };
+};
+
+export const createSetReconcileFrameAfterUpdate = (instance) => {
+  /**
+   * @function setReconcileFrameAfterUpdate
+   *
+   * @description
+   * set the frame reconciler used after componentDidUpdate
+   */
+  return () => {
+    const {
+      debounceReconciler
+    } = instance.props;
+
+    instance.reconcileFrameAfterUpdate = !isNumber(debounceReconciler) ? raf :
+      debounce((updateFrame) => {
+        updateFrame();
+      }, debounceReconciler);
   };
 };
 

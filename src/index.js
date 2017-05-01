@@ -36,6 +36,7 @@ import {
   createRenderItems,
   createScrollAround,
   createScrollTo,
+  createSetReconcileFrameAfterUpdate,
   createSetScroll,
   createSetStateIfAppropriate,
   createUpdateFrame,
@@ -68,6 +69,7 @@ class WindowedList extends PureComponent {
   static propTypes = {
     axis: PropTypes.oneOf(VALID_AXIS_VALUES).isRequired,
     containerRenderer: PropTypes.func.isRequired,
+    debounceReconciler: PropTypes.number,
     initialIndex: PropTypes.number,
     itemRenderer: PropTypes.func.isRequired,
     itemSizeEstimator: PropTypes.func,
@@ -108,6 +110,7 @@ class WindowedList extends PureComponent {
   // instance values
   cache = {};
   prevPrevState = {};
+  reconcileFrameAfterUpdate = null;
   unstable = false;
   updateCounter = 0;
 
@@ -123,6 +126,7 @@ class WindowedList extends PureComponent {
   renderItems = createRenderItems(this);
   scrollAround = createScrollAround(this);
   scrollTo = createScrollTo(this);
+  setReconcileFrameAfterUpdate = createSetReconcileFrameAfterUpdate(this);
   setScroll = createSetScroll(this);
   setStateIfAppropriate = createSetStateIfAppropriate(this);
   updateFrame = createUpdateFrame(this);
