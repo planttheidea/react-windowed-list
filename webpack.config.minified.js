@@ -7,7 +7,7 @@ module.exports = Object.assign({}, defaultConfig, {
   devtool: undefined,
 
   output: Object.assign({}, defaultConfig.output, {
-    filename: 'waddup.min.js'
+    filename: 'react-windowed-list.min.js'
   }),
 
   plugins: defaultConfig.plugins.concat([

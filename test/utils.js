@@ -261,7 +261,9 @@ test('if getFromAndSize will calculate the correct from and size based on simple
   const size = 100;
   const itemsPerRow = 1;
   const props = {
+    isLazy: false,
     length: 1000,
+    pageSize: 10,
     type: constants.VALID_TYPES.SIMPLE
   };
 
@@ -278,7 +280,9 @@ test('if getFromAndSize will calculate the correct from and size based on simple
   const size = 100;
   const itemsPerRow = 1;
   const props = {
+    isLazy: false,
     length: 1000,
+    pageSize: 10,
     type: constants.VALID_TYPES.SIMPLE
   };
 
@@ -295,7 +299,9 @@ test('if getFromAndSize will calculate the correct from and size based on variab
   const size = 100;
   const itemsPerRow = 1;
   const props = {
+    isLazy: false,
     length: 1000,
+    pageSize: 10,
     type: constants.VALID_TYPES.VARIABLE
   };
 
@@ -312,7 +318,9 @@ test('if getFromAndSize will calculate the correct from and size based on variab
   const size = 100;
   const itemsPerRow = 1;
   const props = {
+    isLazy: false,
     length: 1000,
+    pageSize: 10,
     type: constants.VALID_TYPES.VARIABLE
   };
 
@@ -329,7 +337,9 @@ test('if getFromAndSize will calculate the correct from and size based on unifor
   const size = 100;
   const itemsPerRow = 1;
   const props = {
+    isLazy: false,
     length: 1000,
+    pageSize: 10,
     type: constants.VALID_TYPES.UNIFORM
   };
 
@@ -346,7 +356,9 @@ test('if getFromAndSize will calculate the correct from and size based on unifor
   const size = 100;
   const itemsPerRow = 1;
   const props = {
+    isLazy: false,
     length: 1000,
+    pageSize: 10,
     type: constants.VALID_TYPES.UNIFORM
   };
 
