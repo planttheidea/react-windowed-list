@@ -117,7 +117,7 @@ renderContainer = (items, ref) => {
 
 The number in milliseconds to debounce the reconciliation call to the frame update.
 
-Internally, `updateFrame` is called upon all scroll action, and then upon update an additional reconcilitation call to it is performed to ensure that the frame is at the correct scroll location. They are extremely rare, however there are edge cases where the eagerness of this reconciliation may cause a render loop. Applying a debounce should ensure that a stable state is reached before attempting reconciliation. This is not usually necessary, and has potential performance ramifications, so only apply if needed.
+Internally, `updateFrame` is called upon all scroll actions, and upon component update an additional reconciliation call to it is performed to ensure that the frame is at the correct scroll location. While extremely rare, there are edge cases where the eagerness of this reconciliation may cause a render loop. Applying a `debounceReconciler` should ensure that a stable state is reached before attempting reconciliation. This is not usually necessary, and has potential performance ramifications, so only apply as needed.
 
 #### initialIndex
 
