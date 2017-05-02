@@ -610,8 +610,8 @@ export const createUpdateVariableFrame = (instance) => {
       setCacheSizes(currentFrom, instance.getDomNode('items'), axis, instance.cache);
     }
 
-    const startAndEnd = instance.getStartAndEnd();
-    const fromAndSize = getFromAndSizeFromListItemSize(startAndEnd, instance.props, instance.getSizeOfListItem);
+    const fromAndSize = getFromAndSizeFromListItemSize(instance.getStartAndEnd(),
+      instance.props, instance.getSizeOfListItem);
 
     instance.setStateIfAppropriate(fromAndSize, callback);
   };

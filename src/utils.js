@@ -303,24 +303,30 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
   const maxFrom = length - 1;
 
   let space = 0,
-      from = 0,
-      size = 0;
+      from = -1,
+      size = -1,
+      itemSize;
 
-  while (from < maxFrom) {
-    const itemSize = getSizeOfListItem(from);
+  while (++from < maxFrom) {
+    itemSize = getSizeOfListItem(from);
 
     if (isUndefined(itemSize) || space + itemSize > start) {
+      // if an alternative key is used, it causes jitter when the first item is removed from the DOM,
+      // so render the first item if the calculated from is 1
+      if (from === 1) {
+        from = 0;
+      }
+
       break;
     }
 
     space += itemSize;
-    ++from;
   }
 
   const maxSize = length - from;
 
-  while (size < maxSize && space < end) {
-    const itemSize = getSizeOfListItem(from + size);
+  while (++size < maxSize && space < end) {
+    itemSize = getSizeOfListItem(from + size);
 
     if (isUndefined(itemSize)) {
       size = Math.min(size + pageSize, maxSize);
@@ -329,7 +335,6 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
     }
 
     space += itemSize;
-    ++size;
   }
 
   return {
