@@ -1,5 +1,8 @@
 # react-windowed-list CHANGELOG
 
+### 1.3.0
+* Add `isHidden` prop to handle when the container is hidden or not
+
 ### 1.2.1
 * Fix jitter issue when an alternative key is used for list items when type is `variable`
 

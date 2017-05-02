@@ -14,6 +14,7 @@ If you are migrating from `ReactList`, the only prop that has changed is `itemsR
   * [containerRenderer](#containerrenderer)
   * [debounceReconciler](#debouncereconciler)
   * [initialIndex](#initialindex)
+  * [isHidden](#ishidden)
   * [isLazy](#islazy)
   * [itemRenderer](#itemrenderer)
   * [length](#length)
@@ -123,6 +124,10 @@ Internally, `updateFrame` is called upon all scroll actions, and upon component 
 #### initialIndex
 
 The index to scroll to after mounting.
+
+#### isHidden
+
+If the element is hidden via CSS and the `type` is not `uniform`, `WindowList` will try to render all the elements because it calculates the size of all of the items as `0`. Setting `isHidden` to `true` when the element is hidden will prevent this behavior.
 
 #### isLazy
 
@@ -314,6 +319,8 @@ class MyComponent extends PureComponent {
   * The calculations to figure out element positioning and size get significantly more complicated with margins, so they are not supported. Use a transparent border, padding, or an element with nested elements to achieve the desired spacing.
 * Why is there no `onScroll` event handler?
   * If you need an `onScroll` handler, just add the handler to the container element wrapping the `WindowedList` component.
+* Why does `WindowList` render all the items when the container is hidden by CSS?
+  * The size of each item is calculated to be `0` as it is hidden, so it tries to fill the container infinitely (or until the list is complete). If you want to prevent this behavior, set `isHidden` to `true` when the container is hidden.
 
 ### Development
 

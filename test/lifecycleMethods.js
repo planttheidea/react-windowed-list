@@ -18,6 +18,9 @@ const waitForRaf = () => {
 
 test('if createComponentDidMount will create a method that will fire updateFrame on the next animationFrame', async (t) => {
   const instance = {
+    props: {
+      isHidden: false
+    },
     scrollTo: sinon.spy(),
     updateFrame: sinon.spy()
   };
@@ -37,11 +40,37 @@ test('if createComponentDidMount will create a method that will fire updateFrame
   t.true(instance.updateFrame.calledWith(instance.scrollTo));
 });
 
+test('if createComponentDidMount will not fire updateFrame if hidden', async (t) => {
+  const instance = {
+    props: {
+      isHidden: true
+    },
+    scrollTo: sinon.spy(),
+    updateFrame: sinon.spy()
+  };
+
+  const componentDidMount = methods.createComponentDidMount(instance);
+
+  t.true(_.isFunction(componentDidMount));
+
+  componentDidMount();
+
+  t.true(instance.updateFrame.notCalled);
+  t.true(instance.scrollTo.notCalled);
+
+  await waitForRaf();
+
+  t.true(instance.updateFrame.notCalled);
+});
+
 test('if createComponentDidUpdate will not fire anything if unstable', async (t) => {
   const initialUpdateCounter = constants.MAX_SYNC_UPDATES + 1;
   const initialUpdateCounterTimeoutId = 1;
 
   const instance = {
+    props: {
+      isHidden: false
+    },
     unstable: true,
     updateCounter: initialUpdateCounter,
     updateCounterTimeoutId: initialUpdateCounterTimeoutId,
@@ -76,6 +105,9 @@ test('if createComponentDidUpdate will set unstable to true and fire the console
   const initialUpdateCounterTimeoutId = 1;
 
   const instance = {
+    props: {
+      isHidden: false
+    },
     unstable: false,
     updateCounter: initialUpdateCounter,
     updateCounterTimeoutId: initialUpdateCounterTimeoutId,
@@ -111,6 +143,9 @@ test('if createComponentDidUpdate will set the updateCounterTimeoutId if is fals
   const initialUpdateCounterTimeoutId = null;
 
   const instance = {
+    props: {
+      isHidden: false
+    },
     reconcileFrameAfterUpdate: sinon.spy(),
     unstable: false,
     updateCounter: initialUpdateCounter,
@@ -145,6 +180,9 @@ test('if createComponentDidUpdate will just call updateFrame if there is an upda
   const initialUpdateCounterTimeoutId = 2;
 
   const instance = {
+    props: {
+      isHidden: false
+    },
     reconcileFrameAfterUpdate: sinon.spy(),
     unstable: false,
     updateCounter: initialUpdateCounter,
@@ -172,6 +210,42 @@ test('if createComponentDidUpdate will just call updateFrame if there is an upda
 
   t.true(instance.reconcileFrameAfterUpdate.calledOnce);
   t.true(instance.reconcileFrameAfterUpdate.calledWith(instance.updateFrame));
+});
+
+test('if createComponentDidUpdate will not call updateFrame if hidden', async (t) => {
+  const initialUpdateCounter = 3;
+  const initialUpdateCounterTimeoutId = 2;
+
+  const instance = {
+    props: {
+      isHidden: true
+    },
+    reconcileFrameAfterUpdate: sinon.spy(),
+    unstable: false,
+    updateCounter: initialUpdateCounter,
+    updateCounterTimeoutId: initialUpdateCounterTimeoutId,
+    updateFrame: sinon.spy()
+  };
+
+  const componentDidUpdate = methods.createComponentDidUpdate(instance);
+
+  t.true(_.isFunction(componentDidUpdate));
+
+  const consoleErrorStub = sinon.stub(console, 'error');
+
+  componentDidUpdate();
+
+  t.true(consoleErrorStub.notCalled);
+
+  consoleErrorStub.restore();
+
+  await waitForRaf();
+
+  t.false(instance.unstable);
+  t.is(instance.updateCounter, initialUpdateCounter + 1);
+  t.is(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
+
+  t.true(instance.reconcileFrameAfterUpdate.notCalled);
 });
 
 test('if createComponentWillMount will call setState with the right object', (t) => {

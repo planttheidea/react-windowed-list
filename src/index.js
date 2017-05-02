@@ -71,6 +71,7 @@ class WindowedList extends PureComponent {
     containerRenderer: PropTypes.func.isRequired,
     debounceReconciler: PropTypes.number,
     initialIndex: PropTypes.number,
+    isHidden: PropTypes.bool.isRequired,
     isLazy: PropTypes.bool.isRequired,
     itemRenderer: PropTypes.func.isRequired,
     itemSizeEstimator: PropTypes.func,
@@ -88,6 +89,7 @@ class WindowedList extends PureComponent {
   static defaultProps = {
     axis: DEFAULT_AXIS,
     containerRenderer: defaultContainerRenderer,
+    isHidden: false,
     isLazy: false,
     itemRenderer: defaultItemRenderer,
     length: DEFAULT_LENGTH,
