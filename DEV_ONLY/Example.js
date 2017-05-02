@@ -106,6 +106,36 @@ renderGridLine.toJSON = () => {
   return renderGridLine.toString();
 };
 
+const differentKeyItems = (new Array(10000))
+  .fill('foo')
+  .map(() => {
+    return {
+      id: uuid(),
+      height: 100 + Math.floor(Math.random() * 100)
+    };
+  });
+
+const differentKeyRenderer = (index) => {
+  const item = differentKeyItems[index];
+  const style = {
+    height: item.height
+  };
+
+  return (
+    <div
+      className={`item${index % 2 ? '' : ' even'}`}
+      key={item.id}
+      style={style}
+    >
+      {index}
+    </div>
+  );
+};
+
+differentKeyRenderer.toJSON = () => {
+  return differentKeyRenderer.toString();
+};
+
 const examples = [
   {
     debounceReconciler: 1000,
@@ -152,6 +182,12 @@ const examples = [
   },
   {
     length: 10000,
+    itemRenderer: differentKeyRenderer,
+    threshold: 400,
+    type: 'variable'
+  },
+  {
+    length: 10000,
     itemRenderer: renderItem,
     type: 'uniform'
   },
@@ -189,43 +225,6 @@ const examples = [
 const hiddenProps = {
   length: 10000,
   itemRenderer: renderItem,
-  type: 'uniform'
-};
-
-const differentKeyItems = (new Array(10000))
-  .fill('foo')
-  .map(() => {
-    return {
-      id: uuid(),
-      height: 100 + Math.floor(Math.random() * 10)
-    };
-  });
-
-const differentKeyRenderer = (index) => {
-  const item = differentKeyItems[index];
-  const style = {
-    height: item.height
-  };
-
-  return (
-    <div
-      className={`item${index % 2 ? '' : ' even'}`}
-      key={item.id}
-      style={style}
-    >
-      {index}
-    </div>
-  );
-};
-
-differentKeyRenderer.toJSON = () => {
-  return differentKeyRenderer.toString();
-};
-
-const differentKeyProps = {
-  length: 10000,
-  itemRenderer: differentKeyRenderer,
-  threshold: 400,
   type: 'variable'
 };
 
@@ -243,7 +242,11 @@ class Example extends PureComponent {
   };
 
   render() {
-    const visibiltyToggledStyle = this.state.isVisible ? {} : {
+    const {
+      isVisible
+    } = this.state;
+
+    const visibiltyToggledStyle = isVisible ? {} : {
       display: 'none'
     };
 
@@ -282,27 +285,8 @@ class Example extends PureComponent {
               style={visibiltyToggledStyle}
             >
               <WindowedList
+                isHidden={!isVisible}
                 {...hiddenProps}
-              />
-            </div>
-          </div>
-
-          <div className="example axis-y">
-            <strong>
-              Props
-            </strong>
-
-            <pre className="props">
-              {JSON.stringify(differentKeyProps, null, 2)}
-            </pre>
-
-            <strong>
-              Component
-            </strong>
-
-            <div className="component">
-              <WindowedList
-                {...differentKeyProps}
               />
             </div>
           </div>

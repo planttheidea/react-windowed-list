@@ -15,6 +15,7 @@ exports[`if WindowedList renders correctly when type is not simple 1`] = `
     <WindowedList
       axis="y"
       containerRenderer={[Function]}
+      isHidden={false}
       isLazy={false}
       itemRenderer={[Function]}
       length={1000}

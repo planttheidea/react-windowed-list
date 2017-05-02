@@ -38,9 +38,11 @@ export const createComponentDidMount = (instance) => {
    * on mount, update the frame with the desired scroll position
    */
   return () => {
-    raf(() => {
-      instance.updateFrame(instance.scrollTo);
-    });
+    if (!instance.props.isHidden) {
+      raf(() => {
+        instance.updateFrame(instance.scrollTo);
+      });
+    }
   };
 };
 
@@ -74,7 +76,9 @@ export const createComponentDidUpdate = (instance) => {
       });
     }
 
-    instance.reconcileFrameAfterUpdate(instance.updateFrame);
+    if (!instance.props.isHidden) {
+      instance.reconcileFrameAfterUpdate(instance.updateFrame);
+    }
   };
 };
 
