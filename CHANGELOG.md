@@ -1,5 +1,8 @@
 # react-windowed-list CHANGELOG
 
+### 1.4.0
+* Add `minSize` prop to allow setting minimum number of rendered items
+
 ### 1.3.0
 * Add `isHidden` prop to handle when the container is hidden or not
 

@@ -174,6 +174,12 @@ export const DEFAULT_CONTAINER_STYLE = {
 export const DEFAULT_LENGTH = 0;
 
 /**
+ * @constant {number} DEFAULT_MIN_SIZE
+ * @default
+ */
+export const DEFAULT_MIN_SIZE = 1;
+
+/**
  * @constant {number} DEFAULT_PAGE_SIZE
  * @default
  */

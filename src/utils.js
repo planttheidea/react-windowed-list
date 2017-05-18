@@ -257,8 +257,8 @@ export const getContainerStyle = ({axis, length}, {itemsPerRow}, getSpaceBefore)
  * @param {string} type the type of list
  * @returns {{from: number, size: number}} the from and size propertioes
  */
-export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {isLazy, length, pageSize, type}) => {
-  const comparator = isLazy && type === VALID_TYPES.UNIFORM ? 1 : pageSize;
+export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {isLazy, length, minSize, pageSize, type}) => {
+  const comparator = Math.max(minSize, isLazy && type === VALID_TYPES.UNIFORM ? 1 : pageSize);
 
   let size = Math.max(currentSize, comparator),
       mod = size % itemsPerRow;

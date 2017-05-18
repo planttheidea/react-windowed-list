@@ -263,6 +263,7 @@ test('if getFromAndSize will calculate the correct from and size based on simple
   const props = {
     isLazy: false,
     length: 1000,
+    minSize: 1,
     pageSize: 10,
     type: constants.VALID_TYPES.SIMPLE
   };
@@ -282,6 +283,7 @@ test('if getFromAndSize will calculate the correct from and size based on simple
   const props = {
     isLazy: false,
     length: 1000,
+    minSize: 1,
     pageSize: 10,
     type: constants.VALID_TYPES.SIMPLE
   };
@@ -301,6 +303,7 @@ test('if getFromAndSize will calculate the correct from and size based on variab
   const props = {
     isLazy: false,
     length: 1000,
+    minSize: 1,
     pageSize: 10,
     type: constants.VALID_TYPES.VARIABLE
   };
@@ -320,6 +323,7 @@ test('if getFromAndSize will calculate the correct from and size based on variab
   const props = {
     isLazy: false,
     length: 1000,
+    minSize: 1,
     pageSize: 10,
     type: constants.VALID_TYPES.VARIABLE
   };
@@ -339,6 +343,7 @@ test('if getFromAndSize will calculate the correct from and size based on unifor
   const props = {
     isLazy: false,
     length: 1000,
+    minSize: 1,
     pageSize: 10,
     type: constants.VALID_TYPES.UNIFORM
   };
@@ -358,6 +363,7 @@ test('if getFromAndSize will calculate the correct from and size based on unifor
   const props = {
     isLazy: false,
     length: 1000,
+    minSize: 1,
     pageSize: 10,
     type: constants.VALID_TYPES.UNIFORM
   };
@@ -367,6 +373,27 @@ test('if getFromAndSize will calculate the correct from and size based on unifor
   t.deepEqual(result, {
     from,
     size
+  });
+});
+
+test('if getFromAndSize will calculate the correct from and size based on uniform type from 10 and minSize higher than size', (t) => {
+  const from = 10;
+  const size = 100;
+  const minSize = size * 2;
+  const itemsPerRow = 1;
+  const props = {
+    isLazy: false,
+    length: 1000,
+    minSize,
+    pageSize: 10,
+    type: constants.VALID_TYPES.UNIFORM
+  };
+
+  const result = utils.getFromAndSize(from, size, itemsPerRow, props);
+
+  t.deepEqual(result, {
+    from,
+    size: minSize
   });
 });
 
