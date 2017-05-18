@@ -18,6 +18,7 @@ If you are migrating from `ReactList`, the only prop that has changed is `itemsR
   * [isLazy](#islazy)
   * [itemRenderer](#itemrenderer)
   * [length](#length)
+  * [minSize](#minsize)
   * [pageSize](#pageSize)
   * [scrollParentGetter](#scrollparentgetter)
   * [threshold](#threshold)
@@ -156,6 +157,12 @@ renderItem = (index, key) => {
 *defaults to `0`*
 
 The number of items in the list.
+
+#### minSize
+
+*defaults to `1`*
+
+The minimum number of items to render in the list at any given time.
 
 #### pageSize
 

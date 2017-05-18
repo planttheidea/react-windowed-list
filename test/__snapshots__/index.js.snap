@@ -19,6 +19,7 @@ exports[`if WindowedList renders correctly when type is not simple 1`] = `
       isLazy={false}
       itemRenderer={[Function]}
       length={1000}
+      minSize={1}
       pageSize={10}
       size={
         Object {

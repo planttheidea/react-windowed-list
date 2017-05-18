@@ -925,9 +925,9 @@ babel-plugin-transform-react-jsx@^6.24.1:
     babel-plugin-syntax-jsx "^6.8.0"
     babel-runtime "^6.22.0"
 
-babel-plugin-transform-react-remove-prop-types@^0.4.4:
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/babel-plugin-transform-react-remove-prop-types/-/babel-plugin-transform-react-remove-prop-types-0.4.4.tgz#ef3f6fc166b0d1f53f828d1a9dda90106ac27cd8"
+babel-plugin-transform-react-remove-prop-types@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-react-remove-prop-types/-/babel-plugin-transform-react-remove-prop-types-0.4.5.tgz#79d1958437ae23d4fbc0b11d1a041498ddb23877"
   dependencies:
     babel-traverse "^6.24.1"
 
@@ -1189,9 +1189,9 @@ brorand@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
 
-browser-env@^2.0.30:
-  version "2.0.30"
-  resolved "https://registry.yarnpkg.com/browser-env/-/browser-env-2.0.30.tgz#015aa62deaf818dcb469cf9236dfbdd1a5c9c190"
+browser-env@^2.0.31:
+  version "2.0.31"
+  resolved "https://registry.yarnpkg.com/browser-env/-/browser-env-2.0.31.tgz#c9c89bc5d2d3e9b6f76788437465c7b1ab654ef7"
   dependencies:
     window "3.1.5"
 
@@ -1507,6 +1507,10 @@ co-with-promise@^4.6.0:
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
+
+coalescy@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/coalescy/-/coalescy-1.0.0.tgz#4b065846b836361ada6c4b4a4abf4bc1cac31bf1"
 
 code-excerpt@^2.1.0:
   version "2.1.0"
@@ -2241,11 +2245,12 @@ eslint-config-rapid7@^2.9.0:
     eslint-plugin-import "^2.0.0"
     eslint-plugin-react "^6.10.0"
 
-eslint-friendly-formatter@^2.0.7:
-  version "2.0.7"
-  resolved "https://registry.yarnpkg.com/eslint-friendly-formatter/-/eslint-friendly-formatter-2.0.7.tgz#657f95a19af4989636afebb1cc9de6cebbd088ee"
+eslint-friendly-formatter@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-friendly-formatter/-/eslint-friendly-formatter-3.0.0.tgz#278874435a6c46ec1d94fa0b1ff494e30ef04290"
   dependencies:
     chalk "^1.0.0"
+    coalescy "1.0.0"
     extend "^3.0.0"
     minimist "^1.2.0"
     text-table "^0.2.0"
@@ -4168,9 +4173,9 @@ number-is-nan@^1.0.0:
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/nwmatcher/-/nwmatcher-1.3.9.tgz#8bab486ff7fa3dfd086656bbe8b17116d3692d2a"
 
-nyc@^10.3.0:
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/nyc/-/nyc-10.3.0.tgz#a7051ac03f89d17e719a586a66a84ce4bdfde857"
+nyc@^10.3.2:
+  version "10.3.2"
+  resolved "https://registry.yarnpkg.com/nyc/-/nyc-10.3.2.tgz#f27f4d91f2a9db36c24f574ff5c6efff0233de46"
   dependencies:
     archy "^1.0.0"
     arrify "^1.0.1"
@@ -5921,9 +5926,9 @@ webpack-sources@^0.2.3:
     source-list-map "^1.1.1"
     source-map "~0.5.3"
 
-webpack@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.4.1.tgz#15a91dbe34966d8a4b99c7d656efd92a2e5a6f6a"
+webpack@^2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-2.5.1.tgz#61742f0cf8af555b87460a9cd8bba2f1e3ee2fce"
   dependencies:
     acorn "^5.0.0"
     acorn-dynamic-import "^2.0.0"
