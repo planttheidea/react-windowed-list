@@ -21,12 +21,12 @@ renderItem.toJSON = () => {
 
 const renderSquareItem = (index, key) => {
   return (
-      <div
-        className={`square-item${index % 2 ? '' : ' even'}`}
-        key={key}
-      >
-        {index}
-      </div>
+    <div
+      className={`square-item${index % 2 ? '' : ' even'}`}
+      key={key}
+    >
+      {index}
+    </div>
   );
 };
 
@@ -230,7 +230,16 @@ const hiddenProps = {
 
 class Example extends PureComponent {
   state = {
+    isRendered: false,
     isVisible: false
+  };
+
+  onClickToggleIsRendered = () => {
+    this.setState(({isRendered: wasRendered}) => {
+      return {
+        isRendered: !wasRendered
+      };
+    });
   };
 
   onClickToggleIsVisible = () => {
@@ -243,6 +252,7 @@ class Example extends PureComponent {
 
   render() {
     const {
+      isRendered,
       isVisible
     } = this.state;
 
@@ -289,6 +299,28 @@ class Example extends PureComponent {
                 {...hiddenProps}
               />
             </div>
+
+            <div>
+              <button
+                className="button"
+                onClick={this.onClickToggleIsRendered}
+                type="button"
+              >
+                Toggle rendered
+              </button>
+            </div>
+
+            {isRendered && (
+              <div
+                className="component"
+                style={visibiltyToggledStyle}
+              >
+                <WindowedList
+                  {...hiddenProps}
+                  isVisible
+                />
+              </div>
+            )}
           </div>
 
           {examples.map((props, index) => {

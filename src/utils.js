@@ -296,9 +296,10 @@ export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {isLazy, l
  * @param {number} props.length the total size of the list
  * @param {number} props.pageSize the side of the page to display
  * @param {function} getSizeOfListItem the method to get the size of the list item
+ * @param {Object} currentState the current state's from and size
  * @returns {{from: number, size: number}} the from and size properties
  */
-export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize}, getSizeOfListItem) => {
+export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize}, getSizeOfListItem, currentState) => {
   const maxFrom = length - 1;
 
   let space = 0,
@@ -336,7 +337,7 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
     space += itemSize;
   }
 
-  return {
+  return !space ? currentState : {
     from,
     size
   };

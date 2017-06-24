@@ -503,8 +503,10 @@ export const createUpdateScrollParent = (instance) => {
 
     instance.scrollParent = newScrollParent;
 
-    instance.scrollParent.addEventListener('scroll', instance.updateFrame, ADD_EVENT_LISTENER_OPTIONS);
-    instance.scrollParent.addEventListener('mousewheel', noop, ADD_EVENT_LISTENER_OPTIONS);
+    if (instance.scrollParent) {
+      instance.scrollParent.addEventListener('scroll', instance.updateFrame, ADD_EVENT_LISTENER_OPTIONS);
+      instance.scrollParent.addEventListener('mousewheel', noop, ADD_EVENT_LISTENER_OPTIONS);
+    }
   };
 };
 
@@ -593,7 +595,8 @@ export const createUpdateVariableFrame = (instance) => {
       itemSizeGetter
     } = instance.props;
     const {
-      from: currentFrom
+      from: currentFrom,
+      size: currentSize
     } = instance.state;
 
     if (!instance.items) {
@@ -604,8 +607,11 @@ export const createUpdateVariableFrame = (instance) => {
       setCacheSizes(currentFrom, instance.items, axis, instance.cache);
     }
 
-    const fromAndSize = getFromAndSizeFromListItemSize(instance.getStartAndEnd(),
-      instance.props, instance.getSizeOfListItem);
+    const fromAndSize = getFromAndSizeFromListItemSize(instance.getStartAndEnd(), instance.props,
+      instance.getSizeOfListItem, {
+        from: currentFrom,
+        size: currentSize
+      });
 
     instance.setStateIfAppropriate(fromAndSize, callback);
   };
