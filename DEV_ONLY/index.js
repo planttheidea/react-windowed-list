@@ -11,7 +11,7 @@ import Example from './Example';
 const renderItem = (index, key) => {
   return (
     <div
-      className={'item' + (index % 2 ? '' : ' even')}
+      className={`item${index % 2 ? '' : ' even'}`}
       key={key}
     >
       {index}

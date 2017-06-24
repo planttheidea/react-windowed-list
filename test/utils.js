@@ -418,7 +418,7 @@ test('if getFromAndSizeFromListItemSize will calculate from and size based on st
 });
 
 test('if getFromAndSizeFromListItemSize will calculate from and size based on start of 50 and end of 150', (t) => {
-  const state = {
+  const startAndend = {
     end: 150,
     start: 50
   };
@@ -429,12 +429,33 @@ test('if getFromAndSizeFromListItemSize will calculate from and size based on st
   const listItemSize = 20;
   const getSizeOfListItem = sinon.stub().returns(listItemSize);
 
-  const result = utils.getFromAndSizeFromListItemSize(state, props, getSizeOfListItem);
+  const result = utils.getFromAndSizeFromListItemSize(startAndend, props, getSizeOfListItem);
 
   t.deepEqual(result, {
     from: 2,
     size: 6
   });
+});
+
+test('if getFromAndSizeFromListItemSize will return currentState if size calculated is 0', (t) => {
+  const startAndend = {
+    end: 150,
+    start: 50
+  };
+  const props = {
+    length: 1000,
+    pageSize: 10
+  };
+  const state = {
+    from: 0,
+    size: 10
+  };
+  const listItemSize = 0;
+  const getSizeOfListItem = sinon.stub().returns(listItemSize);
+
+  const result = utils.getFromAndSizeFromListItemSize(startAndend, props, getSizeOfListItem, state);
+
+  t.is(result, state);
 });
 
 test('if getListContainerStyle will return the correct style object when usePosition is true and the axis is x', (t) => {
