@@ -26,7 +26,6 @@ import {
 
 // instance methods
 import {
-  createGetDomNode,
   createGetItemSizeAndItemsPerRow,
   createGetScrollOffset,
   createGetScrollParent,
@@ -115,13 +114,13 @@ class WindowedList extends PureComponent {
 
   // instance values
   cache = {};
+  outerContainer = null;
   prevPrevState = {};
   reconcileFrameAfterUpdate = null;
   unstable = false;
   updateCounter = 0;
 
   // instance methods
-  getDomNode = createGetDomNode(this);
   getItemSizeAndItemsPerRow = createGetItemSizeAndItemsPerRow(this);
   getScrollOffset = createGetScrollOffset(this);
   getScrollParent = createGetScrollParent(this);

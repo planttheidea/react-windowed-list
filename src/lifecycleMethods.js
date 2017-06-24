@@ -1,6 +1,9 @@
 // external dependencies
 import noop from 'lodash/noop';
 import raf from 'raf';
+import {
+  findDOMNode
+} from 'react-dom';
 
 // constants
 import {
@@ -38,6 +41,8 @@ export const createComponentDidMount = (instance) => {
    * on mount, update the frame with the desired scroll position
    */
   return () => {
+    instance.outerContainer = findDOMNode(instance);
+
     if (!instance.props.isHidden) {
       raf(() => {
         instance.updateFrame(instance.scrollTo);
@@ -142,5 +147,7 @@ export const createComponentWillUnmount = (instance) => {
   return () => {
     instance.scrollParent.removeEventListener('scroll', instance.updateFrame, ADD_EVENT_LISTENER_OPTIONS);
     instance.scrollParent.removeEventListener('mousewheel', noop, ADD_EVENT_LISTENER_OPTIONS);
+
+    instance.outerContainer = null;
   };
 };

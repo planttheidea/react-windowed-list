@@ -3,6 +3,7 @@ import test from 'ava';
 import _ from 'lodash';
 import noop from 'lodash/noop';
 import raf from 'raf';
+import ReactDOM from 'react-dom';
 import sinon from 'sinon';
 
 // src
@@ -24,12 +25,18 @@ test('if createComponentDidMount will create a method that will fire updateFrame
     scrollTo: sinon.spy(),
     updateFrame: sinon.spy()
   };
+  const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns({});
 
   const componentDidMount = methods.createComponentDidMount(instance);
 
   t.true(_.isFunction(componentDidMount));
 
   componentDidMount();
+
+  t.true(findDOMNodeStub.calledOnce);
+  t.true(findDOMNodeStub.calledWith(instance));
+
+  findDOMNodeStub.restore();
 
   t.true(instance.updateFrame.notCalled);
   t.true(instance.scrollTo.notCalled);
@@ -48,12 +55,18 @@ test('if createComponentDidMount will not fire updateFrame if hidden', async (t)
     scrollTo: sinon.spy(),
     updateFrame: sinon.spy()
   };
+  const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns({});
 
   const componentDidMount = methods.createComponentDidMount(instance);
 
   t.true(_.isFunction(componentDidMount));
 
   componentDidMount();
+
+  t.true(findDOMNodeStub.calledOnce);
+  t.true(findDOMNodeStub.calledWith(instance));
+
+  findDOMNodeStub.restore();
 
   t.true(instance.updateFrame.notCalled);
   t.true(instance.scrollTo.notCalled);

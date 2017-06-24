@@ -1,5 +1,4 @@
 // external dependencies
-import keys from 'lodash/keys';
 import noop from 'lodash/noop';
 
 /**
@@ -27,8 +26,8 @@ export const ADD_EVENT_LISTENER_OPTIONS = !(() => {
 
   return hasSupport;
 })() ? false : {
-  passive: true
-};
+    passive: true
+  };
 
 /**
  * @constant {Object} CLIENT_SIZE_KEYS
@@ -79,6 +78,15 @@ export const OVERFLOW_KEYS = {
 };
 
 /**
+ * @constant {Array<string>} OVERFLOW_VALUES
+ */
+export const OVERFLOW_VALUES = [
+  'auto',
+  'scroll',
+  'overlay'
+];
+
+/**
  * @constant {Object} SCROLL_SIZE_KEYS
  */
 export const SCROLL_SIZE_KEYS = {
@@ -125,7 +133,7 @@ export const VALID_AXES = {
 /**
  * @constant {Array<string>} VALID_AXIS_VALUES
  */
-export const VALID_AXIS_VALUES = keys(VALID_AXES).map((key) => {
+export const VALID_AXIS_VALUES = Object.keys(VALID_AXES).map((key) => {
   return VALID_AXES[key];
 });
 
@@ -141,7 +149,7 @@ export const VALID_TYPES = {
 /**
  * @constant {Array<string>} VALID_TYPE_VALUES
  */
-export const VALID_TYPE_VALUES = keys(VALID_TYPES).map((key) => {
+export const VALID_TYPE_VALUES = Object.keys(VALID_TYPES).map((key) => {
   return VALID_TYPES[key];
 });
 

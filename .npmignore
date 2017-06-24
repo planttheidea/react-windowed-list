@@ -1,5 +1,6 @@
 .git
 .idea
+.nyc_output
 DEV_ONLY
 node_modules
 src
