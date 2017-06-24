@@ -3,7 +3,6 @@ import test from 'ava';
 import _ from 'lodash';
 import noop from 'lodash/noop';
 import raf from 'raf';
-import ReactDOM from 'react-dom';
 import sinon from 'sinon';
 
 // src
@@ -11,50 +10,8 @@ import * as methods from 'src/instanceMethods';
 import * as constants from 'src/constants';
 import * as utils from 'src/utils';
 
-test('if createGetDomNode will call findDOMNode for the instance when no property is passed', (t) => {
-  const instance = {
-    foo: {}
-  };
-
-  const getDomNode = methods.createGetDomNode(instance);
-
-  t.true(_.isFunction(getDomNode));
-
-  const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode');
-
-  getDomNode();
-
-  t.true(findDOMNodeStub.calledOnce);
-  t.true(findDOMNodeStub.calledWith(instance));
-
-  findDOMNodeStub.restore();
-});
-
-test('if createGetDomNode will call findDOMNode for the property on the instance when a property is passed', (t) => {
-  const instance = {
-    foo: {}
-  };
-
-  const getDomNode = methods.createGetDomNode(instance);
-
-  t.true(_.isFunction(getDomNode));
-
-  const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode');
-
-  getDomNode('foo');
-
-  t.true(findDOMNodeStub.calledOnce);
-  t.true(findDOMNodeStub.calledWith(instance.foo));
-
-  findDOMNodeStub.restore();
-});
-
 test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if they exist and useStaticSize is true', (t) => {
-  const fakeDomNode = {
-    children: []
-  };
   const instance = {
-    getDomNode: sinon.stub().returns(fakeDomNode),
     props: {
       axis: 'y',
       useStaticSize: true
@@ -78,7 +35,6 @@ test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if
 
   const result = getItemSizeAndItemsPerRow();
 
-  t.true(instance.getDomNode.notCalled);
   t.true(getCalculatedItemSizeAndItemsPerRowStub.notCalled);
 
   getCalculatedItemSizeAndItemsPerRowStub.restore();
@@ -90,11 +46,7 @@ test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if
 });
 
 test('if createGetItemSizeAndItemsPerRow will return an empty object if useStaticSize is false and there are no children', (t) => {
-  const fakeDomNode = {
-    children: []
-  };
   const instance = {
-    getDomNode: sinon.stub().returns(fakeDomNode),
     props: {
       axis: 'y',
       useStaticSize: false
@@ -117,9 +69,6 @@ test('if createGetItemSizeAndItemsPerRow will return an empty object if useStati
   const getCalculatedItemSizeAndItemsPerRowStub = sinon.stub(utils, 'getCalculatedItemSizeAndItemsPerRow').returns(fakeItemSizeAndItemsPerRow);
 
   const result = getItemSizeAndItemsPerRow();
-
-  t.true(instance.getDomNode.calledOnce);
-  t.true(instance.getDomNode.calledWith('items'));
 
   t.true(getCalculatedItemSizeAndItemsPerRowStub.notCalled);
 
@@ -130,11 +79,12 @@ test('if createGetItemSizeAndItemsPerRow will return an empty object if useStati
 
 test('if createGetItemSizeAndItemsPerRow will return the object from getCalculatedItemSizeAndItemsPerRow ' +
   'if useStaticSize is false and there are children', (t) => {
-  const fakeDomNode = {
-    children: ['foo']
-  };
   const instance = {
-    getDomNode: sinon.stub().returns(fakeDomNode),
+    items: {
+      children: [
+        'foo'
+      ]
+    },
     props: {
       axis: 'y',
       useStaticSize: false
@@ -158,11 +108,8 @@ test('if createGetItemSizeAndItemsPerRow will return the object from getCalculat
 
   const result = getItemSizeAndItemsPerRow();
 
-  t.true(instance.getDomNode.calledOnce);
-  t.true(instance.getDomNode.calledWith('items'));
-
   t.true(getCalculatedItemSizeAndItemsPerRowStub.calledOnce);
-  t.true(getCalculatedItemSizeAndItemsPerRowStub.calledWith(fakeDomNode.children, instance.props.axis,
+  t.true(getCalculatedItemSizeAndItemsPerRowStub.calledWith(instance.items.children, instance.props.axis,
     instance.state.itemSize));
 
   getCalculatedItemSizeAndItemsPerRowStub.restore();
@@ -171,9 +118,8 @@ test('if createGetItemSizeAndItemsPerRow will return the object from getCalculat
 });
 
 test('if createGetScrollOffset will get the offset of the scrollParent when it is not the window', (t) => {
-  const element = {};
   const instance = {
-    getDomNode: sinon.stub().returns(element),
+    outerContainer: {},
     props: {
       axis: 'y'
     },
@@ -200,8 +146,6 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
 
   getViewportSizeStub.restore();
 
-  t.true(instance.getDomNode.calledOnce);
-
   t.true(getOffsetStub.calledTwice);
 
   const firstArgs = getOffsetStub.firstCall.args;
@@ -214,7 +158,7 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
   const secondArgs = getOffsetStub.secondCall.args;
 
   t.deepEqual([...secondArgs], [
-    element,
+    instance.outerContainer,
     instance.props.axis
   ]);
 
@@ -222,9 +166,8 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
 });
 
 test('if createGetScrollOffset will get the offset of the scrollParent when it is the window', (t) => {
-  const element = {};
   const instance = {
-    getDomNode: sinon.stub().returns(element),
+    outerContainer: {},
     props: {
       axis: 'y'
     },
@@ -251,8 +194,6 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
 
   getViewportSizeStub.restore();
 
-  t.true(instance.getDomNode.calledOnce);
-
   t.true(getOffsetStub.calledTwice);
 
   const firstArgs = getOffsetStub.firstCall.args;
@@ -265,7 +206,7 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
   const secondArgs = getOffsetStub.secondCall.args;
 
   t.deepEqual([...secondArgs], [
-    element,
+    instance.outerContainer,
     instance.props.axis
   ]);
 
@@ -477,17 +418,15 @@ test('if createGetSizeOfListItem will pull from cache if the value exists', (t) 
 
 test('if createGetSizeOfListItem will get the DOM node style key', (t) => {
   const estimatedSize = 30;
-  const fakeDomNode = {
-    children: [
-      {
-        [constants.OFFSET_SIZE_KEYS.y]: 20
-      }
-    ]
-  };
   const instance = {
     cache: {},
-    getDomNode: sinon.stub().returns(fakeDomNode),
-    items: [],
+    items: {
+      children: [
+        {
+          [constants.OFFSET_SIZE_KEYS.y]: 20
+        }
+      ]
+    },
     props: {
       axis: 'y',
       itemSizeEstimator: sinon.stub().returns(estimatedSize),
@@ -508,8 +447,6 @@ test('if createGetSizeOfListItem will get the DOM node style key', (t) => {
 
   const result = getSizeOfListItem(index);
 
-  t.true(instance.getDomNode.notCalled);
-
   t.true(instance.props.itemSizeEstimator.calledOnce);
   t.true(instance.props.itemSizeEstimator.calledWith(index, instance.cache));
 
@@ -517,17 +454,15 @@ test('if createGetSizeOfListItem will get the DOM node style key', (t) => {
 });
 
 test('if createGetSizeOfListItem will return undefined if none of the techniques work', (t) => {
-  const fakeDomNode = {
-    children: [
-      {
-        [constants.OFFSET_SIZE_KEYS.y]: 20
-      }
-    ]
-  };
   const instance = {
     cache: {},
-    getDomNode: sinon.stub().returns(fakeDomNode),
-    items: [],
+    items: {
+      children: [
+        {
+          [constants.OFFSET_SIZE_KEYS.y]: 20
+        }
+      ]
+    },
     props: {
       axis: 'y',
       itemSizeEstimator: null,
@@ -547,8 +482,6 @@ test('if createGetSizeOfListItem will return undefined if none of the techniques
   const index = 0;
 
   const result = getSizeOfListItem(index);
-
-  t.true(instance.getDomNode.notCalled);
 
   t.is(result, undefined);
 });
@@ -942,9 +875,8 @@ test('if createSetScroll will return immediately if there is no scrollParent', (
 });
 
 test('if createSetScroll will set the specific axis offset if the scrollParent is not the window', (t) => {
-  const fakeDomNode = {};
   const instance = {
-    getDomNode: sinon.stub().returns(fakeDomNode),
+    outerContainer: {},
     props: {
       axis: 'y'
     },
@@ -971,7 +903,7 @@ test('if createSetScroll will set the specific axis offset if the scrollParent i
   const firstArgs = getOffsetStub.firstCall.args;
 
   t.deepEqual([...firstArgs], [
-    fakeDomNode,
+    instance.outerContainer,
     instance.props.axis
   ]);
 
@@ -990,9 +922,8 @@ test('if createSetScroll will set the specific axis offset if the scrollParent i
 });
 
 test('if createSetScroll will call scrollTo when the scrollParent is the window', (t) => {
-  const fakeDomNode = {};
   const instance = {
-    getDomNode: sinon.stub().returns(fakeDomNode),
+    outerContainer: {},
     props: {
       axis: 'y'
     },
@@ -1016,7 +947,7 @@ test('if createSetScroll will call scrollTo when the scrollParent is the window'
   scrollToStub.restore();
 
   t.true(getOffsetStub.calledOnce);
-  t.true(getOffsetStub.calledWith(fakeDomNode, instance.props.axis));
+  t.true(getOffsetStub.calledWith(instance.outerContainer, instance.props.axis));
 
   getOffsetStub.restore();
 });
@@ -1319,11 +1250,10 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
 });
 
 test('if createUpdateSimpleFrame will not set state if the element end is greater than the end', (t) => {
-  const items = {
-    children: ['foo']
-  };
   const instance = {
-    getDomNode: sinon.stub().returns(items),
+    items: {
+      children: ['foo']
+    },
     getStartAndEnd: sinon.stub().returns({
       end: 10,
       start: 0
@@ -1347,11 +1277,8 @@ test('if createUpdateSimpleFrame will not set state if the element end is greate
 
   updateSimpleFrame(callback);
 
-  t.true(instance.getDomNode.calledOnce);
-  t.true(instance.getDomNode.calledWith('items'));
-
   t.true(getCalculatedElementEndStub.calledOnce);
-  t.true(getCalculatedElementEndStub.calledWith(items.children, instance.props));
+  t.true(getCalculatedElementEndStub.calledWith(instance.items.children, instance.props));
 
   getCalculatedElementEndStub.restore();
 
@@ -1361,11 +1288,10 @@ test('if createUpdateSimpleFrame will not set state if the element end is greate
 });
 
 test('if createUpdateSimpleFrame will set state if the element end is not greater than the end', (t) => {
-  const items = {
-    children: ['foo']
-  };
   const instance = {
-    getDomNode: sinon.stub().returns(items),
+    items: {
+      children: ['foo']
+    },
     getStartAndEnd: sinon.stub().returns({
       end: 100,
       start: 0
@@ -1389,11 +1315,8 @@ test('if createUpdateSimpleFrame will set state if the element end is not greate
 
   updateSimpleFrame(callback);
 
-  t.true(instance.getDomNode.calledOnce);
-  t.true(instance.getDomNode.calledWith('items'));
-
   t.true(getCalculatedElementEndStub.calledOnce);
-  t.true(getCalculatedElementEndStub.calledWith(items.children, instance.props));
+  t.true(getCalculatedElementEndStub.calledWith(instance.items.children, instance.props));
 
   getCalculatedElementEndStub.restore();
 
@@ -1508,12 +1431,11 @@ test('if createUpdateUniformFrame will set state if there is itemSize or itemsPe
 
 test('if createUpdateVariableFrame will call setStateIfAppropriate with the new from and size', (t) => {
   const startAndEnd = {};
-  const items = {};
   const instance = {
     cache: {},
-    getDomNode: sinon.stub().returns(items),
     getSizeOfListItem() {},
     getStartAndEnd: sinon.stub().returns(startAndEnd),
+    items: {},
     props: {
       axis: 'y',
       itemSizeGetter() {}
@@ -1554,10 +1476,9 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate with the new 
 
 test('if createUpdateVariableFrame will call setStateIfAppropriate and setCacheSizes if no itemSizeGetter exists', (t) => {
   const startAndEnd = {};
-  const items = {};
   const instance = {
     cache: {},
-    getDomNode: sinon.stub().returns(items),
+    items: {},
     getSizeOfListItem() {},
     getStartAndEnd: sinon.stub().returns(startAndEnd),
     props: {
@@ -1583,12 +1504,9 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate and setCacheS
   updateVariableFrame(callback);
 
   t.true(setCacheSizesStub.calledOnce);
-  t.true(setCacheSizesStub.calledWith(instance.state.from, items, instance.props.axis, instance.cache));
+  t.true(setCacheSizesStub.calledWith(instance.state.from, instance.items, instance.props.axis, instance.cache));
 
   setCacheSizesStub.restore();
-
-  t.true(instance.getDomNode.calledOnce);
-  t.true(instance.getDomNode.calledWith('items'));
 
   t.true(instance.getStartAndEnd.calledOnce);
 

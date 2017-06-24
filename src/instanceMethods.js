@@ -13,6 +13,7 @@ import {
 import {
   OFFSET_SIZE_KEYS,
   OVERFLOW_KEYS,
+  OVERFLOW_VALUES,
   SCROLL_START_KEYS,
   ADD_EVENT_LISTENER_OPTIONS,
   VALID_TYPES
@@ -32,21 +33,6 @@ import {
   hasDeterminateSize,
   setCacheSizes
 } from './utils';
-
-export const createGetDomNode = (instance) => {
-  /**
-   * @function getDomNode
-   *
-   * @description
-   * get the DOM node of the property on the instance specified, or the instance itself
-   *
-   * @param {string} [property] the property on the instance requested
-   * @returns {HTMLElement} the element requested
-   */
-  return (property) => {
-    return findDOMNode(property ? instance[property] : instance);
-  };
-};
 
 export const createGetItemSizeAndItemsPerRow = (instance) => {
   /**
@@ -75,9 +61,9 @@ export const createGetItemSizeAndItemsPerRow = (instance) => {
       };
     }
 
-    const itemElements = instance.getDomNode('items').children;
+    const itemElements = instance.items ? instance.items.children : [];
 
-    return !itemElements.length ? {} : getCalculatedItemSizeAndItemsPerRow(itemElements, axis, itemSize);
+    return itemElements.length ? getCalculatedItemSizeAndItemsPerRow(itemElements, axis, itemSize) : {};
   };
 };
 
@@ -102,9 +88,9 @@ export const createGetScrollOffset = (instance) => {
 
     const max = getScrollSize(instance.scrollParent, axis) - getViewportSize(instance.scrollParent, axis);
     const scroll = Math.max(0, Math.min(actual, max));
-    const element = instance.getDomNode();
+    const element = instance.outerContainer;
 
-    return getOffset(instance.scrollParent, axis) + scroll - getOffset(element, axis);
+    return !element ? 0 : getOffset(instance.scrollParent, axis) + scroll - getOffset(element, axis);
   };
 };
 
@@ -127,15 +113,16 @@ export const createGetScrollParent = (instance) => {
       return scrollParentGetter();
     }
 
+    if (!instance.outerContainer) {
+      return null;
+    }
+
     const overflowKey = OVERFLOW_KEYS[axis];
 
-    let element = instance.getDomNode(),
-        overflowValue;
+    let element = instance.outerContainer;
 
     while (element = element.parentElement) {
-      overflowValue = window.getComputedStyle(element)[overflowKey];
-
-      if (overflowValue === 'auto' || overflowValue === 'scroll' || overflowValue === 'overlay') {
+      if (~OVERFLOW_VALUES.indexOf(window.getComputedStyle(element)[overflowKey])) {
         return element;
       }
     }
@@ -182,9 +169,11 @@ export const createGetSizeOfListItem = (instance) => {
       return instance.cache[index];
     }
 
+    const itemElements = instance.items ? instance.items.children : [];
+
     // Try the DOM.
-    if (type === VALID_TYPES.SIMPLE && index >= from && index < from + size && instance.items) {
-      const itemEl = instance.getDomNode('items').children[index - from];
+    if (itemElements.length && type === VALID_TYPES.SIMPLE && index >= from && index < from + size) {
+      const itemEl = itemElements[index - from];
 
       if (itemEl) {
         return itemEl[OFFSET_SIZE_KEYS[axis]];
@@ -331,7 +320,7 @@ export const createRenderItems = (instance) => {
     }
 
     return containerRenderer(items, (containerRef) => {
-      return instance.items = containerRef;
+      return instance.items = findDOMNode(containerRef);
     });
   };
 };
@@ -422,7 +411,11 @@ export const createSetScroll = (instance) => {
       axis
     } = instance.props;
 
-    let offset = currentOffset + getOffset(instance.getDomNode(), axis);
+    if (!instance.outerContainer) {
+      return;
+    }
+
+    let offset = currentOffset + getOffset(instance.outerContainer, axis);
 
     if (instance.scrollParent === window) {
       return window.scrollTo(0, offset);
@@ -530,10 +523,7 @@ export const createUpdateSimpleFrame = (instance) => {
       end
     } = instance.getStartAndEnd();
 
-    const itemElements = instance.getDomNode('items').children;
-    const elementEnd = getCalculatedElementEnd(itemElements, instance.props);
-
-    if (elementEnd > end) {
+    if (!instance.items || getCalculatedElementEnd(instance.items.children, instance.props) > end) {
       return callback();
     }
 
@@ -606,8 +596,12 @@ export const createUpdateVariableFrame = (instance) => {
       from: currentFrom
     } = instance.state;
 
+    if (!instance.items) {
+      return;
+    }
+
     if (!itemSizeGetter) {
-      setCacheSizes(currentFrom, instance.getDomNode('items'), axis, instance.cache);
+      setCacheSizes(currentFrom, instance.items, axis, instance.cache);
     }
 
     const fromAndSize = getFromAndSizeFromListItemSize(instance.getStartAndEnd(),

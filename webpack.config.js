@@ -11,7 +11,7 @@ module.exports = {
   devtool: '#source-map',
 
   entry: [
-    path.resolve(__dirname, 'src', 'index.js')
+    path.resolve(__dirname, 'src', 'WindowedList.js')
   ],
 
   externals: {

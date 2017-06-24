@@ -1,7 +1,7 @@
 import React, {
   PureComponent
 } from 'react';
-import WindowedList from '../src';
+import WindowedList from '../src/WindowedList';
 import uuid from 'uuid/v4';
 
 const renderItem = (index, key) => {

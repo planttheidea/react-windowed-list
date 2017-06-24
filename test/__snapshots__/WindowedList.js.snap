@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`if WindowedList renders correctly when type is not simple 1`] = `
+<div
+  style={
+    Object {
+      "height": 500,
+    }
+  }
+>
+  <WindowedList
+    length={1000}
+    type="uniform"
+  >
+    <WindowedList
+      axis="y"
+      containerRenderer={[Function]}
+      isHidden={false}
+      isLazy={false}
+      itemRenderer={[Function]}
+      length={1000}
+      minSize={1}
+      pageSize={10}
+      size={
+        Object {
+          "height": 0,
+          "width": 0,
+        }
+      }
+      threshold={100}
+      type="uniform"
+      usePosition={false}
+      useStaticSize={false}
+      useTranslate3d={false}
+    >
+      <div
+        style={
+          Object {
+            "height": "100%",
+            "maxHeight": "inherit",
+            "width": "100%",
+          }
+        }
+      >
+        <div
+          style={
+            Object {
+              "position": "relative",
+            }
+          }
+        >
+          <div
+            style={
+              Object {
+                "WebkitTransform": "translate(0px, 0px)",
+                "msTransform": "translate(0px, 0px)",
+                "transform": "translate(0px, 0px)",
+              }
+            }
+          >
+            <div>
+              <div>
+                0
+              </div>
+              <div>
+                1
+              </div>
+              <div>
+                2
+              </div>
+              <div>
+                3
+              </div>
+              <div>
+                4
+              </div>
+              <div>
+                5
+              </div>
+              <div>
+                6
+              </div>
+              <div>
+                7
+              </div>
+              <div>
+                8
+              </div>
+              <div>
+                9
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </WindowedList>
+  </WindowedList>
+</div>
+`;
+
+exports[`if WindowedList renders correctly with default props 1`] = `
+<div
+  style={
+    Object {
+      "height": 500,
+    }
+  }
+>
+  <WindowedList
+    length={1000}
+  />
+</div>
+`;

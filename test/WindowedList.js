@@ -8,7 +8,7 @@ import toJson from 'enzyme-to-json';
 import React from 'react';
 
 // src
-import WindowedList from 'src/index';
+import WindowedList from 'src/WindowedList';
 import * as utils from 'src/utils';
 
 test('if WindowedList renders correctly with default props', (t) => {

@@ -1,5 +1,4 @@
 // external dependencies
-import keys from 'lodash/keys';
 import isFunction from 'lodash/isFunction';
 import isNAN from 'lodash/isNaN';
 import isUndefined from 'lodash/isUndefined';
@@ -30,7 +29,7 @@ import {
  * @returns {boolean} should the state be updated
  */
 export const areStateValuesEqual = (currentState, nextPossibleState) => {
-  const nextStateKeys = keys(nextPossibleState);
+  const nextStateKeys = Object.keys(nextPossibleState);
 
   let index = 0,
       key = nextStateKeys[0];
