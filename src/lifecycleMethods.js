@@ -145,8 +145,10 @@ export const createComponentWillUnmount = (instance) => {
    * before unmount, remove any listeners applied to the scroll container
    */
   return () => {
-    instance.scrollParent.removeEventListener('scroll', instance.updateFrame, ADD_EVENT_LISTENER_OPTIONS);
-    instance.scrollParent.removeEventListener('mousewheel', noop, ADD_EVENT_LISTENER_OPTIONS);
+    if (instance.scrollParent) {
+      instance.scrollParent.removeEventListener('scroll', instance.updateFrame, ADD_EVENT_LISTENER_OPTIONS);
+      instance.scrollParent.removeEventListener('mousewheel', noop, ADD_EVENT_LISTENER_OPTIONS);
+    }
 
     instance.outerContainer = null;
   };

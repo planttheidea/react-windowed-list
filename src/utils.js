@@ -2,6 +2,7 @@
 import isFunction from 'lodash/isFunction';
 import isNAN from 'lodash/isNaN';
 import isUndefined from 'lodash/isUndefined';
+import moize from 'moize';
 import React from 'react';
 
 // constants
@@ -10,6 +11,7 @@ import {
   CLIENT_SIZE_KEYS,
   DEFAULT_CONTAINER_STYLE,
   INNER_SIZE_KEYS,
+  MAX_CACHE_SIZE,
   OFFSET_START_KEYS,
   OFFSET_SIZE_KEYS,
   SCROLL_SIZE_KEYS,
@@ -213,18 +215,11 @@ export const getCalculatedItemSizeAndItemsPerRow = (elements, axis, currentItemS
  * @description
  * get the style object to apply to the container
  *
- * @param {Object} props the current props of the component
- * @param {string} props.axis the axis of the component
- * @param {number} props.length the total size of the list
- * @param {Object} state the current state of the component
- * @param {number} state.itemsPerRow the number of items per row in state
- * @param {function} getSpaceBefore the method to get the space before
+ * @param {string} axis the axis of the component
+ * @param {number} size the total size of the axis property to apply
  * @returns {Object} the style for the container
  */
-export const getContainerStyle = ({axis, length}, {itemsPerRow}, getSpaceBefore) => {
-  const bottom = Math.ceil(length / itemsPerRow) * itemsPerRow;
-  const size = getSpaceBefore(bottom, {});
-
+export const getContainerStyle = moize.maxSize(MAX_CACHE_SIZE)((axis, size) => {
   if (!size) {
     return DEFAULT_CONTAINER_STYLE;
   }
@@ -239,7 +234,7 @@ export const getContainerStyle = ({axis, length}, {itemsPerRow}, getSpaceBefore)
   }
 
   return style;
-};
+});
 
 /**
  * @function getFromAndSize
@@ -349,18 +344,14 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
  * @description
  * get the style object to provide to the list container
  *
- * @param {Object} props the current props of the component
- * @param {string} props.axis the axis of the component
- * @param {string} props.usePosition should position be used instead of the transform
- * @param {string} props.useTranslate3d should translate3d be used for the transform
- * @param {Object} state the current state of the component
- * @param {number} state.from the first item to show in the window
+ * @param {string} axis the axis of the component
+ * @param {string} usePosition should position be used instead of the transform
+ * @param {string} useTranslate3d should translate3d be used for the transform
+ * @param {number} offset the amount of offset to apply to the chosen axis
  * @param {function} getSpaceBefore the method to get the space before
  * @returns {Object} the style object for the list container
  */
-export const getListContainerStyle = ({axis, usePosition, useTranslate3d}, {from}, getSpaceBefore) => {
-  const offset = getSpaceBefore(from, {});
-
+export const getListContainerStyle = (axis, usePosition, useTranslate3d, offset) => {
   const x = axis === VALID_AXES.X ? offset : 0;
   const y = axis === VALID_AXES.Y ? offset : 0;
 

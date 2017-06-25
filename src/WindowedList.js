@@ -7,18 +7,10 @@ import measure from 'remeasure';
 
 // constants
 import {
-  DEFAULT_AXIS,
-  DEFAULT_LENGTH,
-  DEFAULT_MIN_SIZE,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_THRESHOLD,
-  DEFAULT_TYPE,
-  DEFAULT_USE_POSITION,
-  DEFAULT_USE_STATIC_SIZE,
-  DEFAULT_USE_TRANSLATE_3D,
   OUTER_CONTAINER_STYLE,
   REMEASURE_OPTIONS,
   REMEASURE_PROPERTIES,
+  VALID_AXES,
   VALID_AXIS_VALUES,
   VALID_TYPES,
   VALID_TYPE_VALUES
@@ -26,7 +18,9 @@ import {
 
 // instance methods
 import {
+  createGetContainerStyle,
   createGetItemSizeAndItemsPerRow,
+  createGetListContainerStyle,
   createGetScrollOffset,
   createGetScrollParent,
   createGetSizeOfListItem,
@@ -58,10 +52,8 @@ import {
 
 // utils
 import {
-  getContainerStyle,
   defaultItemRenderer,
-  defaultContainerRenderer,
-  getListContainerStyle
+  defaultContainerRenderer
 } from './utils';
 
 @measure(REMEASURE_PROPERTIES, REMEASURE_OPTIONS)
@@ -87,19 +79,19 @@ class WindowedList extends PureComponent {
   };
 
   static defaultProps = {
-    axis: DEFAULT_AXIS,
+    axis: VALID_AXES.Y,
     containerRenderer: defaultContainerRenderer,
     isHidden: false,
     isLazy: false,
     itemRenderer: defaultItemRenderer,
-    length: DEFAULT_LENGTH,
-    minSize: DEFAULT_MIN_SIZE,
-    pageSize: DEFAULT_PAGE_SIZE,
-    threshold: DEFAULT_THRESHOLD,
-    type: DEFAULT_TYPE,
-    usePosition: DEFAULT_USE_POSITION,
-    useStaticSize: DEFAULT_USE_STATIC_SIZE,
-    useTranslate3d: DEFAULT_USE_TRANSLATE_3D
+    length: 0,
+    minSize: 1,
+    pageSize: 10,
+    threshold: 100,
+    type: VALID_TYPES.SIMPLE,
+    usePosition: false,
+    useStaticSize: false,
+    useTranslate3d: false
   };
 
   // initial state
@@ -121,7 +113,9 @@ class WindowedList extends PureComponent {
   updateCounter = 0;
 
   // instance methods
+  getContainerStyle = createGetContainerStyle(this);
   getItemSizeAndItemsPerRow = createGetItemSizeAndItemsPerRow(this);
+  getListContainerStyle = createGetListContainerStyle(this);
   getScrollOffset = createGetScrollOffset(this);
   getScrollParent = createGetScrollParent(this);
   getSizeOfListItem = createGetSizeOfListItem(this);
@@ -141,18 +135,14 @@ class WindowedList extends PureComponent {
   updateVariableFrame = createUpdateVariableFrame(this);
 
   render() {
-    const {
-      type
-    } = this.props;
-
     const items = this.renderItems();
 
-    if (type === VALID_TYPES.SIMPLE) {
+    if (this.props.type === VALID_TYPES.SIMPLE) {
       return items;
     }
 
-    const style = getContainerStyle(this.props, this.state, this.getSpaceBefore);
-    const listStyle = getListContainerStyle(this.props, this.state, this.getSpaceBefore);
+    const style = this.getContainerStyle();
+    const listStyle = this.getListContainerStyle();
 
     return (
       <div style={OUTER_CONTAINER_STYLE}>

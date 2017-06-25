@@ -15,6 +15,12 @@ module.exports = {
   ],
 
   externals: {
+    moize: {
+      amd: 'moize',
+      commonjs: 'moize',
+      commonjs2: 'moize',
+      root: 'moize'
+    },
     react: {
       amd: 'react',
       commonjs: 'react',
