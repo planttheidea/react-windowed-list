@@ -10,6 +10,50 @@ import * as methods from 'src/instanceMethods';
 import * as constants from 'src/constants';
 import * as utils from 'src/utils';
 
+test('if createGetContainerStyle creates a method that will call getContainerStyle with the right axis and size', (t) => {
+  const bottom = 0;
+  const size = 100;
+
+  const instance = {
+    getSpaceBefore: sinon.stub().returns(size),
+    props: {
+      axis: 'y',
+      length: 1000
+    },
+    state: {
+      itemsPerRow: 1
+    }
+  };
+
+  const getContainerStyle = methods.createGetContainerStyle(instance);
+
+  t.true(_.isFunction(getContainerStyle));
+
+  const mathCeilStub = sinon.stub(Math, 'ceil').returns(bottom);
+  const getStyleStub = sinon.stub(utils, 'getContainerStyle');
+
+  getContainerStyle();
+
+  t.true(mathCeilStub.calledOnce);
+  t.true(mathCeilStub.calledWith(instance.props.length / instance.state.itemsPerRow));
+
+  mathCeilStub.restore();
+
+  t.true(instance.getSpaceBefore.calledOnce);
+
+  const args = instance.getSpaceBefore.firstCall.args;
+
+  t.deepEqual(args, [
+    bottom,
+    {}
+  ]);
+
+  t.true(getStyleStub.calledOnce);
+  t.true(getStyleStub.calledWith(instance.props.axis, size));
+
+  getStyleStub.restore();
+});
+
 test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if they exist and useStaticSize is true', (t) => {
   const instance = {
     props: {
@@ -115,6 +159,45 @@ test('if createGetItemSizeAndItemsPerRow will return the object from getCalculat
   getCalculatedItemSizeAndItemsPerRowStub.restore();
 
   t.is(result, fakeItemSizeAndItemsPerRow);
+});
+
+test('if createGetListContainerStyle calls getListContainerStyle with the calculated offset', (t) => {
+  const offset = 100;
+
+  const instance = {
+    getSpaceBefore: sinon.stub().returns(offset),
+    props: {
+      axis: 'y',
+      usePosition: false,
+      useTranslate3d: false
+    },
+    state: {
+      from: 0
+    }
+  };
+
+  const getListContainerStyle = methods.createGetListContainerStyle(instance);
+
+  t.true(_.isFunction(getListContainerStyle));
+
+  const getStyleStub = sinon.stub(utils, 'getListContainerStyle');
+
+  getListContainerStyle();
+
+  t.true(instance.getSpaceBefore.calledOnce);
+
+  const args = instance.getSpaceBefore.firstCall.args;
+
+  t.deepEqual(args, [
+    instance.state.from,
+    {}
+  ]);
+
+  t.true(getStyleStub.calledOnce);
+  t.true(getStyleStub.calledWith(instance.props.axis, instance.props.usePosition,
+    instance.props.useTranslate3d, offset));
+
+  getStyleStub.restore();
 });
 
 test('if createGetScrollOffset will get the offset of the scrollParent when it is not the window', (t) => {
@@ -243,11 +326,11 @@ test('if createGetScrollParent will return immediately if there is a scrollParen
   t.is(result, scrollGetterElement);
 });
 
-test.skip('if createGetScrollParent will return the window if the overflowStyleKey is not found on the element', (t) => {
+test('if createGetScrollParent will return null if there is no outerContainer', (t) => {
   const element = {};
-  const scrollGetterElement = {};
   const instance = {
     getDomNode: sinon.stub().returns(element),
+    outerContainer: null,
     props: {
       axis: 'y',
       scrollParentGetter: null
@@ -266,7 +349,35 @@ test.skip('if createGetScrollParent will return the window if the overflowStyleK
 
   getComputedStyleStub.restore();
 
+  t.is(result, null);
+});
+
+test.skip('if createGetScrollParent will return the window if the overflowStyleKey is not found on the element', (t) => {
+  const element = {};
+  const scrollGetterElement = {};
+  const instance = {
+    outerContainer: {
+      parentElement: element
+    },
+    props: {
+      axis: 'y',
+      scrollParentGetter: null
+    }
+  };
+
+  const getScrollParent = methods.createGetScrollParent(instance);
+
+  t.true(_.isFunction(getScrollParent));
+
+  const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns({});
+
+  const result = getScrollParent();
+
+  t.true(getComputedStyleStub.calledOnce);
+
   t.is(result, scrollGetterElement);
+
+  getComputedStyleStub.restore();
 });
 
 test.skip('if createGetScrollParent will return the element if the overflowStyleKey is found on the element', (t) => {
@@ -276,7 +387,9 @@ test.skip('if createGetScrollParent will return the element if the overflowStyle
   };
   const scrollGetterElement = {};
   const instance = {
-    getDomNode: sinon.stub().returns(element),
+    outerContainer: {
+      parentElement: element
+    },
     props: {
       axis,
       scrollParentGetter: null
@@ -293,9 +406,9 @@ test.skip('if createGetScrollParent will return the element if the overflowStyle
 
   t.true(getComputedStyleStub.notCalled);
 
-  getComputedStyleStub.restore();
-
   t.is(result, scrollGetterElement);
+
+  getComputedStyleStub.restore();
 });
 
 test('if createGetSizeOfListItem will return the itemSize if it exists', (t) => {

@@ -54,6 +54,11 @@ export const INNER_SIZE_KEYS = {
 };
 
 /**
+ * @constant {number} MAX_CACHE_SIZE
+ */
+export const MAX_CACHE_SIZE = 250;
+
+/**
  * @constant {Object} OFFSET_SIZE_KEYS
  */
 export const OFFSET_SIZE_KEYS = {
@@ -174,54 +179,6 @@ export const OUTER_CONTAINER_STYLE = {
 export const DEFAULT_CONTAINER_STYLE = {
   position: 'relative'
 };
-
-/**
- * @constant {number} DEFAULT_LENGTH
- * @default
- */
-export const DEFAULT_LENGTH = 0;
-
-/**
- * @constant {number} DEFAULT_MIN_SIZE
- * @default
- */
-export const DEFAULT_MIN_SIZE = 1;
-
-/**
- * @constant {number} DEFAULT_PAGE_SIZE
- * @default
- */
-export const DEFAULT_PAGE_SIZE = 10;
-
-/**
- * @constant {number} DEFAULT_THRESHOLD
- * @default
- */
-export const DEFAULT_THRESHOLD = 100;
-
-/**
- * @constant {string} DEFAULT_TYPE
- * @default
- */
-export const DEFAULT_TYPE = VALID_TYPES.SIMPLE;
-
-/**
- * @constant {boolean} DEFAULT_USE_POSITION
- * @default
- */
-export const DEFAULT_USE_POSITION = false;
-
-/**
- * @constant {boolean} DEFAULT_USE_STATIC_SIZE
- * @default
- */
-export const DEFAULT_USE_STATIC_SIZE = false;
-
-/**
- * @constant {boolean} DEFAULT_USE_TRANSLATE_3D
- * @default
- */
-export const DEFAULT_USE_TRANSLATE_3D = false;
 
 /**
  * @constant {Array<string>} REMEASURE_OPTIONS

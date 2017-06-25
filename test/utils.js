@@ -192,33 +192,19 @@ test('if getCalculatedItemSizeAndItemsPerRow returns an empty object when there 
 });
 
 test('if getContainerStyle returns the DEFAULT_CONTAINER_STYLE when there is no size', (t) => {
-  const props = {
-    axis: 'y',
-    length: 100
-  };
-  const state = {
-    itemsPerRow: 1
-  };
-  const getSpaceBefore = sinon.stub().returns(0);
+  const axis = 'y';
+  const size = 0;
 
-  const result = utils.getContainerStyle(props, state, getSpaceBefore);
+  const result = utils.getContainerStyle(axis, size);
 
   t.is(result, constants.DEFAULT_CONTAINER_STYLE);
 });
 
 test('if getContainerStyle returns the correct style when there is size and the axis is y', (t) => {
   const axis = 'y';
-  const props = {
-    axis,
-    length: 100
-  };
-  const state = {
-    itemsPerRow: 1
-  };
   const size = 500;
-  const getSpaceBefore = sinon.stub().returns(size);
 
-  const result = utils.getContainerStyle(props, state, getSpaceBefore);
+  const result = utils.getContainerStyle(axis, size);
 
   t.deepEqual(result, {
     ...constants.DEFAULT_CONTAINER_STYLE,
@@ -228,26 +214,9 @@ test('if getContainerStyle returns the correct style when there is size and the 
 
 test('if getContainerStyle returns the correct style when there is size and the axis is x', (t) => {
   const axis = 'x';
-  const props = {
-    axis,
-    length: 100
-  };
-  const state = {
-    itemsPerRow: 1
-  };
   const size = 500;
-  const getSpaceBefore = sinon.stub().returns(size);
 
-  const result = utils.getContainerStyle(props, state, getSpaceBefore);
-
-  t.true(getSpaceBefore.calledOnce);
-
-  const args = getSpaceBefore.firstCall.args;
-
-  t.deepEqual([...args], [
-    props.length,
-    {}
-  ]);
+  const result = utils.getContainerStyle(axis, size);
 
   t.deepEqual(result, {
     ...constants.DEFAULT_CONTAINER_STYLE,
@@ -459,27 +428,12 @@ test('if getFromAndSizeFromListItemSize will return currentState if size calcula
 });
 
 test('if getListContainerStyle will return the correct style object when usePosition is true and the axis is x', (t) => {
-  const props = {
-    axis: 'x',
-    usePosition: true,
-    useTranslate3d: false
-  };
-  const state = {
-    from: 5
-  };
+  const axis = 'x';
+  const usePosition = true;
+  const useTranslate3d = false;
   const offset = 100;
-  const getSpaceBefore = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(props, state, getSpaceBefore);
-
-  t.true(getSpaceBefore.calledOnce);
-
-  const args = getSpaceBefore.firstCall.args;
-
-  t.deepEqual([...args], [
-    state.from,
-    {}
-  ]);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
 
   t.deepEqual(result, {
     left: offset,
@@ -489,27 +443,12 @@ test('if getListContainerStyle will return the correct style object when usePosi
 });
 
 test('if getListContainerStyle will return the correct style object when usePosition is true and the axis is y', (t) => {
-  const props = {
-    axis: 'y',
-    usePosition: true,
-    useTranslate3d: false
-  };
-  const state = {
-    from: 5
-  };
+  const axis = 'y';
+  const usePosition = true;
+  const useTranslate3d = false;
   const offset = 100;
-  const getSpaceBefore = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(props, state, getSpaceBefore);
-
-  t.true(getSpaceBefore.calledOnce);
-
-  const args = getSpaceBefore.firstCall.args;
-
-  t.deepEqual([...args], [
-    state.from,
-    {}
-  ]);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
 
   t.deepEqual(result, {
     left: 0,
@@ -519,27 +458,12 @@ test('if getListContainerStyle will return the correct style object when usePosi
 });
 
 test('if getListContainerStyle will return the correct style object when useTranslate3d is true and the axis is x', (t) => {
-  const props = {
-    axis: 'x',
-    usePosition: false,
-    useTranslate3d: true
-  };
-  const state = {
-    from: 5
-  };
+  const axis = 'x';
+  const usePosition = false;
+  const useTranslate3d = true;
   const offset = 100;
-  const getSpaceBefore = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(props, state, getSpaceBefore);
-
-  t.true(getSpaceBefore.calledOnce);
-
-  const args = getSpaceBefore.firstCall.args;
-
-  t.deepEqual([...args], [
-    state.from,
-    {}
-  ]);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
 
   const expectedTransform = `translate3d(${offset}px, 0px, 0)`;
 
@@ -551,27 +475,12 @@ test('if getListContainerStyle will return the correct style object when useTran
 });
 
 test('if getListContainerStyle will return the correct style object when useTranslate3d is true and the axis is y', (t) => {
-  const props = {
-    axis: 'y',
-    usePosition: false,
-    useTranslate3d: true
-  };
-  const state = {
-    from: 5
-  };
+  const axis = 'y';
+  const usePosition = false;
+  const useTranslate3d = true;
   const offset = 100;
-  const getSpaceBefore = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(props, state, getSpaceBefore);
-
-  t.true(getSpaceBefore.calledOnce);
-
-  const args = getSpaceBefore.firstCall.args;
-
-  t.deepEqual([...args], [
-    state.from,
-    {}
-  ]);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
 
   const expectedTransform = `translate3d(0px, ${offset}px, 0)`;
 
@@ -583,27 +492,12 @@ test('if getListContainerStyle will return the correct style object when useTran
 });
 
 test('if getListContainerStyle will return the correct style object when useTranslate3d is false and the axis is x', (t) => {
-  const props = {
-    axis: 'x',
-    usePosition: false,
-    useTranslate3d: false
-  };
-  const state = {
-    from: 5
-  };
+  const axis = 'x';
+  const usePosition = false;
+  const useTranslate3d = false;
   const offset = 100;
-  const getSpaceBefore = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(props, state, getSpaceBefore);
-
-  t.true(getSpaceBefore.calledOnce);
-
-  const args = getSpaceBefore.firstCall.args;
-
-  t.deepEqual([...args], [
-    state.from,
-    {}
-  ]);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
 
   const expectedTransform = `translate(${offset}px, 0px)`;
 
@@ -615,27 +509,12 @@ test('if getListContainerStyle will return the correct style object when useTran
 });
 
 test('if getListContainerStyle will return the correct style object when useTranslate3d is false and the axis is y', (t) => {
-  const props = {
-    axis: 'y',
-    usePosition: false,
-    useTranslate3d: false
-  };
-  const state = {
-    from: 5
-  };
+  const axis = 'y';
+  const usePosition = false;
+  const useTranslate3d = false;
   const offset = 100;
-  const getSpaceBefore = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(props, state, getSpaceBefore);
-
-  t.true(getSpaceBefore.calledOnce);
-
-  const args = getSpaceBefore.firstCall.args;
-
-  t.deepEqual([...args], [
-    state.from,
-    {}
-  ]);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
 
   const expectedTransform = `translate(0px, ${offset}px)`;
 

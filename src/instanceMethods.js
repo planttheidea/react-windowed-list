@@ -25,14 +25,41 @@ import {
   getCalculatedElementEnd,
   getCalculatedItemSizeAndItemsPerRow,
   getCalculatedSpaceBefore,
+  getContainerStyle,
   getFromAndSize,
   getFromAndSizeFromListItemSize,
+  getListContainerStyle,
   getOffset,
   getScrollSize,
   getViewportSize,
   hasDeterminateSize,
   setCacheSizes
 } from './utils';
+
+export const createGetContainerStyle = (instance) => {
+  /**
+   * @function getContainerStyle
+   *
+   * @description
+   * create a memoized handler for getting the style object for the main container
+   *
+   * @returns {Object} the style object for the main container
+   */
+  return () => {
+    const {
+      axis,
+      length
+    } = instance.props;
+    const {
+      itemsPerRow
+    } = instance.state;
+
+    const bottom = Math.ceil(length / itemsPerRow) * itemsPerRow;
+    const size = instance.getSpaceBefore(bottom, {});
+
+    return getContainerStyle(axis, size);
+  };
+};
 
 export const createGetItemSizeAndItemsPerRow = (instance) => {
   /**
@@ -48,8 +75,7 @@ export const createGetItemSizeAndItemsPerRow = (instance) => {
       axis,
       useStaticSize
     } = instance.props;
-
-    let {
+    const {
       itemSize,
       itemsPerRow
     } = instance.state;
@@ -67,6 +93,31 @@ export const createGetItemSizeAndItemsPerRow = (instance) => {
   };
 };
 
+export const createGetListContainerStyle = (instance) => {
+  /**
+   * @function getListContainerStyle
+   *
+   * @description
+   * create a memoized handler for getting the style object for the list container
+   *
+   * @returns {Object} the style object for the list container
+   */
+  return () => {
+    const {
+      axis,
+      usePosition,
+      useTranslate3d
+    } = instance.props;
+    const {
+      from
+    } = instance.state;
+
+    const offset = instance.getSpaceBefore(from, {});
+
+    return getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+  };
+};
+
 export const createGetScrollOffset = (instance) => {
   /**
    * @function getScrollOffset
@@ -77,6 +128,10 @@ export const createGetScrollOffset = (instance) => {
    * @returns {number} the scrollOffset to apply
    */
   return () => {
+    if (!instance.outerContainer) {
+      return 0;
+    }
+
     const {
       axis
     } = instance.props;
@@ -88,9 +143,8 @@ export const createGetScrollOffset = (instance) => {
 
     const max = getScrollSize(instance.scrollParent, axis) - getViewportSize(instance.scrollParent, axis);
     const scroll = Math.max(0, Math.min(actual, max));
-    const element = instance.outerContainer;
 
-    return !element ? 0 : getOffset(instance.scrollParent, axis) + scroll - getOffset(element, axis);
+    return getOffset(instance.scrollParent, axis) + scroll - getOffset(instance.outerContainer, axis);
   };
 };
 
@@ -169,14 +223,16 @@ export const createGetSizeOfListItem = (instance) => {
       return instance.cache[index];
     }
 
-    const itemElements = instance.items ? instance.items.children : [];
+    if (instance.items) {
+      const itemElements = instance.items.children;
 
-    // Try the DOM.
-    if (itemElements.length && type === VALID_TYPES.SIMPLE && index >= from && index < from + size) {
-      const itemEl = itemElements[index - from];
+      // Try the DOM.
+      if (itemElements.length && type === VALID_TYPES.SIMPLE && index >= from && index < from + size) {
+        const itemEl = itemElements[index - from];
 
-      if (itemEl) {
-        return itemEl[OFFSET_SIZE_KEYS[axis]];
+        if (itemEl) {
+          return itemEl[OFFSET_SIZE_KEYS[axis]];
+        }
       }
     }
 
@@ -276,11 +332,11 @@ export const createGetVisibleRange = (instance) => {
       itemStart = instance.getSpaceBefore(index, cache);
       itemEnd = itemStart + instance.getSizeOfListItem(index);
 
-      if (isUndefined(first) && itemEnd > start) {
-        first = index;
-      }
-
-      if (!isUndefined(first) && itemStart < end) {
+      if (isUndefined(first)) {
+        if (itemEnd > start) {
+          first = index;
+        }
+      } else if (itemStart < end) {
         last = index;
       }
     }
@@ -403,17 +459,13 @@ export const createSetScroll = (instance) => {
    * @returns {void}
    */
   return (currentOffset) => {
-    if (!instance.scrollParent) {
+    if (!instance.scrollParent || !instance.outerContainer) {
       return;
     }
 
     const {
       axis
     } = instance.props;
-
-    if (!instance.outerContainer) {
-      return;
-    }
 
     let offset = currentOffset + getOffset(instance.outerContainer, axis);
 
