@@ -230,6 +230,7 @@ test('if getFromAndSize will calculate the correct from and size based on simple
   const size = 100;
   const itemsPerRow = 1;
   const props = {
+    initialIndex: 0,
     isLazy: false,
     length: 1000,
     minSize: 1,

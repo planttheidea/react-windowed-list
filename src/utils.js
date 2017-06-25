@@ -265,7 +265,7 @@ export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {isLazy, l
     size = length;
   }
 
-  let from = type === VALID_TYPES.SIMPLE || !currentFrom ? 0 : Math.max(Math.min(currentFrom, length - size), 0);
+  let from = !currentFrom || type === VALID_TYPES.SIMPLE ? 0 : Math.max(Math.min(currentFrom, length - size), 0);
 
   if (mod = from % itemsPerRow) {
     from -= mod;

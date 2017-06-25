@@ -62,7 +62,7 @@ class WindowedList extends PureComponent {
     axis: PropTypes.oneOf(VALID_AXIS_VALUES).isRequired,
     containerRenderer: PropTypes.func.isRequired,
     debounceReconciler: PropTypes.number,
-    initialIndex: PropTypes.number,
+    initialIndex: PropTypes.number.isRequired,
     isHidden: PropTypes.bool.isRequired,
     isLazy: PropTypes.bool.isRequired,
     itemRenderer: PropTypes.func.isRequired,
@@ -81,6 +81,7 @@ class WindowedList extends PureComponent {
   static defaultProps = {
     axis: VALID_AXES.Y,
     containerRenderer: defaultContainerRenderer,
+    initialIndex: 0,
     isHidden: false,
     isLazy: false,
     itemRenderer: defaultItemRenderer,
@@ -95,7 +96,7 @@ class WindowedList extends PureComponent {
   };
 
   // initial state
-  state = getInitialState();
+  state = getInitialState(this);
 
   // lifecycle methods
   componentWillMount = createComponentWillMount(this);
