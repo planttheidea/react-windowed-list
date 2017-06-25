@@ -260,6 +260,11 @@ class Example extends PureComponent {
       display: 'none'
     };
 
+    const hiddenPropsWithVisibility = {
+      ...hiddenProps,
+      isHidden: !isVisible
+    };
+
     return (
       <div className="index">
         <div className="header">
@@ -273,7 +278,7 @@ class Example extends PureComponent {
             </strong>
 
             <pre className="props">
-              {JSON.stringify(hiddenProps, null, 2)}
+              {JSON.stringify(hiddenPropsWithVisibility, null, 2)}
             </pre>
 
             <strong>
@@ -294,11 +299,22 @@ class Example extends PureComponent {
               className="component"
               style={visibiltyToggledStyle}
             >
-              <WindowedList
-                isHidden={!isVisible}
-                {...hiddenProps}
-              />
+              <WindowedList {...hiddenPropsWithVisibility}/>
             </div>
+          </div>
+
+          <div className="example axis-y">
+            <strong>
+              Props
+            </strong>
+
+            <pre className="props">
+              {JSON.stringify(hiddenProps, null, 2)}
+            </pre>
+
+            <strong>
+              Component
+            </strong>
 
             <div>
               <button
@@ -311,10 +327,7 @@ class Example extends PureComponent {
             </div>
 
             {isRendered && (
-              <div
-                className="component"
-                style={visibiltyToggledStyle}
-              >
+              <div className="component">
                 <WindowedList
                   {...hiddenProps}
                   isVisible
