@@ -1,5 +1,22 @@
 # react-windowed-list CHANGELOG
 
+### 1.5.1
+* Give `initialIndex` a default value of `0` instead of being left `undefined`
+
+### 1.5.0
+* Add memoization of container's calculated style for better performance
+  * `moize` is now an external, so if using the `dist` version then it is expected to exist on the `window` from a prior `<script>` tag
+* Remove some unneeded code
+* More defensive coding around scroll listeners
+
+### 1.4.2
+* Prevent cyclical render when total calculated list size is 0 (because it is hidden)
+* Prevent adding of scroll listeners when the `scrollParent` does not exist
+
+### 1.4.1
+* Remove a bunch of runtime calls to `findDOMNode`
+* Add defensive code to prevent execution when the component is not mounted
+
 ### 1.4.0
 * Add `minSize` prop to allow setting minimum number of rendered items
 

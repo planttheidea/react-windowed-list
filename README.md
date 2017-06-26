@@ -84,6 +84,12 @@ class MyComponent extends PureComponent {
 }
 ```
 
+The version you install from `npm` includes both the library as you would use in a bundler (such as `webpack`) as well as the compiled file you would use in a `<script>` tag or with AMD bundlers (such as `RequireJS`). If using the `dist` file, be aware that the following dependencies are considered externals, meaning they are required to exist on the `window` before the library can be included:
+* ['moize'](https://www.npmjs.com/package/moize)
+* [`react`](https://www.npmjs.com/package/react)
+* [`react-dom`](https://www.npmjs.com/package/react-dom)
+* [`remeasure`](https://www.npmjs.com/package/remeasure)
+
 ### Available props
 
 #### axis
