@@ -1,5 +1,8 @@
 # react-windowed-list CHANGELOG
 
+### 1.5.2
+* Fix issue where unbound containers were not growing to the right size when `rowSizing` was set to `variable`
+
 ### 1.5.1
 * Give `initialIndex` a default value of `0` instead of being left `undefined`
 

@@ -70,12 +70,10 @@ module.exports = {
               ]
             }
           },
-          plugins: [
-            'transform-decorators-legacy'
-          ],
           presets: [
             ['env', {
               loose: true,
+              modules: false,
               targets: {
                 browsers: [
                   'last 2 versions',
