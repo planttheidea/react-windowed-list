@@ -56,7 +56,6 @@ import {
   defaultContainerRenderer
 } from './utils';
 
-@measure(REMEASURE_PROPERTIES, REMEASURE_OPTIONS)
 class WindowedList extends PureComponent {
   static propTypes = {
     axis: PropTypes.oneOf(VALID_AXIS_VALUES).isRequired,
@@ -159,4 +158,4 @@ class WindowedList extends PureComponent {
 
 WindowedList.displayName = 'WindowedList';
 
-export default WindowedList;
+export default measure(REMEASURE_PROPERTIES, REMEASURE_OPTIONS)(WindowedList);

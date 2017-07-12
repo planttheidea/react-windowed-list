@@ -142,7 +142,7 @@ test('if getCalculatedSpaceBefore will calculate the correct space before with n
 
   const result = utils.getCalculatedSpaceBefore(cache, length, getSizeOfListItem);
 
-  t.is(result, itemSize * (length - 1));
+  t.is(result, itemSize * length);
 });
 
 test('if getCalculatedSpaceBefore will calculate the correct space before with some cach cache', (t) => {
@@ -157,7 +157,7 @@ test('if getCalculatedSpaceBefore will calculate the correct space before with s
 
   const result = utils.getCalculatedSpaceBefore(cache, length, getSizeOfListItem);
 
-  t.is(result, itemSize * (length - 2));
+  t.is(result, itemSize * (length - 1));
 });
 
 test('if getCalculatedItemSizeAndItemsPerRow correctly calculated itemSize and itemsPerRow when the different is a number greater than 0', (t) => {

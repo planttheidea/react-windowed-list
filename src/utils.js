@@ -149,7 +149,7 @@ export const getCalculatedSpaceBefore = (cache, length, getSizeOfListItem) => {
       index = from,
       itemSize;
 
-  while (++index < length) {
+  while (index < length) {
     cache[index] = space;
     itemSize = getSizeOfListItem(index);
 
@@ -158,6 +158,8 @@ export const getCalculatedSpaceBefore = (cache, length, getSizeOfListItem) => {
     }
 
     space += itemSize;
+
+    index++;
   }
 
   return space;
