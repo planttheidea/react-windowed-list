@@ -1,5 +1,8 @@
 # react-windowed-list CHANGELOG
 
+### 1.5.3
+* Under-the-hood optimizations
+
 ### 1.5.2
 * Fix issue where unbound containers were not growing to the right size when `rowSizing` was set to `variable`
 
