@@ -68,16 +68,13 @@ export const createComponentDidUpdate = (instance) => {
     if (++instance.updateCounter > MAX_SYNC_UPDATES) {
       instance.unstable = true;
 
-      /* eslint-disable no-console */
-      return console.error(UNSTABLE_MESSAGE);
-      /* eslint-enable */
+      return console.error(UNSTABLE_MESSAGE); // eslint-disable-line no-console
     }
 
     if (!instance.updateCounterTimeoutId) {
       instance.updateCounterTimeoutId = raf(() => {
         instance.updateCounter = 0;
-
-        delete instance.updateCounterTimeoutId;
+        instance.updateCounterTimeoutId = null;
       });
     }
 
@@ -102,7 +99,6 @@ export const createComponentWillMount = (instance) => {
     const fromAndSize = getFromAndSize(initialIndex, 0, itemsPerRow, instance.props);
 
     instance.setReconcileFrameAfterUpdate();
-
     instance.setState({
       ...fromAndSize,
       itemsPerRow
@@ -133,7 +129,9 @@ export const createComponentWillReceiveProps = (instance) => {
       instance.setReconcileFrameAfterUpdate();
     }
 
-    instance.setStateIfAppropriate(getFromAndSize(from, size, itemsPerRow, nextProps), noop);
+    const fromAndSize = getFromAndSize(from, size, itemsPerRow, nextProps);
+
+    instance.setStateIfAppropriate(fromAndSize, noop);
   };
 };
 

@@ -48,6 +48,19 @@ export const areStateValuesEqual = (currentState, nextPossibleState) => {
 };
 
 /**
+ * @function coalesceToZero
+ *
+ * @description
+ * return the value if truthy, else zero
+ *
+ * @param {*} value the value to compare
+ * @returns {*} the value or zero
+ */
+export const coalesceToZero = (value) => {
+  return value || 0;
+};
+
+/**
  * @function defaultItemRenderer
  *
  * @description
@@ -96,11 +109,11 @@ export const defaultContainerRenderer = (items, ref) => {
 export const getOffset = (element, axis) => {
   const offsetKey = OFFSET_START_KEYS[axis];
 
-  let offset = element[CLIENT_START_KEYS[axis]] || 0;
+  let offset = coalesceToZero(element[CLIENT_START_KEYS[axis]]) + coalesceToZero(element[offsetKey]);
 
-  do {
-    offset += element[offsetKey] || 0;
-  } while (element = element.offsetParent);
+  while (element = element.offsetParent) {
+    offset += coalesceToZero(element[offsetKey]);
+  }
 
   return offset;
 };
@@ -123,8 +136,7 @@ export const getCalculatedElementEnd = (elements, {axis}) => {
   const firstItemEl = elements[0];
   const lastItemEl = elements[elements.length - 1];
 
-  return getOffset(lastItemEl, axis) + lastItemEl[OFFSET_SIZE_KEYS[axis]] -
-    getOffset(firstItemEl, axis);
+  return getOffset(lastItemEl, axis) + lastItemEl[OFFSET_SIZE_KEYS[axis]] - getOffset(firstItemEl, axis);
 };
 
 /**
@@ -145,7 +157,7 @@ export const getCalculatedSpaceBefore = (cache, length, getSizeOfListItem) => {
     --from;
   }
 
-  let space = cache[from] || 0,
+  let space = coalesceToZero(cache[from]),
       index = from,
       itemSize;
 
@@ -226,16 +238,15 @@ export const getContainerStyle = moize.maxSize(MAX_CACHE_SIZE)((axis, size) => {
     return DEFAULT_CONTAINER_STYLE;
   }
 
-  let style = {
+  const style = {
     ...DEFAULT_CONTAINER_STYLE,
     [SIZE_KEYS[axis]]: size
   };
 
-  if (axis === VALID_AXES.X) {
-    style.overflowX = 'hidden';
-  }
-
-  return style;
+  return axis !== VALID_AXES.X ? style : {
+    ...style,
+    overflowX: 'hidden'
+  };
 });
 
 /**
@@ -308,8 +319,11 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
     itemSize = getSizeOfListItem(from);
 
     if (isUndefined(itemSize) || space + itemSize > start) {
-      // if an alternative key is used, it causes jitter when the first item is removed from the DOM,
-      // so render the first item if the calculated from is 1
+      /**
+       * @NOTE
+       * if an alternative key is used, it causes jitter when the first item is removed from the DOM,
+       * so render the first item if the calculated from is 1
+       */
       if (from === 1) {
         from = 0;
       }

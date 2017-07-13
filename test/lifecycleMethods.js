@@ -178,11 +178,14 @@ test('if createComponentDidUpdate will set the updateCounterTimeoutId if is fals
 
   consoleErrorStub.restore();
 
+  t.not(instance.updateCounter, 0);
+  t.not(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
+
   await waitForRaf();
 
   t.false(instance.unstable);
   t.is(instance.updateCounter, 0);
-  t.not(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
+  t.is(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
 
   t.true(instance.reconcileFrameAfterUpdate.calledOnce);
   t.true(instance.reconcileFrameAfterUpdate.calledWith(instance.updateFrame));

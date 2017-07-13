@@ -401,7 +401,9 @@ export const createScrollAround = (instance) => {
 
     if (current <= min) {
       return instance.setScroll(min);
-    } else if (current > max) {
+    }
+
+    if (current > max) {
       return instance.setScroll(max);
     }
   };
@@ -491,11 +493,7 @@ export const createSetStateIfAppropriate = (instance) => {
    * @returns {void}
    */
   return (nextState, callback) => {
-    if (areStateValuesEqual(instance.state, nextState)) {
-      return callback();
-    }
-
-    instance.setState(nextState, callback);
+    return areStateValuesEqual(instance.state, nextState) ? callback() : instance.setState(nextState, callback);
   };
 };
 
@@ -642,6 +640,10 @@ export const createUpdateVariableFrame = (instance) => {
    * @returns {void}
    */
   return (callback) => {
+    if (!instance.items) {
+      return;
+    }
+
     const {
       axis,
       itemSizeGetter
@@ -651,19 +653,17 @@ export const createUpdateVariableFrame = (instance) => {
       size: currentSize
     } = instance.state;
 
-    if (!instance.items) {
-      return;
-    }
-
     if (!itemSizeGetter) {
       setCacheSizes(currentFrom, instance.items, axis, instance.cache);
     }
 
+    const currentFromAndSize = {
+      from: currentFrom,
+      size: currentSize
+    };
+
     const fromAndSize = getFromAndSizeFromListItemSize(instance.getStartAndEnd(), instance.props,
-      instance.getSizeOfListItem, {
-        from: currentFrom,
-        size: currentSize
-      });
+      instance.getSizeOfListItem, currentFromAndSize);
 
     instance.setStateIfAppropriate(fromAndSize, callback);
   };
