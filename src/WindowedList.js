@@ -111,6 +111,7 @@ class WindowedList extends PureComponent {
   reconcileFrameAfterUpdate = null;
   unstable = false;
   updateCounter = 0;
+  updateCounterTimeoutId = null;
 
   // instance methods
   getContainerStyle = createGetContainerStyle(this);

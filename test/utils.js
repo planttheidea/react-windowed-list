@@ -37,6 +37,48 @@ test('if areStateValuesEqual will return false when the values from the nextPoss
   t.false(utils.areStateValuesEqual(currentState, nextPossibleState));
 });
 
+test('if coalesceToZero returns the value if truthy, else zero', (t) => {
+  const array = [];
+  const booleanFalse = false;
+  const booleanTrue = true;
+  const date = new Date();
+  const decimal = 1.23;
+  const fn = () => {};
+  const integerNegative = -123;
+  const integerPositive = 123;
+  const integerZero = 0;
+  const map = new Map();
+  const nul = null;
+  const object = {};
+  const promise = new Promise(() => {});
+  const regex = /foo/;
+  const set = new Set();
+  const stringValue = 'foo';
+  const stringEmpty = '';
+  const symbol = Symbol('foo');
+  const undef = undefined;
+
+  t.is(utils.coalesceToZero(array), array);
+  t.is(utils.coalesceToZero(booleanFalse), 0);
+  t.is(utils.coalesceToZero(booleanTrue), booleanTrue);
+  t.is(utils.coalesceToZero(date), date);
+  t.is(utils.coalesceToZero(decimal), decimal);
+  t.is(utils.coalesceToZero(fn), fn);
+  t.is(utils.coalesceToZero(integerNegative), integerNegative);
+  t.is(utils.coalesceToZero(integerPositive), integerPositive);
+  t.is(utils.coalesceToZero(integerZero), 0);
+  t.is(utils.coalesceToZero(map), map);
+  t.is(utils.coalesceToZero(nul), 0);
+  t.is(utils.coalesceToZero(object), object);
+  t.is(utils.coalesceToZero(promise), promise);
+  t.is(utils.coalesceToZero(regex), regex);
+  t.is(utils.coalesceToZero(set), set);
+  t.is(utils.coalesceToZero(stringValue), stringValue);
+  t.is(utils.coalesceToZero(stringEmpty), 0);
+  t.is(utils.coalesceToZero(symbol), symbol);
+  t.is(utils.coalesceToZero(undef), 0);
+});
+
 test('if defaultItemRenderer will render the item', (t) => {
   const index = 2;
   const key = 'foo';

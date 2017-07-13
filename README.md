@@ -152,7 +152,7 @@ renderItem = (index, key) => {
 
   return (
     <div key={key}>
-      {this.props[index]}
+      {items[index]}
     </div>
   );
 };
