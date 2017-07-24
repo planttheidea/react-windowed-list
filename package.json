@@ -20,16 +20,16 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "moize": "^2.3.3",
+    "moize": "^3.3.0",
     "prop-types": "^15.5.10",
     "raf": "^3.3.2",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
-    "remeasure": "^2.3.1"
+    "remeasure": "^2.4.0"
   },
   "description": "A fast, versatile virtual-render list component for React",
   "devDependencies": {
-    "ava": "^0.20.0",
+    "ava": "^0.21.0",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.1",
@@ -43,7 +43,7 @@
     "browser-env": "^3.1.0",
     "enzyme": "^2.9.1",
     "enzyme-to-json": "^1.5.1",
-    "eslint": "^4.2.0",
+    "eslint": "^4.3.0",
     "eslint-config-rapid7": "^2.10.0",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.9.0",
@@ -53,11 +53,11 @@
     "nyc": "^11.0.3",
     "optimize-js-plugin": "^0.0.4",
     "react-addons-test-utils": "^15.6.0",
-    "sinon": "^2.3.7",
+    "sinon": "^2.3.8",
     "uuid": "^3.1.0",
-    "webpack": "^3.2.0",
+    "webpack": "^3.3.0",
     "webpack-dashboard": "^0.4.0",
-    "webpack-dev-server": "^2.5.1"
+    "webpack-dev-server": "^2.6.1"
   },
   "homepage": "https://github.com/planttheidea/react-windowed-list#readme",
   "keywords": [
