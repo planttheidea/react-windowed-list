@@ -1,9 +1,6 @@
 // test
 import test from 'ava';
-import {
-  mount,
-  shallow
-} from 'enzyme';
+import {mount, shallow} from 'enzyme';
 import toJson from 'enzyme-to-json';
 import React from 'react';
 
@@ -14,7 +11,7 @@ import * as utils from 'src/utils';
 test('if WindowedList renders correctly with default props', (t) => {
   const wrapper = shallow(
     <div style={{height: 500}}>
-      <WindowedList length={1000}/>
+      <WindowedList length={1000} />
     </div>
   );
 

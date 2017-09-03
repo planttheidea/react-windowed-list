@@ -71,11 +71,7 @@ export const coalesceToZero = (value) => {
  * @returns {ReactElement} the generated element
  */
 export const defaultItemRenderer = (index, key) => {
-  return (
-    <div key={key}>
-      {index}
-    </div>
-  );
+  return <div key={key}>{index}</div>;
 };
 
 /**
@@ -89,11 +85,7 @@ export const defaultItemRenderer = (index, key) => {
  * @returns {ReactElement} the generated element
  */
 export const defaultContainerRenderer = (items, ref) => {
-  return (
-    <div ref={ref}>
-      {items}
-    </div>
-  );
+  return <div ref={ref}>{items}</div>;
 };
 
 /**
@@ -111,7 +103,7 @@ export const getOffset = (element, axis) => {
 
   let offset = coalesceToZero(element[CLIENT_START_KEYS[axis]]) + coalesceToZero(element[offsetKey]);
 
-  while (element = element.offsetParent) {
+  while ((element = element.offsetParent)) {
     offset += coalesceToZero(element[offsetKey]);
   }
 
@@ -243,10 +235,12 @@ export const getContainerStyle = moize.maxSize(MAX_CACHE_SIZE)((axis, size) => {
     [SIZE_KEYS[axis]]: size
   };
 
-  return axis !== VALID_AXES.X ? style : {
-    ...style,
-    overflowX: 'hidden'
-  };
+  return axis !== VALID_AXES.X
+    ? style
+    : {
+      ...style,
+      overflowX: 'hidden'
+    };
 });
 
 /**
@@ -280,7 +274,7 @@ export const getFromAndSize = (currentFrom, currentSize, itemsPerRow, {isLazy, l
 
   let from = !currentFrom || type === VALID_TYPES.SIMPLE ? 0 : Math.max(Math.min(currentFrom, length - size), 0);
 
-  if (mod = from % itemsPerRow) {
+  if ((mod = from % itemsPerRow)) {
     from -= mod;
     size += mod;
   }
@@ -348,10 +342,12 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
     space += itemSize;
   }
 
-  return !space ? currentState : {
-    from,
-    size
-  };
+  return !space
+    ? currentState
+    : {
+      from,
+      size
+    };
 };
 
 /**

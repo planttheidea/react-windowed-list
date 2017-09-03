@@ -295,12 +295,15 @@ test('if createComponentWillMount will call setState with the right object', (t)
 
   const args = instance.setState.getCall(0).args;
 
-  t.deepEqual([...args], [
-    {
-      ...fromAndSize,
-      itemsPerRow: 1
-    }
-  ]);
+  t.deepEqual(
+    [...args],
+    [
+      {
+        ...fromAndSize,
+        itemsPerRow: 1
+      }
+    ]
+  );
 
   t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
 });
@@ -334,8 +337,9 @@ test('if createComponentWillReceiveProps will fire setStateIfAppropriate with th
   componentWillReceiveProps(nextProps);
 
   t.true(getFromAndSizeStub.calledOnce);
-  t.true(getFromAndSizeStub.calledWith(instance.state.from, instance.state.size,
-    instance.state.itemsPerRow, nextProps));
+  t.true(
+    getFromAndSizeStub.calledWith(instance.state.from, instance.state.size, instance.state.itemsPerRow, nextProps)
+  );
 
   getFromAndSizeStub.restore();
 
@@ -373,8 +377,9 @@ test('if createComponentWillReceiveProps will fire setReconcileFrameAfterUpdate 
   componentWillReceiveProps(nextProps);
 
   t.true(getFromAndSizeStub.calledOnce);
-  t.true(getFromAndSizeStub.calledWith(instance.state.from, instance.state.size,
-    instance.state.itemsPerRow, nextProps));
+  t.true(
+    getFromAndSizeStub.calledWith(instance.state.from, instance.state.size, instance.state.itemsPerRow, nextProps)
+  );
 
   getFromAndSizeStub.restore();
 
@@ -402,19 +407,11 @@ test('if createComponentWillUnmount will call removeEventListener on the scroll 
 
   const firstCallArgs = instance.scrollParent.removeEventListener.getCall(0).args;
 
-  t.deepEqual([...firstCallArgs], [
-    'scroll',
-    instance.updateFrame,
-    constants.ADD_EVENT_LISTENER_OPTIONS
-  ]);
+  t.deepEqual([...firstCallArgs], ['scroll', instance.updateFrame, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   const secondCallArgs = instance.scrollParent.removeEventListener.getCall(1).args;
 
-  t.deepEqual([...secondCallArgs], [
-    'mousewheel',
-    noop,
-    constants.ADD_EVENT_LISTENER_OPTIONS
-  ]);
+  t.deepEqual([...secondCallArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 });
 
 test('if getInitialState returns the correct state', (t) => {

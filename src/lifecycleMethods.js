@@ -1,21 +1,13 @@
 // external dependencies
 import noop from 'lodash/noop';
 import raf from 'raf';
-import {
-  findDOMNode
-} from 'react-dom';
+import {findDOMNode} from 'react-dom';
 
 // constants
-import {
-  MAX_SYNC_UPDATES,
-  ADD_EVENT_LISTENER_OPTIONS,
-  UNSTABLE_MESSAGE
-} from './constants';
+import {MAX_SYNC_UPDATES, ADD_EVENT_LISTENER_OPTIONS, UNSTABLE_MESSAGE} from './constants';
 
 // utils
-import {
-  getFromAndSize
-} from './utils';
+import {getFromAndSize} from './utils';
 
 /**
  * @function getInitialState
@@ -92,15 +84,12 @@ export const createComponentWillMount = (instance) => {
    * prior to mount, set the initial state
    */
   return () => {
-    const {
-      initialIndex
-    } = instance.props;
+    const {initialIndex} = instance.props;
     const itemsPerRow = 1;
-    const fromAndSize = getFromAndSize(initialIndex, 0, itemsPerRow, instance.props);
 
     instance.setReconcileFrameAfterUpdate();
     instance.setState({
-      ...fromAndSize,
+      ...getFromAndSize(initialIndex, 0, itemsPerRow, instance.props),
       itemsPerRow
     });
   };
@@ -116,22 +105,14 @@ export const createComponentWillReceiveProps = (instance) => {
    * @param {Object} nextProps the incoming props
    */
   return (nextProps) => {
-    const {
-      debounceReconciler
-    } = instance.props;
-    const {
-      from,
-      itemsPerRow,
-      size
-    } = instance.state;
+    const {debounceReconciler} = instance.props;
+    const {from, itemsPerRow, size} = instance.state;
 
     if (nextProps.debounceReconciler !== debounceReconciler) {
       instance.setReconcileFrameAfterUpdate();
     }
 
-    const fromAndSize = getFromAndSize(from, size, itemsPerRow, nextProps);
-
-    instance.setStateIfAppropriate(fromAndSize, noop);
+    instance.setStateIfAppropriate(getFromAndSize(from, size, itemsPerRow, nextProps), noop);
   };
 };
 

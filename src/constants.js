@@ -20,12 +20,14 @@ export const ADD_EVENT_LISTENER_OPTIONS = !(() => {
         return false;
       }
     });
-  /* eslint-disable no-empty */
+    /* eslint-disable no-empty */
   } catch (e) {}
   /* eslint-enable */
 
   return hasSupport;
-})() ? false : {
+})()
+  ? false
+  : {
     passive: true
   };
 
@@ -85,11 +87,7 @@ export const OVERFLOW_KEYS = {
 /**
  * @constant {Array<string>} OVERFLOW_VALUES
  */
-export const OVERFLOW_VALUES = [
-  'auto',
-  'scroll',
-  'overlay'
-];
+export const OVERFLOW_VALUES = ['auto', 'scroll', 'overlay'];
 
 /**
  * @constant {Object} SCROLL_SIZE_KEYS
@@ -184,17 +182,10 @@ export const DEFAULT_CONTAINER_STYLE = {
  * @constant {Array<string>} REMEASURE_OPTIONS
  */
 export const REMEASURE_OPTIONS = {
-  inheritedMethods: [
-    'getVisibleRange',
-    'scrollAround',
-    'scrollTo'
-  ]
+  inheritedMethods: ['getVisibleRange', 'scrollAround', 'scrollTo']
 };
 
 /**
  * @constant {Array<string>} REMEASURE_PROPERTIES
  */
-export const REMEASURE_PROPERTIES = [
-  'height',
-  'width'
-];
+export const REMEASURE_PROPERTIES = ['height', 'width'];

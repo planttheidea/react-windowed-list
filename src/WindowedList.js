@@ -1,8 +1,6 @@
 // external dependencies
 import PropTypes from 'prop-types';
-import React, {
-  PureComponent
-} from 'react';
+import React, {PureComponent} from 'react';
 import measure from 'remeasure';
 
 // constants
@@ -51,12 +49,11 @@ import {
 } from './lifecycleMethods';
 
 // utils
-import {
-  defaultItemRenderer,
-  defaultContainerRenderer
-} from './utils';
+import {defaultItemRenderer, defaultContainerRenderer} from './utils';
 
 class WindowedList extends PureComponent {
+  static displayName = 'WindowedList';
+
   static propTypes = {
     axis: PropTypes.oneOf(VALID_AXIS_VALUES).isRequired,
     containerRenderer: PropTypes.func.isRequired,
@@ -148,15 +145,11 @@ class WindowedList extends PureComponent {
     return (
       <div style={OUTER_CONTAINER_STYLE}>
         <div style={style}>
-          <div style={listStyle}>
-            {items}
-          </div>
+          <div style={listStyle}>{items}</div>
         </div>
       </div>
     );
   }
 }
-
-WindowedList.displayName = 'WindowedList';
 
 export default measure(REMEASURE_PROPERTIES, REMEASURE_OPTIONS)(WindowedList);
