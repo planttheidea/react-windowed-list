@@ -10,9 +10,7 @@ module.exports = {
 
   devtool: '#source-map',
 
-  entry: [
-    path.resolve(__dirname, 'src', 'WindowedList.js')
-  ],
+  entry: [path.resolve(__dirname, 'src', 'WindowedList.js')],
 
   externals: {
     moize: {
@@ -45,9 +43,7 @@ module.exports = {
     rules: [
       {
         enforce: 'pre',
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
+        include: [path.resolve(__dirname, 'src')],
         loader: 'eslint-loader',
         options: {
           configFile: '.eslintrc',
@@ -56,31 +52,28 @@ module.exports = {
           formatter: eslintFriendlyFormatter
         },
         test: /\.js$/
-      }, {
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
+      },
+      {
+        include: [path.resolve(__dirname, 'src')],
         loader: 'babel-loader',
         options: {
           babelrc: false,
           env: {
             production: {
-              plugins: [
-                'transform-react-remove-prop-types'
-              ]
+              plugins: ['transform-react-remove-prop-types']
             }
           },
           presets: [
-            ['env', {
-              loose: true,
-              modules: false,
-              targets: {
-                browsers: [
-                  'last 2 versions',
-                  'ie 11'
-                ]
+            [
+              'env',
+              {
+                loose: true,
+                modules: false,
+                targets: {
+                  browsers: ['last 2 versions', 'ie 11']
+                }
               }
-            }],
+            ],
             'react',
             'stage-2'
           ]
@@ -97,10 +90,5 @@ module.exports = {
     umdNamedDefine: true
   },
 
-  plugins: [
-    new webpack.EnvironmentPlugin([
-      'NODE_ENV'
-    ]),
-    new LodashModuleReplacementPlugin()
-  ]
+  plugins: [new webpack.EnvironmentPlugin(['NODE_ENV']), new LodashModuleReplacementPlugin()]
 };

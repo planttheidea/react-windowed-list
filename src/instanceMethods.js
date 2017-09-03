@@ -5,9 +5,7 @@ import isNumber from 'lodash/isNumber';
 import isUndefined from 'lodash/isUndefined';
 import noop from 'lodash/noop';
 import raf from 'raf';
-import {
-  findDOMNode
-} from 'react-dom';
+import {findDOMNode} from 'react-dom';
 
 // constants
 import {
@@ -46,18 +44,12 @@ export const createGetContainerStyle = (instance) => {
    * @returns {Object} the style object for the main container
    */
   return () => {
-    const {
-      axis,
-      length
-    } = instance.props;
-    const {
-      itemsPerRow
-    } = instance.state;
+    const {axis, length} = instance.props;
+    const {itemsPerRow} = instance.state;
 
     const bottom = Math.ceil(length / itemsPerRow) * itemsPerRow;
-    const size = instance.getSpaceBefore(bottom, {});
 
-    return getContainerStyle(axis, size);
+    return getContainerStyle(axis, instance.getSpaceBefore(bottom, {}));
   };
 };
 
@@ -71,14 +63,8 @@ export const createGetItemSizeAndItemsPerRow = (instance) => {
    * @returns {{itemSize: number, itemsPerRow: number}} the itemSize and itemsPerRow
    */
   return () => {
-    const {
-      axis,
-      useStaticSize
-    } = instance.props;
-    const {
-      itemSize,
-      itemsPerRow
-    } = instance.state;
+    const {axis, useStaticSize} = instance.props;
+    const {itemSize, itemsPerRow} = instance.state;
 
     if (useStaticSize && itemSize && itemsPerRow) {
       return {
@@ -103,18 +89,10 @@ export const createGetListContainerStyle = (instance) => {
    * @returns {Object} the style object for the list container
    */
   return () => {
-    const {
-      axis,
-      usePosition,
-      useTranslate3d
-    } = instance.props;
-    const {
-      from
-    } = instance.state;
+    const {axis, usePosition, useTranslate3d} = instance.props;
+    const {from} = instance.state;
 
-    const offset = instance.getSpaceBefore(from, {});
-
-    return getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+    return getListContainerStyle(axis, usePosition, useTranslate3d, instance.getSpaceBefore(from, {}));
   };
 };
 
@@ -132,14 +110,13 @@ export const createGetScrollOffset = (instance) => {
       return 0;
     }
 
-    const {
-      axis
-    } = instance.props;
+    const {axis} = instance.props;
 
     const scrollKey = SCROLL_START_KEYS[axis];
-    const actual = instance.scrollParent === window ?
-      (document.body[scrollKey] || document.documentElement[scrollKey]) :
-      instance.scrollParent[scrollKey];
+    const actual =
+      instance.scrollParent === window
+        ? document.body[scrollKey] || document.documentElement[scrollKey]
+        : instance.scrollParent[scrollKey];
 
     const max = getScrollSize(instance.scrollParent, axis) - getViewportSize(instance.scrollParent, axis);
     const scroll = Math.max(0, Math.min(actual, max));
@@ -158,10 +135,7 @@ export const createGetScrollParent = (instance) => {
    * @returns {HTMLElement} the scroll parent
    */
   return () => {
-    const {
-      axis,
-      scrollParentGetter
-    } = instance.props;
+    const {axis, scrollParentGetter} = instance.props;
 
     if (isFunction(scrollParentGetter)) {
       return scrollParentGetter();
@@ -175,7 +149,7 @@ export const createGetScrollParent = (instance) => {
 
     let element = instance.outerContainer;
 
-    while (element = element.parentElement) {
+    while ((element = element.parentElement)) {
       if (~OVERFLOW_VALUES.indexOf(window.getComputedStyle(element)[overflowKey])) {
         return element;
       }
@@ -196,17 +170,8 @@ export const createGetSizeOfListItem = (instance) => {
    * @returns {number} the size of the list item
    */
   return (index) => {
-    const {
-      axis,
-      itemSizeEstimator,
-      itemSizeGetter,
-      type
-    } = instance.props;
-    const {
-      from,
-      itemSize,
-      size
-    } = instance.state;
+    const {axis, itemSizeEstimator, itemSizeGetter, type} = instance.props;
+    const {from, itemSize, size} = instance.state;
 
     // Try the static itemSize.
     if (itemSize) {
@@ -260,13 +225,11 @@ export const createGetSpaceBefore = (instance) => {
     }
 
     // Try the static itemSize.
-    const {
-      itemSize,
-      itemsPerRow
-    } = instance.state;
+    const {itemSize, itemsPerRow} = instance.state;
 
-    cache[index] = itemSize ? Math.floor(index / itemsPerRow) * itemSize :
-      getCalculatedSpaceBefore(cache, index, instance.getSizeOfListItem);
+    cache[index] = itemSize
+      ? Math.floor(index / itemsPerRow) * itemSize
+      : getCalculatedSpaceBefore(cache, index, instance.getSizeOfListItem);
 
     return cache[index];
   };
@@ -283,22 +246,16 @@ export const createGetStartAndEnd = (instance) => {
    * @returns {{end: number, start: number}} the start and end of the window
    */
   return (threshold = instance.props.threshold) => {
-    const {
-      axis,
-      itemSizeGetter,
-      length,
-      type
-    } = instance.props;
+    const {axis, itemSizeGetter, length, type} = instance.props;
 
     const scroll = instance.getScrollOffset();
-    const start = Math.max(0, scroll - threshold);
     const calculatedEnd = scroll + getViewportSize(instance.scrollParent, axis) + threshold;
-    const end = !hasDeterminateSize(type, itemSizeGetter) ? calculatedEnd :
-      Math.min(calculatedEnd, instance.getSpaceBefore(length));
 
     return {
-      end,
-      start
+      end: hasDeterminateSize(type, itemSizeGetter)
+        ? Math.min(calculatedEnd, instance.getSpaceBefore(length))
+        : calculatedEnd,
+      start: Math.max(0, scroll - threshold)
     };
   };
 };
@@ -313,20 +270,17 @@ export const createGetVisibleRange = (instance) => {
    * @returns {Array<number>} the first and last index of the visible items
    */
   return () => {
-    const {
-      from,
-      size
-    } = instance.state;
-    const {
-      end,
-      start
-    } = instance.getStartAndEnd(0);
+    const {from, size} = instance.state;
+    const {end, start} = instance.getStartAndEnd(0);
 
     const cache = {};
 
-    let first, last, itemStart, itemEnd,
-        index = from - 1,
-        length = from + size;
+    let index = from - 1,
+        length = from + size,
+        first,
+        last,
+        itemStart,
+        itemEnd;
 
     while (++index < length) {
       itemStart = instance.getSpaceBefore(index, cache);
@@ -341,10 +295,7 @@ export const createGetVisibleRange = (instance) => {
       }
     }
 
-    return [
-      first,
-      last
-    ];
+    return [first, last];
   };
 };
 
@@ -358,25 +309,18 @@ export const createRenderItems = (instance) => {
    * @returns {ReactElement} the rendered container with the items
    */
   return () => {
-    const {
-      itemRenderer,
-      containerRenderer
-    } = instance.props;
-    const {
-      from,
-      size
-    } = instance.state;
+    const {itemRenderer, containerRenderer} = instance.props;
+    const {from, size} = instance.state;
 
-    const items = [];
-
-    let index = -1;
+    let items = [],
+        index = -1;
 
     while (++index < size) {
       items[index] = itemRenderer(from + index, index);
     }
 
     return containerRenderer(items, (containerRef) => {
-      return instance.items = findDOMNode(containerRef);
+      return (instance.items = findDOMNode(containerRef));
     });
   };
 };
@@ -396,12 +340,13 @@ export const createScrollAround = (instance) => {
     const top = bottom - instance.getViewportSize() + instance.getSizeOfListItem(index);
 
     const min = Math.min(top, bottom);
-    const max = Math.max(top, bottom);
     const current = instance.getScrollOffset();
 
     if (current <= min) {
       return instance.setScroll(min);
     }
+
+    const max = Math.max(top, bottom);
 
     if (current > max) {
       return instance.setScroll(max);
@@ -419,9 +364,7 @@ export const createScrollTo = (instance) => {
    * @param {number} index the index to scroll to
    */
   return (index) => {
-    const {
-      initialIndex
-    } = instance.props;
+    const {initialIndex} = instance.props;
 
     const indexToScrollTo = isNumber(index) ? index : initialIndex;
 
@@ -439,14 +382,13 @@ export const createSetReconcileFrameAfterUpdate = (instance) => {
    * set the frame reconciler used after componentDidUpdate
    */
   return () => {
-    const {
-      debounceReconciler
-    } = instance.props;
+    const {debounceReconciler} = instance.props;
 
-    instance.reconcileFrameAfterUpdate = !isNumber(debounceReconciler) ? raf :
-      debounce((updateFrame) => {
+    instance.reconcileFrameAfterUpdate = isNumber(debounceReconciler)
+      ? debounce((updateFrame) => {
         updateFrame();
-      }, debounceReconciler);
+      }, debounceReconciler)
+      : raf;
   };
 };
 
@@ -465,19 +407,15 @@ export const createSetScroll = (instance) => {
       return;
     }
 
-    const {
-      axis
-    } = instance.props;
+    const {axis} = instance.props;
 
-    let offset = currentOffset + getOffset(instance.outerContainer, axis);
+    const offset = currentOffset + getOffset(instance.outerContainer, axis);
 
     if (instance.scrollParent === window) {
       return window.scrollTo(0, offset);
     }
 
-    offset -= getOffset(instance.scrollParent, axis);
-
-    instance.scrollParent[SCROLL_START_KEYS[axis]] = offset;
+    instance.scrollParent[SCROLL_START_KEYS[axis]] = offset - getOffset(instance.scrollParent, axis);
   };
 };
 
@@ -508,9 +446,7 @@ export const createUpdateFrame = (instance) => {
    * @returns {void}
    */
   return (callback) => {
-    const {
-      type
-    } = instance.props;
+    const {type} = instance.props;
 
     instance.updateScrollParent();
 
@@ -571,24 +507,21 @@ export const createUpdateSimpleFrame = (instance) => {
    * @returns {void}
    */
   return (callback) => {
-    const {
-      end
-    } = instance.getStartAndEnd();
+    const {end} = instance.getStartAndEnd();
 
     if (!instance.items || getCalculatedElementEnd(instance.items.children, instance.props) > end) {
       return callback();
     }
 
-    const {
-      pageSize,
-      length
-    } = instance.props;
+    const {pageSize, length} = instance.props;
+    const {size} = instance.state;
 
-    const size = Math.min(instance.state.size + pageSize, length);
-
-    instance.setStateIfAppropriate({
-      size
-    }, callback);
+    instance.setStateIfAppropriate(
+      {
+        size: Math.min(size + pageSize, length)
+      },
+      callback
+    );
   };
 };
 
@@ -604,28 +537,25 @@ export const createUpdateUniformFrame = (instance) => {
    */
   return (callback) => {
     const itemSizeAndItemsPerRow = instance.getItemSizeAndItemsPerRow();
-    const {
-      itemSize,
-      itemsPerRow
-    } = itemSizeAndItemsPerRow;
+    const {itemSize, itemsPerRow} = itemSizeAndItemsPerRow;
 
     if (!itemSize || !itemsPerRow) {
       return callback();
     }
 
-    const {
-      start,
-      end
-    } = instance.getStartAndEnd();
+    const {start, end} = instance.getStartAndEnd();
 
     const calculatedFrom = Math.floor(start / itemSize) * itemsPerRow;
     const calulatedSize = (Math.ceil((end - start) / itemSize) + 1) * itemsPerRow;
     const fromAndSize = getFromAndSize(calculatedFrom, calulatedSize, itemsPerRow, instance.props);
 
-    return instance.setStateIfAppropriate({
-      ...fromAndSize,
-      ...itemSizeAndItemsPerRow
-    }, callback);
+    return instance.setStateIfAppropriate(
+      {
+        ...fromAndSize,
+        ...itemSizeAndItemsPerRow
+      },
+      callback
+    );
   };
 };
 
@@ -644,26 +574,22 @@ export const createUpdateVariableFrame = (instance) => {
       return;
     }
 
-    const {
-      axis,
-      itemSizeGetter
-    } = instance.props;
-    const {
-      from: currentFrom,
-      size: currentSize
-    } = instance.state;
+    const {axis, itemSizeGetter} = instance.props;
+    const {from: currentFrom, size: currentSize} = instance.state;
 
     if (!itemSizeGetter) {
       setCacheSizes(currentFrom, instance.items, axis, instance.cache);
     }
 
-    const currentFromAndSize = {
-      from: currentFrom,
-      size: currentSize
-    };
-
-    const fromAndSize = getFromAndSizeFromListItemSize(instance.getStartAndEnd(), instance.props,
-      instance.getSizeOfListItem, currentFromAndSize);
+    const fromAndSize = getFromAndSizeFromListItemSize(
+      instance.getStartAndEnd(),
+      instance.props,
+      instance.getSizeOfListItem,
+      {
+        from: currentFrom,
+        size: currentSize
+      }
+    );
 
     instance.setStateIfAppropriate(fromAndSize, callback);
   };

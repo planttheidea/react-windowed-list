@@ -1,8 +1,6 @@
 // test
 import test from 'ava';
-import {
-  shallow
-} from 'enzyme';
+import {shallow} from 'enzyme';
 import toJson from 'enzyme-to-json';
 import React from 'react';
 import sinon from 'sinon';
@@ -90,11 +88,7 @@ test('if defaultItemRenderer will render the item', (t) => {
 });
 
 test('if defaultContainerRenderer will render the item', (t) => {
-  const items = [
-    'foo',
-    'bar',
-    'baz'
-  ];
+  const items = ['foo', 'bar', 'baz'];
   const ref = sinon.spy();
 
   const element = utils.defaultContainerRenderer(items, ref);
@@ -168,13 +162,13 @@ test('if getCalculatedElementEnd calculates the correct end based on offset of t
   };
 
   const result = utils.getCalculatedElementEnd(elements, props);
-  const expectedResult = elements[elements.length - 1][constants.OFFSET_START_KEYS[axis]] +
+  const expectedResult =
+    elements[elements.length - 1][constants.OFFSET_START_KEYS[axis]] +
     elements[elements.length - 1][constants.OFFSET_SIZE_KEYS[axis]] -
     elements[0][constants.OFFSET_START_KEYS[axis]];
 
   t.is(result, expectedResult);
 });
-
 
 test('if getCalculatedSpaceBefore will calculate the correct space before with no cache', (t) => {
   const cache = {};
@@ -223,9 +217,7 @@ test('if getCalculatedItemSizeAndItemsPerRow correctly calculated itemSize and i
 test('if getCalculatedItemSizeAndItemsPerRow returns an empty object when there is no size', (t) => {
   const axis = 'y';
   const itemSize = 0;
-  const elements = [
-    {[constants.OFFSET_SIZE_KEYS[axis]]: itemSize}
-  ];
+  const elements = [{[constants.OFFSET_SIZE_KEYS[axis]]: itemSize}];
   const currentItemSize = 50;
 
   const result = utils.getCalculatedItemSizeAndItemsPerRow(elements, axis, currentItemSize);

@@ -43,10 +43,7 @@ test('if createGetContainerStyle creates a method that will call getContainerSty
 
   const args = instance.getSpaceBefore.firstCall.args;
 
-  t.deepEqual(args, [
-    bottom,
-    {}
-  ]);
+  t.deepEqual(args, [bottom, {}]);
 
   t.true(getStyleStub.calledOnce);
   t.true(getStyleStub.calledWith(instance.props.axis, size));
@@ -75,7 +72,9 @@ test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if
     itemsPerRow: 2
   };
 
-  const getCalculatedItemSizeAndItemsPerRowStub = sinon.stub(utils, 'getCalculatedItemSizeAndItemsPerRow').returns(fakeItemSizeAndItemsPerRow);
+  const getCalculatedItemSizeAndItemsPerRowStub = sinon
+    .stub(utils, 'getCalculatedItemSizeAndItemsPerRow')
+    .returns(fakeItemSizeAndItemsPerRow);
 
   const result = getItemSizeAndItemsPerRow();
 
@@ -110,7 +109,9 @@ test('if createGetItemSizeAndItemsPerRow will return an empty object if useStati
     itemsPerRow: 2
   };
 
-  const getCalculatedItemSizeAndItemsPerRowStub = sinon.stub(utils, 'getCalculatedItemSizeAndItemsPerRow').returns(fakeItemSizeAndItemsPerRow);
+  const getCalculatedItemSizeAndItemsPerRowStub = sinon
+    .stub(utils, 'getCalculatedItemSizeAndItemsPerRow')
+    .returns(fakeItemSizeAndItemsPerRow);
 
   const result = getItemSizeAndItemsPerRow();
 
@@ -121,45 +122,53 @@ test('if createGetItemSizeAndItemsPerRow will return an empty object if useStati
   t.deepEqual(result, {});
 });
 
-test('if createGetItemSizeAndItemsPerRow will return the object from getCalculatedItemSizeAndItemsPerRow ' +
-  'if useStaticSize is false and there are children', (t) => {
-  const instance = {
-    items: {
-      children: [
-        'foo'
-      ]
-    },
-    props: {
-      axis: 'y',
-      useStaticSize: false
-    },
-    state: {
-      itemSize: 30,
-      itemsPerRow: 1
-    }
-  };
+test(
+  'if createGetItemSizeAndItemsPerRow will return the object from getCalculatedItemSizeAndItemsPerRow ' +
+    'if useStaticSize is false and there are children',
+  (t) => {
+    const instance = {
+      items: {
+        children: ['foo']
+      },
+      props: {
+        axis: 'y',
+        useStaticSize: false
+      },
+      state: {
+        itemSize: 30,
+        itemsPerRow: 1
+      }
+    };
 
-  const getItemSizeAndItemsPerRow = methods.createGetItemSizeAndItemsPerRow(instance);
+    const getItemSizeAndItemsPerRow = methods.createGetItemSizeAndItemsPerRow(instance);
 
-  t.true(_.isFunction(getItemSizeAndItemsPerRow));
+    t.true(_.isFunction(getItemSizeAndItemsPerRow));
 
-  const fakeItemSizeAndItemsPerRow = {
-    itemSize: 40,
-    itemsPerRow: 2
-  };
+    const fakeItemSizeAndItemsPerRow = {
+      itemSize: 40,
+      itemsPerRow: 2
+    };
 
-  const getCalculatedItemSizeAndItemsPerRowStub = sinon.stub(utils, 'getCalculatedItemSizeAndItemsPerRow').returns(fakeItemSizeAndItemsPerRow);
+    const getCalculatedItemSizeAndItemsPerRowStub = sinon
+      .stub(utils, 'getCalculatedItemSizeAndItemsPerRow')
+      .returns(fakeItemSizeAndItemsPerRow);
 
-  const result = getItemSizeAndItemsPerRow();
+    const result = getItemSizeAndItemsPerRow();
 
-  t.true(getCalculatedItemSizeAndItemsPerRowStub.calledOnce);
-  t.true(getCalculatedItemSizeAndItemsPerRowStub.calledWith(instance.items.children, instance.props.axis,
-    instance.state.itemSize));
+    t.true(getCalculatedItemSizeAndItemsPerRowStub.calledOnce);
+    t.true(
+      getCalculatedItemSizeAndItemsPerRowStub.calledWith(
+        instance.items.children,
+        instance.props.axis,
+        instance.state.itemSize
+      )
+    );
 
-  getCalculatedItemSizeAndItemsPerRowStub.restore();
+    getCalculatedItemSizeAndItemsPerRowStub.restore();
 
-  t.is(result, fakeItemSizeAndItemsPerRow);
-});
+    t.is(result, fakeItemSizeAndItemsPerRow);
+  }
+);
 
 test('if createGetListContainerStyle calls getListContainerStyle with the calculated offset', (t) => {
   const offset = 100;
@@ -188,14 +197,12 @@ test('if createGetListContainerStyle calls getListContainerStyle with the calcul
 
   const args = instance.getSpaceBefore.firstCall.args;
 
-  t.deepEqual(args, [
-    instance.state.from,
-    {}
-  ]);
+  t.deepEqual(args, [instance.state.from, {}]);
 
   t.true(getStyleStub.calledOnce);
-  t.true(getStyleStub.calledWith(instance.props.axis, instance.props.usePosition,
-    instance.props.useTranslate3d, offset));
+  t.true(
+    getStyleStub.calledWith(instance.props.axis, instance.props.usePosition, instance.props.useTranslate3d, offset)
+  );
 
   getStyleStub.restore();
 });
@@ -233,17 +240,11 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
 
   const firstArgs = getOffsetStub.firstCall.args;
 
-  t.deepEqual([...firstArgs], [
-    instance.scrollParent,
-    instance.props.axis
-  ]);
+  t.deepEqual([...firstArgs], [instance.scrollParent, instance.props.axis]);
 
   const secondArgs = getOffsetStub.secondCall.args;
 
-  t.deepEqual([...secondArgs], [
-    instance.outerContainer,
-    instance.props.axis
-  ]);
+  t.deepEqual([...secondArgs], [instance.outerContainer, instance.props.axis]);
 
   getOffsetStub.restore();
 });
@@ -281,17 +282,11 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
 
   const firstArgs = getOffsetStub.firstCall.args;
 
-  t.deepEqual([...firstArgs], [
-    instance.scrollParent,
-    instance.props.axis
-  ]);
+  t.deepEqual([...firstArgs], [instance.scrollParent, instance.props.axis]);
 
   const secondArgs = getOffsetStub.secondCall.args;
 
-  t.deepEqual([...secondArgs], [
-    instance.outerContainer,
-    instance.props.axis
-  ]);
+  t.deepEqual([...secondArgs], [instance.outerContainer, instance.props.axis]);
 
   getOffsetStub.restore();
 });
@@ -807,10 +802,7 @@ test('if createGetVisibleRange will return the first and last indices of visible
   const viewport = 1000 - 15;
   const items = Math.round(viewport / itemSize);
 
-  t.deepEqual(result, [
-    instance.state.from,
-    items
-  ]);
+  t.deepEqual(result, [instance.state.from, items]);
 });
 
 test('if createRenderItems will call itemRenderer for the length of size, and call containerRenderer with the result', (t) => {
@@ -834,10 +826,7 @@ test('if createRenderItems will call itemRenderer for the length of size, and ca
   t.is(instance.props.itemRenderer.callCount, instance.state.size);
 
   instance.props.itemRenderer.args.forEach((callArgs, index) => {
-    t.deepEqual([...callArgs], [
-      instance.state.from + index,
-      index
-    ]);
+    t.deepEqual([...callArgs], [instance.state.from + index, index]);
   });
 
   t.true(instance.props.containerRenderer.calledOnce);
@@ -1015,17 +1004,11 @@ test('if createSetScroll will set the specific axis offset if the scrollParent i
 
   const firstArgs = getOffsetStub.firstCall.args;
 
-  t.deepEqual([...firstArgs], [
-    instance.outerContainer,
-    instance.props.axis
-  ]);
+  t.deepEqual([...firstArgs], [instance.outerContainer, instance.props.axis]);
 
   const secondArgs = getOffsetStub.secondCall.args;
 
-  t.deepEqual([...secondArgs], [
-    instance.scrollParent,
-    instance.props.axis
-  ]);
+  t.deepEqual([...secondArgs], [instance.scrollParent, instance.props.axis]);
 
   getOffsetStub.restore();
 
@@ -1255,7 +1238,6 @@ test('if createUpdateScrollParent will do nothing if the current scrollParent is
 
   t.true(instance.getScrollParent.calledOnce);
 
-
   t.true(instance.scrollParent.addEventListener.notCalled);
   t.true(instance.scrollParent.removeEventListener.notCalled);
 });
@@ -1279,24 +1261,15 @@ test('if createUpdateScrollParent will call addEventListener if there is not cur
 
   t.true(instance.getScrollParent.calledOnce);
 
-
   t.true(instance.scrollParent.addEventListener.calledTwice);
 
   const firstAddArgs = instance.scrollParent.addEventListener.firstCall.args;
 
-  t.deepEqual([...firstAddArgs], [
-    'scroll',
-    instance.updateFrame,
-    constants.ADD_EVENT_LISTENER_OPTIONS
-  ]);
+  t.deepEqual([...firstAddArgs], ['scroll', instance.updateFrame, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   const secondAddArgs = instance.scrollParent.addEventListener.secondCall.args;
 
-  t.deepEqual([...secondAddArgs], [
-    'mousewheel',
-    noop,
-    constants.ADD_EVENT_LISTENER_OPTIONS
-  ]);
+  t.deepEqual([...secondAddArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   t.true(instance.scrollParent.removeEventListener.notCalled);
 });
@@ -1324,24 +1297,15 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
 
   t.true(instance.getScrollParent.calledOnce);
 
-
   t.true(instance.scrollParent.addEventListener.calledTwice);
 
   const firstAddArgs = instance.scrollParent.addEventListener.firstCall.args;
 
-  t.deepEqual([...firstAddArgs], [
-    'scroll',
-    instance.updateFrame,
-    constants.ADD_EVENT_LISTENER_OPTIONS
-  ]);
+  t.deepEqual([...firstAddArgs], ['scroll', instance.updateFrame, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   const secondAddArgs = instance.scrollParent.addEventListener.secondCall.args;
 
-  t.deepEqual([...secondAddArgs], [
-    'mousewheel',
-    noop,
-    constants.ADD_EVENT_LISTENER_OPTIONS
-  ]);
+  t.deepEqual([...secondAddArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   t.true(scrollParent.removeEventListener.notCalled);
 
@@ -1349,17 +1313,11 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
 
   const firstRemoveArgs = currentScrollParent.removeEventListener.firstCall.args;
 
-  t.deepEqual([...firstRemoveArgs], [
-    'scroll',
-    instance.updateFrame
-  ]);
+  t.deepEqual([...firstRemoveArgs], ['scroll', instance.updateFrame]);
 
   const secondRemoveArgs = currentScrollParent.removeEventListener.secondCall.args;
 
-  t.deepEqual([...secondRemoveArgs], [
-    'mousewheel',
-    noop
-  ]);
+  t.deepEqual([...secondRemoveArgs], ['mousewheel', noop]);
 });
 
 test('if createUpdateSimpleFrame will not set state if the element end is greater than the end', (t) => {
