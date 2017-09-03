@@ -1,7 +1,10 @@
 # react-windowed-list CHANGELOG
 
+### 1.5.5
+* Remove unneeded variable instantiation for faster runtime
+
 ### 1.5.4
-* Update dependencies (`moize` and `react-windowed-list` had big performance improvements)
+* Update dependencies (`moize` and `remeasure` had big performance improvements)
 
 ### 1.5.3
 * Under-the-hood optimizations
