@@ -3,15 +3,8 @@
   "ava": {
     "babel": "inherit",
     "failFast": true,
-    "files": [
-      "test/*.js",
-      "!test/helpers/setup-browser-env.js"
-    ],
-    "require": [
-      "babel-register",
-      "babel-polyfill",
-      "test/helpers/setup-browser-env.js"
-    ],
+    "files": ["test/*.js", "!test/helpers/setup-browser-env.js"],
+    "require": ["babel-register", "babel-polyfill", "test/helpers/setup-browser-env.js"],
     "verbose": true
   },
   "bugs": {
@@ -59,17 +52,7 @@
     "webpack-dev-server": "^2.7.1"
   },
   "homepage": "https://github.com/planttheidea/react-windowed-list#readme",
-  "keywords": [
-    "react",
-    "reactjs",
-    "virtual",
-    "list",
-    "scrolling",
-    "infinite",
-    "virtualized",
-    "table",
-    "grid"
-  ],
+  "keywords": ["react", "reactjs", "virtual", "list", "scrolling", "infinite", "virtualized", "table", "grid"],
   "license": "MIT",
   "main": "lib/WindowedList.js",
   "name": "react-windowed-list",
@@ -83,8 +66,9 @@
     "dev": "NODE_ENV=development webpack-dev-server --colors --config=webpack.config.dev.js",
     "lint": "NODE_ENV=test eslint src",
     "lint:fix": "NODE_ENV=test eslint src --fix",
-    "prepublish": "in-publish && npm run prepublish:compile || echo ''",
-    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified",
+    "prepublish": "if in-publish; then npm run prepublish:compile; fi",
+    "prepublish:compile":
+      "npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified",
     "start": "npm run dev",
     "test": "NODE_PATH=. NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
