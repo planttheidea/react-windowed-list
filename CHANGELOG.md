@@ -1,5 +1,8 @@
 # react-windowed-list CHANGELOG
 
+### 1.5.6
+* Add `react` 16 support
+
 ### 1.5.5
 * Remove unneeded variable instantiation for faster runtime
 
