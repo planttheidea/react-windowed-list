@@ -51,7 +51,7 @@ import {
 // utils
 import {defaultItemRenderer, defaultContainerRenderer} from './utils';
 
-class WindowedList extends PureComponent {
+export class WindowedList extends PureComponent {
   static displayName = 'WindowedList';
 
   static propTypes = {

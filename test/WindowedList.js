@@ -5,8 +5,10 @@ import toJson from 'enzyme-to-json';
 import React from 'react';
 
 // src
-import WindowedList from 'src/WindowedList';
+import * as component from 'src/WindowedList';
 import * as utils from 'src/utils';
+
+const WindowedList = component.WindowedList;
 
 test('if WindowedList renders correctly with default props', (t) => {
   const wrapper = shallow(
@@ -30,7 +32,10 @@ test('if WindowedList renders correctly when type is not simple', (t) => {
 
   t.snapshot(toJson(wrapper));
 
-  const container = wrapper.children().children();
+  const container = wrapper
+    .children()
+    .children()
+    .children();
 
   t.deepEqual(container.prop('style'), utils.getContainerStyle('y', 0));
 
