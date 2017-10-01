@@ -1,7 +1,5 @@
-import React, {
-  PureComponent
-} from 'react';
-import WindowedList from '../src/WindowedList';
+import React, {PureComponent} from 'react';
+import WindowedList from '../src';
 import uuid from 'uuid/v4';
 
 const renderItem = (index, key) => {
@@ -35,7 +33,7 @@ renderSquareItem.toJSON = () => {
 };
 
 const getHeight = (index) => {
-  return 30 + (10 * (index % 10));
+  return 30 + 10 * (index % 10);
 };
 
 getHeight.toJSON = () => {
@@ -43,7 +41,7 @@ getHeight.toJSON = () => {
 };
 
 const getWidth = (index) => {
-  return 100 + (10 * (index % 10));
+  return 100 + 10 * (index % 10);
 };
 
 getWidth.toJSON = () => {
@@ -88,10 +86,11 @@ renderVariableWidthItem.toJSON = () => {
 
 const renderGridLine = (row, key) => {
   const gridLineItemRenderer = (column, key) => {
-    return renderSquareItem(column + (10000 * row), key);
+    return renderSquareItem(column + 10000 * row, key);
   };
 
   return (
+    /* eslint-disable prettier */
     <WindowedList
       axis="x"
       itemRenderer={gridLineItemRenderer}
@@ -99,6 +98,7 @@ const renderGridLine = (row, key) => {
       length={10000}
       type="uniform"
     />
+    /* eslint-enable */
   );
 };
 
@@ -106,14 +106,12 @@ renderGridLine.toJSON = () => {
   return renderGridLine.toString();
 };
 
-const differentKeyItems = (new Array(10000))
-  .fill('foo')
-  .map(() => {
-    return {
-      id: uuid(),
-      height: 100 + Math.floor(Math.random() * 100)
-    };
-  });
+const differentKeyItems = new Array(10000).fill('foo').map(() => {
+  return {
+    id: uuid(),
+    height: 100 + Math.floor(Math.random() * 100)
+  };
+});
 
 const differentKeyRenderer = (index) => {
   const item = differentKeyItems[index];
@@ -251,14 +249,13 @@ class Example extends PureComponent {
   };
 
   render() {
-    const {
-      isRendered,
-      isVisible
-    } = this.state;
+    const {isRendered, isVisible} = this.state;
 
-    const visibiltyToggledStyle = isVisible ? {} : {
-      display: 'none'
-    };
+    const visibiltyToggledStyle = isVisible
+      ? {}
+      : {
+        display: 'none'
+      };
 
     const hiddenPropsWithVisibility = {
       ...hiddenProps,
@@ -267,23 +264,15 @@ class Example extends PureComponent {
 
     return (
       <div className="index">
-        <div className="header">
-          WindowedList
-        </div>
+        <div className="header">WindowedList</div>
 
         <div className="examples">
           <div className="example axis-y">
-            <strong>
-              Props
-            </strong>
+            <strong>Props</strong>
 
-            <pre className="props">
-              {JSON.stringify(hiddenPropsWithVisibility, null, 2)}
-            </pre>
+            <pre className="props">{JSON.stringify(hiddenPropsWithVisibility, null, 2)}</pre>
 
-            <strong>
-              Component
-            </strong>
+            <strong>Component</strong>
 
             <div>
               <button
@@ -299,22 +288,16 @@ class Example extends PureComponent {
               className="component"
               style={visibiltyToggledStyle}
             >
-              <WindowedList {...hiddenPropsWithVisibility}/>
+              <WindowedList {...hiddenPropsWithVisibility} />
             </div>
           </div>
 
           <div className="example axis-y">
-            <strong>
-              Props
-            </strong>
+            <strong>Props</strong>
 
-            <pre className="props">
-              {JSON.stringify(hiddenProps, null, 2)}
-            </pre>
+            <pre className="props">{JSON.stringify(hiddenProps, null, 2)}</pre>
 
-            <strong>
-              Component
-            </strong>
+            <strong>Component</strong>
 
             <div>
               <button
@@ -344,17 +327,11 @@ class Example extends PureComponent {
                 className={`example axis-${props.axis}`}
                 key={key}
               >
-                <strong>
-                  Props
-                </strong>
+                <strong>Props</strong>
 
-                <pre className="props">
-                  {JSON.stringify(props, null, 2)}
-                </pre>
+                <pre className="props">{JSON.stringify(props, null, 2)}</pre>
 
-                <strong>
-                  Component
-                </strong>
+                <strong>Component</strong>
 
                 <div className="component">
                   <WindowedList {...props} />

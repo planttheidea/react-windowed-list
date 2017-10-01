@@ -1,10 +1,5 @@
-import PropTypes from 'prop-types';
-import React, {
-  Component
-} from 'react';
-import {
-  render
-} from 'react-dom';
+import React from 'react';
+import {render} from 'react-dom';
 
 import Example from './Example';
 
@@ -118,10 +113,8 @@ style.textContent = `
     }
 `;
 
-const renderApp = (container, length = 1000) => {
-  render((
-    <Example/>
-  ), container);
+const renderApp = (container) => {
+  render(<Example />, container);
 };
 
 renderApp(div);
