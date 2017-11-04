@@ -1,5 +1,8 @@
 # react-windowed-list CHANGELOG
 
+### 1.5.7
+* Move `react` and `react-dom` to `peerDependencies`
+
 ### 1.5.6
 * Add `react` 16 support
 
