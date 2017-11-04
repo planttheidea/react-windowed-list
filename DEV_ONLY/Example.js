@@ -217,6 +217,31 @@ const examples = [
     itemRenderer: renderGridLine,
     type: 'uniform',
     usePosition: true
+  },
+  {
+    containerRenderer(items, ref) {
+      return (
+        <table>
+          <thead>
+            <tr>
+              <th>Header</th>
+            </tr>
+          </thead>
+
+          <tbody ref={ref}>{items}</tbody>
+        </table>
+      );
+    },
+    length: 10000,
+    itemRenderer(index, key) {
+      return (
+        <tr key={key}>
+          <td>{index}</td>
+        </tr>
+      );
+    },
+    type: 'uniform',
+    usePosition: true
   }
 ];
 
