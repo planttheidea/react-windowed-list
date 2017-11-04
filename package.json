@@ -3,15 +3,8 @@
   "ava": {
     "babel": "inherit",
     "failFast": true,
-    "files": [
-      "test/*.js",
-      "!test/helpers/setup-browser-env.js"
-    ],
-    "require": [
-      "babel-register",
-      "babel-polyfill",
-      "test/helpers/setup-browser-env.js"
-    ],
+    "files": ["test/*.js", "!test/helpers/setup-browser-env.js"],
+    "require": ["babel-register", "babel-polyfill", "test/helpers/setup-browser-env.js"],
     "verbose": true
   },
   "bugs": {
@@ -22,9 +15,7 @@
     "moize": "^3.3.0 || ^4.0.0",
     "prop-types": "^15.6.0",
     "raf": "^3.3.2",
-    "react": "^15.3.0 || ^16.0.0",
-    "react-dom": "^15.3.0 || ^16.0.0",
-    "remeasure": "^2.4.1"
+    "remeasure": "^2.5.1"
   },
   "description": "A fast, versatile virtual-render list component for React",
   "devDependencies": {
@@ -52,28 +43,23 @@
     "lodash-webpack-plugin": "^0.11.4",
     "nyc": "^11.1.0",
     "optimize-js-plugin": "^0.0.4",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "react-test-renderer": "^16.0.0",
     "sinon": "^4.0.0",
     "uuid": "^3.1.0",
     "webpack": "^3.5.5",
-    "webpack-dashboard": "^0.4.0",
     "webpack-dev-server": "^2.7.1"
   },
   "homepage": "https://github.com/planttheidea/react-windowed-list#readme",
-  "keywords": [
-    "react",
-    "reactjs",
-    "virtual",
-    "list",
-    "scrolling",
-    "infinite",
-    "virtualized",
-    "table",
-    "grid"
-  ],
+  "keywords": ["react", "reactjs", "virtual", "list", "scrolling", "infinite", "virtualized", "table", "grid"],
   "license": "MIT",
   "main": "lib/index.js",
   "name": "react-windowed-list",
+  "peerDependencies": {
+    "react": "^15.3.0 || ^16.0.0",
+    "react-dom": "^15.3.0 || ^16.0.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/planttheidea/react-windowed-list.git"
@@ -85,7 +71,8 @@
     "lint": "NODE_ENV=test eslint src",
     "lint:fix": "NODE_ENV=test eslint src --fix",
     "prepublish": "if in-publish; then npm run prepublish:compile; fi",
-    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified",
+    "prepublish:compile":
+      "npm run lint && npm run test:coverage && npm run transpile && npm run build && npm run build:minified",
     "start": "npm run dev",
     "test": "NODE_PATH=. NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",
