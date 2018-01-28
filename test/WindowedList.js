@@ -142,6 +142,20 @@ test('if scrollTo will not throw when there is no ref', (t) => {
   });
 });
 
+test('if setRef will set the component passed to the ref on the instance', (t) => {
+  const instance = {
+    ref: null
+  };
+
+  const setRef = component.createSetRef(instance);
+
+  const windowedList = {};
+
+  setRef(windowedList);
+
+  t.is(instance.ref, windowedList);
+});
+
 test('if WindowedList renders correctly with default props', (t) => {
   const props = {};
 

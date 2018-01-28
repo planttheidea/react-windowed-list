@@ -3,14 +3,8 @@
   "ava": {
     "babel": "inherit",
     "failFast": true,
-    "files": [
-      "test/*.js",
-      "!test/helpers/setup-browser-env.js"
-    ],
-    "require": [
-      "babel-register",
-      "test/helpers/setup-browser-env.js"
-    ],
+    "files": ["test/*.js", "!test/helpers/setup-browser-env.js"],
+    "require": ["babel-register", "test/helpers/setup-browser-env.js"],
     "verbose": true
   },
   "bugs": {
@@ -59,17 +53,7 @@
     "webpack-dev-server": "^2.11.1"
   },
   "homepage": "https://github.com/planttheidea/react-windowed-list#readme",
-  "keywords": [
-    "react",
-    "reactjs",
-    "virtual",
-    "list",
-    "scrolling",
-    "infinite",
-    "virtualized",
-    "table",
-    "grid"
-  ],
+  "keywords": ["react", "reactjs", "virtual", "list", "scrolling", "infinite", "virtualized", "table", "grid"],
   "license": "MIT",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -89,7 +73,8 @@
     "lint": "NODE_ENV=test eslint src",
     "lint:fix": "NODE_ENV=test eslint src --fix",
     "prepublish": "if in-publish; then npm run prepublish:compile; fi",
-    "prepublish:compile": "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run build && npm run build:minified",
+    "prepublish:compile":
+      "npm run lint && npm run test:coverage && npm run transpile:lib && npm run transpile:es && npm run build && npm run build:minified",
     "start": "npm run dev",
     "test": "NODE_PATH=. NODE_ENV=test ava --no-cache",
     "test:coverage": "nyc npm test",

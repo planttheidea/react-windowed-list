@@ -6,6 +6,7 @@ import React from 'react';
 
 // src
 import * as component from 'src/WindowedListRenderer';
+import * as constants from 'src/constants';
 import * as utils from 'src/utils';
 
 const WindowedListRenderer = component.WindowedListRenderer;
@@ -13,7 +14,10 @@ const WindowedListRenderer = component.WindowedListRenderer;
 test('if WindowedListRenderer renders correctly with default props', (t) => {
   const wrapper = shallow(
     <div style={{height: 500}}>
-      <WindowedListRenderer length={1000} />
+      <WindowedListRenderer
+        length={1000}
+        type={constants.VALID_TYPES.SIMPLE}
+      />
     </div>
   );
 
@@ -25,7 +29,7 @@ test('if WindowedListRenderer renders correctly when type is not simple', (t) =>
     <div style={{height: 500}}>
       <WindowedListRenderer
         length={1000}
-        type="uniform"
+        type={constants.VALID_TYPES.UNIFORM}
       />
     </div>
   );

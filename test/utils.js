@@ -531,6 +531,30 @@ test('if getFromAndSizeFromListItemSize will return currentState if size calcula
   t.is(result, state);
 });
 
+test('if getFromAndSizeFromListItemSize will return the correct size if itemSize is not a number', (t) => {
+  const startAndend = {
+    end: 150,
+    start: 50
+  };
+  const props = {
+    length: 1000,
+    pageSize: 10
+  };
+  const state = {
+    from: 0,
+    size: 10
+  };
+  const listItemSize = undefined;
+  const getSizeOfListItem = sinon.stub().returns(listItemSize);
+
+  const result = utils.getFromAndSizeFromListItemSize(startAndend, props, getSizeOfListItem, state);
+
+  t.deepEqual(result, {
+    from: state.from,
+    size: Math.min(state.size, props.length - state.from)
+  });
+});
+
 test('if getListContainerStyle will return the correct style object when usePosition is true and the axis is x', (t) => {
   const axis = 'x';
   const usePosition = true;
@@ -650,6 +674,15 @@ test('if getScrollSize will get the scroll size of the element if the element is
   const result = utils.getScrollSize(element, axis);
 
   t.is(result, element[key]);
+});
+
+test('if getViewportSize will return 0 if element does not exist', (t) => {
+  const axis = 'y';
+  const element = null;
+
+  const result = utils.getViewportSize(element, axis);
+
+  t.is(result, 0);
 });
 
 test('if getViewportSize will get the window value for the right key if the element is the window', (t) => {

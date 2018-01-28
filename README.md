@@ -130,6 +130,18 @@ renderItem = (index, key) => {
 };
 ```
 
+It is also possible to use your own custom `key` property
+
+```javascript
+renderItem = (index) => {
+  const {items} = this.props;
+
+  return <div key={items[index].id}>{items[index]}</div>;
+};
+```
+
+`key` is required, so please ensure the value you pass is not empty and is unique.
+
 #### length
 
 _defaults to `0`_
@@ -152,7 +164,7 @@ The number of items to batch up for new renders.
 
 _defaults to finding the nearest scrollable container_
 
-A function that returns a DOM element or `window` that will be treated as the scrolling container for the list. In most cases, this does not need to be set for the list to work as intended. It is exposed as a prop for more complicated uses where the scrolling container may not initially have an overflow property that enables scrolling.
+A function that returns a DOM element or `window` that will be treated as the scrolling container for the list. In most cases, this does not need to be set for the list to work as intended. It is exposed as a prop for more complicated uses where the scrolling container may not initially have an overflow property that enables scrolling, or if you want to specify a container higher up in the DOM tree.
 
 #### threshold
 
@@ -166,7 +178,7 @@ _one of: `simple`, `variable`, `uniform`, defaults to `simple`_
 
 * `simple`
   * Does not cache item sizes or remove items that are above the viewport
-  * This type is sufficient for many cases when the only requrement is incremental rendering when scrolling
+  * This type can be sufficient for many cases when the only requirement is incremental rendering when scrolling
 * `variable`
   * Caches item sizes as they are rendered so that the items that are above the viewport can be removed as the list is scrolled
   * This type is preferred when the sizes of the items in the list vary
@@ -176,7 +188,7 @@ _one of: `simple`, `variable`, `uniform`, defaults to `simple`_
   * This type is preferred when you can guarantee all of your elements will be the same size, which allows the length of the entire list to be calculated beforehand
   * Multiple items per row are also supported with this type
 
-**NOTE**: If you have set the `type` to be `uniform` and the sizes of the items vary, it causes a continuous re-render until the list gives up. If you received a message about WindowedList reaching an unstable state, this is a common cause.
+**NOTE**: If you have set the `type` to be `uniform` and the sizes of the items vary, it causes continuous re-calculation of sizes until the list gives up. If you received a message about WindowedList reaching an unstable state, this is likely the cause.
 
 #### usePosition
 
@@ -188,7 +200,7 @@ Set to `true` if you choose to not use `transform` CSS property, instead opting 
 
 #### useTranslate3d
 
-Set to `true` if you want to use `translate3d` instead of the default `translate` value for the `transform` property. This can be helpful on mobile devices, but is supported by fewer browsers.
+Set to `true` if you want to use `translate3d` instead of the default `translate` value for the `transform` property. This can be more performant (especially on mobile devices), but is supported by fewer browsers.
 
 ## Methods
 

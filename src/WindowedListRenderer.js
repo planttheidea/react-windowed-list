@@ -98,7 +98,7 @@ export class WindowedListRenderer extends PureComponent {
   outerContainer = null;
   prevPrevState = {};
   reconcileFrameAfterUpdate = null;
-  unstable = false;
+  unstableTimeoutId = null;
   updateCounter = 0;
   updateCounterTimeoutId = null;
 

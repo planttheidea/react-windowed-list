@@ -61,8 +61,16 @@ export const createScrollTo = (instance) => {
 };
 
 export const createSetRef = (instance) => {
-  return (element) => {
-    instance.ref = element;
+  /**
+   * @function setRef
+   *
+   * @description
+   * set the ref of the original instance
+   *
+   * @param {ReactComponent} component the WindowedListRenderer component
+   */
+  return (component) => {
+    instance.ref = component;
   };
 };
 

@@ -4,6 +4,7 @@
 
 * Remove `lodash` and `moize` dependencies (smaller footprint)
 * Update to latest version of`remeasure`
+* Prevent permanent locking of unstable state
 
 #### BREAKING CHANGES
 
