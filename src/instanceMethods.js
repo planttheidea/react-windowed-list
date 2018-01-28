@@ -1,9 +1,5 @@
 // external dependencies
-import debounce from 'lodash/debounce';
-import isFunction from 'lodash/isFunction';
-import isNumber from 'lodash/isNumber';
-import isUndefined from 'lodash/isUndefined';
-import noop from 'lodash/noop';
+import debounce from 'debounce';
 import raf from 'raf';
 import {findDOMNode} from 'react-dom';
 
@@ -31,6 +27,9 @@ import {
   getScrollSize,
   getViewportSize,
   hasDeterminateSize,
+  isFunction,
+  isNumber,
+  noop,
   setCacheSizes
 } from './utils';
 
@@ -106,7 +105,7 @@ export const createGetScrollOffset = (instance) => {
    * @returns {number} the scrollOffset to apply
    */
   return () => {
-    if (!instance.outerContainer) {
+    if (!instance.outerContainer || !instance.scrollParent) {
       return 0;
     }
 
@@ -184,7 +183,7 @@ export const createGetSizeOfListItem = (instance) => {
     }
 
     // Try the cache.
-    if (!isUndefined(instance.cache[index])) {
+    if (isNumber(instance.cache[index])) {
       return instance.cache[index];
     }
 
@@ -220,7 +219,7 @@ export const createGetSpaceBefore = (instance) => {
    * @returns {number} the space before the item requested
    */
   return (index, cache = {}) => {
-    if (!isUndefined(cache[index])) {
+    if (isNumber(cache[index])) {
       return cache[index];
     }
 
@@ -274,19 +273,15 @@ export const createGetVisibleRange = (instance) => {
     const {end, start} = instance.getStartAndEnd(0);
 
     const cache = {};
+    const length = from + size;
 
-    let index = from - 1,
-        length = from + size,
-        first,
-        last,
-        itemStart,
-        itemEnd;
+    let first, last, itemStart, itemEnd;
 
-    while (++index < length) {
+    for (let index = from; index < length; index++) {
       itemStart = instance.getSpaceBefore(index, cache);
       itemEnd = itemStart + instance.getSizeOfListItem(index);
 
-      if (isUndefined(first)) {
+      if (!isNumber(first)) {
         if (itemEnd > start) {
           first = index;
         }
@@ -312,10 +307,9 @@ export const createRenderItems = (instance) => {
     const {itemRenderer, containerRenderer} = instance.props;
     const {from, size} = instance.state;
 
-    let items = [],
-        index = -1;
+    let items = new Array(size);
 
-    while (++index < size) {
+    for (let index = 0; index < size; index++) {
       items[index] = itemRenderer(from + index, index);
     }
 

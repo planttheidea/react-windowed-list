@@ -1,5 +1,4 @@
 // external dependencies
-import noop from 'lodash/noop';
 import raf from 'raf';
 import {findDOMNode} from 'react-dom';
 
@@ -7,7 +6,7 @@ import {findDOMNode} from 'react-dom';
 import {MAX_SYNC_UPDATES, ADD_EVENT_LISTENER_OPTIONS, UNSTABLE_MESSAGE} from './constants';
 
 // utils
-import {getFromAndSize} from './utils';
+import {getFromAndSize, noop} from './utils';
 
 /**
  * @function getInitialState

@@ -1,7 +1,6 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import noop from 'lodash/noop';
 import raf from 'raf';
 import sinon from 'sinon';
 
@@ -1190,7 +1189,7 @@ test('if createUpdateFrame will call the simple method when type is not uniform 
   t.true(instance.updateSimpleFrame.calledWith(callback));
 });
 
-test('if createUpdateFrame will coalesce the callback to noop when not a function', (t) => {
+test('if createUpdateFrame will coalesce the callback to utils.noop when not a function', (t) => {
   const instance = {
     props: {
       type: 'foo'
@@ -1216,7 +1215,7 @@ test('if createUpdateFrame will coalesce the callback to noop when not a functio
   t.true(instance.updateVariableFrame.notCalled);
 
   t.true(instance.updateSimpleFrame.calledOnce);
-  t.true(instance.updateSimpleFrame.calledWith(noop));
+  t.true(instance.updateSimpleFrame.calledWith(utils.noop));
 });
 
 test('if createUpdateScrollParent will do nothing if the current scrollParent is the same as the new', (t) => {
@@ -1269,7 +1268,7 @@ test('if createUpdateScrollParent will call addEventListener if there is not cur
 
   const secondAddArgs = instance.scrollParent.addEventListener.secondCall.args;
 
-  t.deepEqual([...secondAddArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
+  t.deepEqual([...secondAddArgs], ['mousewheel', utils.noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   t.true(instance.scrollParent.removeEventListener.notCalled);
 });
@@ -1305,7 +1304,7 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
 
   const secondAddArgs = instance.scrollParent.addEventListener.secondCall.args;
 
-  t.deepEqual([...secondAddArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
+  t.deepEqual([...secondAddArgs], ['mousewheel', utils.noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   t.true(scrollParent.removeEventListener.notCalled);
 
@@ -1317,7 +1316,7 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
 
   const secondRemoveArgs = currentScrollParent.removeEventListener.secondCall.args;
 
-  t.deepEqual([...secondRemoveArgs], ['mousewheel', noop]);
+  t.deepEqual([...secondRemoveArgs], ['mousewheel', utils.noop]);
 });
 
 test('if createUpdateSimpleFrame will not set state if the element end is greater than the end', (t) => {

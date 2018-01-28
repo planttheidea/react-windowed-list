@@ -1,7 +1,6 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import noop from 'lodash/noop';
 import raf from 'raf';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
@@ -411,7 +410,7 @@ test('if createComponentWillUnmount will call removeEventListener on the scroll 
 
   const secondCallArgs = instance.scrollParent.removeEventListener.getCall(1).args;
 
-  t.deepEqual([...secondCallArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
+  t.deepEqual([...secondCallArgs], ['mousewheel', utils.noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 });
 
 test('if getInitialState returns the correct state', (t) => {

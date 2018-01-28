@@ -273,6 +273,18 @@ class Example extends PureComponent {
     });
   };
 
+  setRef = (element) => {
+    this.ref = element;
+  };
+
+  getRefVisibleRange = () => {
+    console.log(this.ref.getVisibleRange());
+  };
+
+  setScroll = () => {
+    this.ref.scrollTo(50);
+  };
+
   render() {
     const {isRendered, isVisible} = this.state;
 
@@ -290,6 +302,9 @@ class Example extends PureComponent {
     return (
       <div className="index">
         <div className="header">WindowedList</div>
+
+        <button onClick={this.getRefVisibleRange}>Log visible range of ref</button>
+        <button onClick={this.setScroll}>Scroll ref to 50</button>
 
         <div className="examples">
           <div className="example axis-y">
@@ -313,7 +328,10 @@ class Example extends PureComponent {
               className="component"
               style={visibiltyToggledStyle}
             >
-              <WindowedList {...hiddenPropsWithVisibility} />
+              <WindowedList
+                {...hiddenPropsWithVisibility}
+                ref={this.setRef}
+              />
             </div>
           </div>
 
