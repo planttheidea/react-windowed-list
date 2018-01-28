@@ -1,7 +1,6 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import noop from 'lodash/noop';
 import raf from 'raf';
 import sinon from 'sinon';
 
@@ -606,13 +605,13 @@ test('if createGetSpaceBefore will return the item in cache if defined', (t) => 
 
   t.true(_.isFunction(getSpaceBefore));
 
-  const fakeResult = 'bar';
+  const fakeResult = 123;
 
   const getCalculatedSpaceBeforeStub = sinon.stub(utils, 'getCalculatedSpaceBefore').returns(fakeResult);
 
   const index = 2;
   const cache = {
-    2: 'foo'
+    2: 100
   };
 
   const result = getSpaceBefore(index, cache);
@@ -841,7 +840,7 @@ test('if createRenderItems will call itemRenderer for the length of size, and ca
   t.true(_.isFunction(itemsArgs[1]));
 });
 
-test('if createScrollAround will call setScroll with the correct value', (t) => {
+test('if createScrollAround will call setScroll with the correct value when the current is at most the min', (t) => {
   const index = 4;
   const scrollOffset = 100;
   const listItemSize = 30;
@@ -864,6 +863,31 @@ test('if createScrollAround will call setScroll with the correct value', (t) => 
 
   t.true(instance.setScroll.calledOnce);
   t.true(instance.setScroll.calledWith(spaceBefore - viewportSize + listItemSize));
+});
+
+test('if createScrollAround will call setScroll with the correct value when the current is greater than the max', (t) => {
+  const index = 4;
+  const scrollOffset = 1000;
+  const listItemSize = 30;
+  const spaceBefore = 650;
+  const viewportSize = 500;
+
+  const instance = {
+    getScrollOffset: sinon.stub().returns(scrollOffset),
+    getSizeOfListItem: sinon.stub().returns(listItemSize),
+    getSpaceBefore: sinon.stub().returns(spaceBefore),
+    getViewportSize: sinon.stub().returns(viewportSize),
+    setScroll: sinon.spy()
+  };
+
+  const scrollAround = methods.createScrollAround(instance);
+
+  t.true(_.isFunction(scrollAround));
+
+  scrollAround(index);
+
+  t.true(instance.setScroll.calledOnce);
+  t.true(instance.setScroll.calledWith(spaceBefore));
 });
 
 test('if createScrollTo will call setScroll if initialIndex is a number', (t) => {
@@ -927,13 +951,13 @@ test('if createSetReconcileFrameAfterUpdate will assign raf when debounceReconci
   t.is(instance.reconcileFrameAfterUpdate, raf);
 });
 
-test('if createSetReconcileFrameAfterUpdate will assign a debounced method when debounceReconciler is a number', (t) => {
+test('if createSetReconcileFrameAfterUpdate will assign a debounced method when debounceReconciler is a number', async (t) => {
   const instance = {
     props: {
       debounceReconciler: 123
     },
     reconcileFrameAfterUpdate: null,
-    updateFrame() {}
+    updateFrame: sinon.spy()
   };
 
   const setReconcileFrameAfterUpdate = methods.createSetReconcileFrameAfterUpdate(instance);
@@ -944,6 +968,16 @@ test('if createSetReconcileFrameAfterUpdate will assign a debounced method when 
 
   t.not(instance.reconcileFrameAfterUpdate, raf);
   t.is(instance.reconcileFrameAfterUpdate.name, 'debounced');
+
+  instance.reconcileFrameAfterUpdate(instance.updateFrame);
+
+  t.true(instance.updateFrame.notCalled);
+
+  await new Promise((resolve) => {
+    setTimeout(resolve, instance.props.debounceReconciler + 50);
+  });
+
+  t.true(instance.updateFrame.calledOnce);
 });
 
 test('if createSetScroll will return immediately if there is no scrollParent', (t) => {
@@ -1190,7 +1224,7 @@ test('if createUpdateFrame will call the simple method when type is not uniform 
   t.true(instance.updateSimpleFrame.calledWith(callback));
 });
 
-test('if createUpdateFrame will coalesce the callback to noop when not a function', (t) => {
+test('if createUpdateFrame will coalesce the callback to utils.noop when not a function', (t) => {
   const instance = {
     props: {
       type: 'foo'
@@ -1216,7 +1250,7 @@ test('if createUpdateFrame will coalesce the callback to noop when not a functio
   t.true(instance.updateVariableFrame.notCalled);
 
   t.true(instance.updateSimpleFrame.calledOnce);
-  t.true(instance.updateSimpleFrame.calledWith(noop));
+  t.true(instance.updateSimpleFrame.calledWith(utils.noop));
 });
 
 test('if createUpdateScrollParent will do nothing if the current scrollParent is the same as the new', (t) => {
@@ -1269,7 +1303,7 @@ test('if createUpdateScrollParent will call addEventListener if there is not cur
 
   const secondAddArgs = instance.scrollParent.addEventListener.secondCall.args;
 
-  t.deepEqual([...secondAddArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
+  t.deepEqual([...secondAddArgs], ['mousewheel', utils.noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   t.true(instance.scrollParent.removeEventListener.notCalled);
 });
@@ -1305,7 +1339,7 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
 
   const secondAddArgs = instance.scrollParent.addEventListener.secondCall.args;
 
-  t.deepEqual([...secondAddArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
+  t.deepEqual([...secondAddArgs], ['mousewheel', utils.noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 
   t.true(scrollParent.removeEventListener.notCalled);
 
@@ -1317,7 +1351,7 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
 
   const secondRemoveArgs = currentScrollParent.removeEventListener.secondCall.args;
 
-  t.deepEqual([...secondRemoveArgs], ['mousewheel', noop]);
+  t.deepEqual([...secondRemoveArgs], ['mousewheel', utils.noop]);
 });
 
 test('if createUpdateSimpleFrame will not set state if the element end is greater than the end', (t) => {
@@ -1588,4 +1622,46 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate and setCacheS
 
   t.true(instance.setStateIfAppropriate.calledOnce);
   t.true(instance.setStateIfAppropriate.calledWith(fromAndSize, callback));
+});
+
+test('if createUpdateVariableFrame will do nothing if there are no items', (t) => {
+  const startAndEnd = {};
+  const instance = {
+    cache: {},
+    items: null,
+    getSizeOfListItem() {},
+    getStartAndEnd: sinon.stub().returns(startAndEnd),
+    props: {
+      axis: 'y'
+    },
+    setStateIfAppropriate: sinon.spy(),
+    state: {
+      from: 5
+    }
+  };
+
+  const updateVariableFrame = methods.createUpdateVariableFrame(instance);
+
+  t.true(_.isFunction(updateVariableFrame));
+
+  const callback = sinon.spy();
+
+  const fromAndSize = {};
+
+  const setCacheSizesStub = sinon.stub(utils, 'setCacheSizes');
+  const getFromAndSizeFromListItemSizeStub = sinon.stub(utils, 'getFromAndSizeFromListItemSize').returns(fromAndSize);
+
+  updateVariableFrame(callback);
+
+  t.true(setCacheSizesStub.notCalled);
+
+  setCacheSizesStub.restore();
+
+  t.true(instance.getStartAndEnd.notCalled);
+
+  t.true(getFromAndSizeFromListItemSizeStub.notCalled);
+
+  getFromAndSizeFromListItemSizeStub.restore();
+
+  t.true(instance.setStateIfAppropriate.notCalled);
 });

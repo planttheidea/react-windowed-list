@@ -1,11 +1,11 @@
-// external dependencies
-import noop from 'lodash/noop';
+// utils
+import {noop} from './utils';
 
 /**
  * @constant {boolean} ADD_EVENT_LISTENER_OPTIONS
  * @default
  */
-export const ADD_EVENT_LISTENER_OPTIONS = !(() => {
+export const ADD_EVENT_LISTENER_OPTIONS = (() => {
   if (typeof window === 'undefined') {
     return false;
   }
@@ -26,10 +26,10 @@ export const ADD_EVENT_LISTENER_OPTIONS = !(() => {
 
   return hasSupport;
 })()
-  ? false
-  : {
+  ? {
     passive: true
-  };
+  }
+  : false;
 
 /**
  * @constant {Object} CLIENT_SIZE_KEYS
@@ -54,11 +54,6 @@ export const INNER_SIZE_KEYS = {
   x: 'innerWidth',
   y: 'innerHeight'
 };
-
-/**
- * @constant {number} MAX_CACHE_SIZE
- */
-export const MAX_CACHE_SIZE = 250;
 
 /**
  * @constant {Object} OFFSET_SIZE_KEYS
@@ -179,13 +174,6 @@ export const DEFAULT_CONTAINER_STYLE = {
 };
 
 /**
- * @constant {Array<string>} REMEASURE_OPTIONS
+ * @constant {number} UNSTABLE_TIMEOUT
  */
-export const REMEASURE_OPTIONS = {
-  inheritedMethods: ['getVisibleRange', 'scrollAround', 'scrollTo']
-};
-
-/**
- * @constant {Array<string>} REMEASURE_PROPERTIES
- */
-export const REMEASURE_PROPERTIES = ['height', 'width'];
+export const UNSTABLE_TIMEOUT = 250;

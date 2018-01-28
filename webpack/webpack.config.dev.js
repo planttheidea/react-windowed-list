@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const defaultConfig = require('./webpack.config');
 
 const PORT = 3000;
+const ROOT = path.resolve(__dirname, '..');
 
 module.exports = Object.assign({}, defaultConfig, {
   cache: true,
@@ -27,7 +28,7 @@ module.exports = Object.assign({}, defaultConfig, {
     }
   },
 
-  entry: [path.resolve(__dirname, 'DEV_ONLY', 'index.js')],
+  entry: [path.resolve(ROOT, 'DEV_ONLY', 'index.js')],
 
   externals: undefined,
 
@@ -38,7 +39,7 @@ module.exports = Object.assign({}, defaultConfig, {
       }
 
       return Object.assign({}, rule, {
-        include: rule.include.concat([path.resolve(__dirname, 'DEV_ONLY')])
+        include: rule.include.concat([path.resolve(ROOT, 'DEV_ONLY')])
       });
     })
   }),

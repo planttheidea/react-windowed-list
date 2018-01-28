@@ -6,8 +6,8 @@ This component was originally forked from [ReactList](https://github.com/orgsync
 
 If you are migrating from `ReactList`, the only prop that has changed is `itemsRenderer`, which has been renamed to `containerRenderer`. The list itself now uses `PureComponent` instead of `Component` for optimized performance, so if you are relying on mutated props causing render updates, you may be impacted. The simple solution to that is to create new objects instead of mutating the current ones.
 
-### Table of contents
-* [Installation](#installation)
+## Table of contents
+
 * [Usage](#usage)
 * [Available props](#available-props)
   * [axis](#axis)
@@ -32,18 +32,10 @@ If you are migrating from `ReactList`, the only prop that has changed is `itemsR
 * [FAQ](#faq)
 * [Development](#development)
 
-### Installation
-
-```
-$ npm i react-windowed-list --save
-```
-
-### Usage
+## Usage
 
 ```javascript
-import React, {
-  PureComponent
-} from 'react';
+import React, {PureComponent} from 'react';
 import WindowedList from 'react-windowed-list';
 
 const CONTAINER_STYLE = {
@@ -53,30 +45,18 @@ const CONTAINER_STYLE = {
 
 class MyComponent extends PureComponent {
   renderItem = (index, key) => {
-    return (
-      <div key={key}>
-        I am rendering stuff for the item at index {index}!
-      </div>
-    );
+    return <div key={key}>I am rendering stuff for the item at index {index}!</div>;
   };
 
   render() {
-    const {
-      items
-    } = this.props;
+    const {items} = this.props;
 
     return (
       <div>
-        <h1>
-          List example
-        </h1>
+        <h1>List example</h1>
 
         <div style={CONTAINER_STYLE}>
-          <WindowedList
-            itemRenderer={this.renderItem}
-            length={items.length}
-            type="uniform"
-          />
+          <WindowedList itemRenderer={this.renderItem} length={items.length} type="uniform" />
         </div>
       </div>
     );
@@ -85,16 +65,16 @@ class MyComponent extends PureComponent {
 ```
 
 The version you install from `npm` includes both the library as you would use in a bundler (such as `webpack`) as well as the compiled file you would use in a `<script>` tag or with AMD bundlers (such as `RequireJS`). If using the `dist` file, be aware that the following dependencies are considered externals, meaning they are required to exist on the `window` before the library can be included:
-* ['moize'](https://www.npmjs.com/package/moize)
+
 * [`react`](https://www.npmjs.com/package/react)
 * [`react-dom`](https://www.npmjs.com/package/react-dom)
 * [`remeasure`](https://www.npmjs.com/package/remeasure)
 
-### Available props
+## Available props
 
 #### axis
 
-*defaults to `y`*
+_defaults to `y`_
 
 The axis that this list will scroll on.
 
@@ -114,9 +94,7 @@ renderContainer = (items, ref) => {
         <th>Item 3</th>
       </thead>
 
-      <tbody>
-        {items}
-      </tbody>
+      <tbody>{items}</tbody>
     </table>
   );
 };
@@ -146,55 +124,61 @@ A function that receives `index` and `key` and returns the content to be rendere
 
 ```javascript
 renderItem = (index, key) => {
-  const {
-    items
-  } = this.props;
+  const {items} = this.props;
 
-  return (
-    <div key={key}>
-      {items[index]}
-    </div>
-  );
+  return <div key={key}>{items[index]}</div>;
 };
 ```
 
+It is also possible to use your own custom `key` property
+
+```javascript
+renderItem = (index) => {
+  const {items} = this.props;
+
+  return <div key={items[index].id}>{items[index]}</div>;
+};
+```
+
+`key` is required, so please ensure the value you pass is not empty and is unique.
+
 #### length
 
-*defaults to `0`*
+_defaults to `0`_
 
 The number of items in the list.
 
 #### minSize
 
-*defaults to `1`*
+_defaults to `1`_
 
 The minimum number of items to render in the list at any given time.
 
 #### pageSize
 
-*defaults to `10`*
+_defaults to `10`_
 
 The number of items to batch up for new renders.
 
 #### scrollParentGetter
 
-*defaults to finding the nearest scrollable container*
+_defaults to finding the nearest scrollable container_
 
-A function that returns a DOM element or `window` that will be treated as the scrolling container for the list. In most cases, this does not need to be set for the list to work as intended. It is exposed as a prop for more complicated uses where the scrolling container may not initially have an overflow property that enables scrolling.
+A function that returns a DOM element or `window` that will be treated as the scrolling container for the list. In most cases, this does not need to be set for the list to work as intended. It is exposed as a prop for more complicated uses where the scrolling container may not initially have an overflow property that enables scrolling, or if you want to specify a container higher up in the DOM tree.
 
 #### threshold
 
-*defaults to `100`*
+_defaults to `100`_
 
 The number of pixels to buffer at the beginning and end of the rendered list items.
 
 #### type
 
-*one of: `simple`, `variable`, `uniform`, defaults to `simple`*
+_one of: `simple`, `variable`, `uniform`, defaults to `simple`_
 
 * `simple`
   * Does not cache item sizes or remove items that are above the viewport
-  * This type is sufficient for many cases when the only requrement is incremental rendering when scrolling
+  * This type can be sufficient for many cases when the only requirement is incremental rendering when scrolling
 * `variable`
   * Caches item sizes as they are rendered so that the items that are above the viewport can be removed as the list is scrolled
   * This type is preferred when the sizes of the items in the list vary
@@ -204,11 +188,11 @@ The number of pixels to buffer at the beginning and end of the rendered list ite
   * This type is preferred when you can guarantee all of your elements will be the same size, which allows the length of the entire list to be calculated beforehand
   * Multiple items per row are also supported with this type
 
-**NOTE**: If you have set the `type` to be `uniform` and the sizes of the items vary, it causes a continuous re-render until the list gives up. If you received a message about WindowedList reaching an unstable state, this is a common cause.
+**NOTE**: If you have set the `type` to be `uniform` and the sizes of the items vary, it causes continuous re-calculation of sizes until the list gives up. If you received a message about WindowedList reaching an unstable state, this is likely the cause.
 
 #### usePosition
 
-*defaults to `false`*
+_defaults to `false`_
 
 Set to `true` if you choose to not use `transform` CSS property, instead opting for one based on `position`. This is a rare use case, but an example is if you have nested elements that have `position: fixed` and transform is disturbing their window-based position.
 
@@ -216,9 +200,9 @@ Set to `true` if you choose to not use `transform` CSS property, instead opting 
 
 #### useTranslate3d
 
-Set to `true` if you want to use `translate3d` instead of the default `translate` value for the `transform` property. This can be helpful on mobile devices, but is supported by fewer browsers.
+Set to `true` if you want to use `translate3d` instead of the default `translate` value for the `transform` property. This can be more performant (especially on mobile devices), but is supported by fewer browsers.
 
-### Methods
+## Methods
 
 #### getVisibleRange
 
@@ -324,29 +308,31 @@ class MyComponent extends PureComponent {
 }
 ```
 
-### FAQ
+## FAQ
 
-* What is "WindowedList failed to reach a stable state."?
+* What is _"WindowedList failed to reach a stable state."_?
   * This happens when specifying the `uniform` type when the elements are not actually uniform in size. The component attempts to draw only the minimum necessary elements at one time and that minimum element calculation is based off of the first element in the list. When the first element does not match the other elements, the calculation will be wrong and the component will never be able to fully resolve the ideal necessary elements.
 * Why doesn't it work with margins?
-  * The calculations to figure out element positioning and size get significantly more complicated with margins, so they are not supported. Use a transparent border, padding, or an element with nested elements to achieve the desired spacing.
+  * The calculations to figure out element positioning and size get significantly more complicated with margins, so they are not supported. Use a transparent `border`, `padding`, or an element with nested elements to achieve the desired spacing.
 * Why is there no `onScroll` event handler?
   * If you need an `onScroll` handler, just add the handler to the container element wrapping the `WindowedList` component.
 * Why does `WindowList` render all the items when the container is hidden by CSS?
   * The size of each item is calculated to be `0` as it is hidden, so it tries to fill the container infinitely (or until the list is complete). If you want to prevent this behavior, set `isHidden` to `true` when the container is hidden.
 
-### Development
+## Development
 
-  Standard stuff, clone the repo and `npm i` to get the dependencies. npm scripts available:
-  * `build` => builds the distributed JS with `NODE_ENV=development` and with sourcemaps
-  * `build:minified` => builds the distributed JS with `NODE_ENV=production` and minified
-  * `dev` => runs the webpack dev server for the playground
-  * `dist` => runs the `build` and `build:minified`
-  * `lint` => runs ESLint against files in the `src` folder
-  * `lint:fix` => runs ESLint against files in the `src` folder and fixes any fixable issues discovered
-  * `prepublish` => if in publish, runs `prepublish:compile`
-  * `prepublish:compile` => runs the `lint`, `test`, `transpile`, `dist` scripts
-  * `test` => run `ava` with NODE_ENV=test
-  * `test:coverage` => run `ava` with `nyc` to calculate code coverage
-  * `test:watch` => runs `test` but with persistent watcher
-  * `transpile` => runs Babel against files in `src` to files in `lib`
+Standard stuff, clone the repo and `npm i` to get the dependencies. npm scripts available:
+
+* `build` => builds the distributed JS with `NODE_ENV=development` and with sourcemaps
+* `build:minified` => builds the distributed JS with `NODE_ENV=production` and minified
+* `dev` => runs the webpack dev server for the playground
+* `dist` => runs the `build` and `build:minified`
+* `lint` => runs ESLint against files in the `src` folder
+* `lint:fix` => runs ESLint against files in the `src` folder and fixes any fixable issues discovered
+* `prepublish` => if in publish, runs `prepublish:compile`
+* `prepublish:compile` => runs the `lint`, `test`, `transpile:lib`, `transpile:es`, and `dist` scripts
+* `test` => run `ava` with NODE_ENV=test
+* `test:coverage` => run `ava` with `nyc` to calculate code coverage
+* `test:watch` => runs `test` but with persistent watcher
+* `transpile:lib` => run babel against all files in `src` to create files in `lib`
+* `transpile:es` => run babel against all files in `src` to create files in `es`, preserving ES2015 modules (for

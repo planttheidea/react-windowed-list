@@ -6,6 +6,8 @@ const OptimizeJsPlugin = require('optimize-js-plugin');
 const defaultConfig = require('./webpack.config');
 
 module.exports = Object.assign({}, defaultConfig, {
+  bail: true,
+
   devtool: undefined,
 
   output: Object.assign({}, defaultConfig.output, {

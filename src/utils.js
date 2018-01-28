@@ -1,8 +1,5 @@
 // external dependencies
-import isFunction from 'lodash/isFunction';
-import isNAN from 'lodash/isNaN';
-import isUndefined from 'lodash/isUndefined';
-import moize from 'moize';
+import memoize from 'micro-memoize';
 import React from 'react';
 
 // constants
@@ -11,7 +8,6 @@ import {
   CLIENT_SIZE_KEYS,
   DEFAULT_CONTAINER_STYLE,
   INNER_SIZE_KEYS,
-  MAX_CACHE_SIZE,
   OFFSET_START_KEYS,
   OFFSET_SIZE_KEYS,
   SCROLL_SIZE_KEYS,
@@ -19,6 +15,53 @@ import {
   VALID_AXES,
   VALID_TYPES
 } from './constants';
+
+/**
+ * @function isFunction
+ *
+ * @description
+ * is the object passed a function
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is teh object a function
+ */
+export const isFunction = (object) => {
+  return typeof object === 'function';
+};
+
+/**
+ * @function isNAN
+ *
+ * @description
+ * is the object passed a NaN
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is teh object a NaN
+ */
+export const isNAN = (object) => {
+  return object !== object;
+};
+
+/**
+ * @function isNumber
+ *
+ * @description
+ * is the object passed a number
+ *
+ * @param {*} object the object to test
+ * @returns {boolean} is teh object a number
+ */
+export const isNumber = (object) => {
+  return typeof object === 'number';
+};
+
+/**
+ * @function noop
+ *
+ * @description
+ * a no-op method
+ */
+export const noop = () => {};
 
 /**
  * @function areStateValuesEqual
@@ -33,15 +76,14 @@ import {
 export const areStateValuesEqual = (currentState, nextPossibleState) => {
   const nextStateKeys = Object.keys(nextPossibleState);
 
-  let index = 0,
-      key = nextStateKeys[0];
+  let key;
 
-  while (index < nextStateKeys.length) {
+  for (let index = 0; index < nextStateKeys.length; index++) {
+    key = nextStateKeys[index];
+
     if (currentState[key] !== nextPossibleState[key]) {
       return false;
     }
-
-    key = nextStateKeys[++index];
   }
 
   return true;
@@ -61,7 +103,7 @@ export const coalesceToZero = (value) => {
 };
 
 /**
- * @function defaultItemRenderer
+ * @function DefaultItemRenderer
  *
  * @description
  * the default method to create the item element
@@ -70,12 +112,12 @@ export const coalesceToZero = (value) => {
  * @param {number} key the key to provide to the item
  * @returns {ReactElement} the generated element
  */
-export const defaultItemRenderer = (index, key) => {
+export const DefaultItemRenderer = (index, key) => {
   return <div key={key}>{index}</div>;
 };
 
 /**
- * @function defaultContainerRenderer
+ * @function DefaultContainerRenderer
  *
  * @description
  * the default method to create the list container
@@ -84,7 +126,7 @@ export const defaultItemRenderer = (index, key) => {
  * @param {function} ref the ref to provide to the list container
  * @returns {ReactElement} the generated element
  */
-export const defaultContainerRenderer = (items, ref) => {
+export const DefaultContainerRenderer = (items, ref) => {
   return <div ref={ref}>{items}</div>;
 };
 
@@ -145,25 +187,22 @@ export const getCalculatedElementEnd = (elements, {axis}) => {
 export const getCalculatedSpaceBefore = (cache, length, getSizeOfListItem) => {
   let from = length;
 
-  while (from > 0 && isUndefined(cache[from])) {
+  while (from > 0 && !isNumber(cache[from])) {
     --from;
   }
 
   let space = coalesceToZero(cache[from]),
-      index = from,
       itemSize;
 
-  while (index < length) {
+  for (let index = from; index < length; index++) {
     cache[index] = space;
     itemSize = getSizeOfListItem(index);
 
-    if (isUndefined(itemSize)) {
+    if (!isNumber(itemSize)) {
       break;
     }
 
     space += itemSize;
-
-    index++;
   }
 
   return space;
@@ -204,9 +243,7 @@ export const getCalculatedItemSizeAndItemsPerRow = (elements, axis, currentItemS
       item = elements[itemsPerRow];
 
   while (item && item[startKey] === firstStart) {
-    ++itemsPerRow;
-
-    item = elements[itemsPerRow];
+    item = elements[++itemsPerRow];
   }
 
   return {
@@ -225,23 +262,29 @@ export const getCalculatedItemSizeAndItemsPerRow = (elements, axis, currentItemS
  * @param {number} size the total size of the axis property to apply
  * @returns {Object} the style for the container
  */
-export const getContainerStyle = moize.maxSize(MAX_CACHE_SIZE)((axis, size) => {
-  if (!size) {
-    return DEFAULT_CONTAINER_STYLE;
+export const getContainerStyle = memoize(
+  (axis, size) => {
+    if (!size) {
+      return DEFAULT_CONTAINER_STYLE;
+    }
+
+    const axisKey = SIZE_KEYS[axis];
+
+    return axis !== VALID_AXES.X
+      ? {
+        ...DEFAULT_CONTAINER_STYLE,
+        [axisKey]: size
+      }
+      : {
+        ...DEFAULT_CONTAINER_STYLE,
+        [axisKey]: size,
+        overflowX: 'hidden'
+      };
+  },
+  {
+    maxSize: 250
   }
-
-  const style = {
-    ...DEFAULT_CONTAINER_STYLE,
-    [SIZE_KEYS[axis]]: size
-  };
-
-  return axis !== VALID_AXES.X
-    ? style
-    : {
-      ...style,
-      overflowX: 'hidden'
-    };
-});
+);
 
 /**
  * @function getFromAndSize
@@ -305,14 +348,14 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
   const maxFrom = length - 1;
 
   let space = 0,
-      from = -1,
+      from = 0,
       size = -1,
       itemSize;
 
-  while (++from < maxFrom) {
+  for (; from < maxFrom; from++) {
     itemSize = getSizeOfListItem(from);
 
-    if (isUndefined(itemSize) || space + itemSize > start) {
+    if (!isNumber(itemSize) || space + itemSize > start) {
       /**
        * @NOTE
        * if an alternative key is used, it causes jitter when the first item is removed from the DOM,
@@ -333,7 +376,7 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
   while (++size < maxSize && space < end) {
     itemSize = getSizeOfListItem(from + size);
 
-    if (isUndefined(itemSize)) {
+    if (!isNumber(itemSize)) {
       size = Math.min(size + pageSize, maxSize);
 
       break;
@@ -342,12 +385,12 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
     space += itemSize;
   }
 
-  return !space
-    ? currentState
-    : {
+  return space
+    ? {
       from,
       size
-    };
+    }
+    : currentState;
 };
 
 /**
@@ -411,6 +454,10 @@ export const getScrollSize = (element, axis) => {
  * @returns {number} the viewport size of the element
  */
 export const getViewportSize = (element, axis) => {
+  if (!element) {
+    return 0;
+  }
+
   return element === window ? window[INNER_SIZE_KEYS[axis]] : element[CLIENT_SIZE_KEYS[axis]];
 };
 
@@ -443,9 +490,7 @@ export const setCacheSizes = (from, element, axis, cache) => {
   const itemElements = element.children;
   const sizeKey = OFFSET_SIZE_KEYS[axis];
 
-  let index = -1;
-
-  while (++index < itemElements.length) {
+  for (let index = 0; index < itemElements.length; index++) {
     cache[from + index] = itemElements[index][sizeKey];
   }
 };

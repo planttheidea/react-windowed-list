@@ -1,13 +1,12 @@
 // external dependencies
-import noop from 'lodash/noop';
 import raf from 'raf';
 import {findDOMNode} from 'react-dom';
 
 // constants
-import {MAX_SYNC_UPDATES, ADD_EVENT_LISTENER_OPTIONS, UNSTABLE_MESSAGE} from './constants';
+import {MAX_SYNC_UPDATES, ADD_EVENT_LISTENER_OPTIONS, UNSTABLE_MESSAGE, UNSTABLE_TIMEOUT} from './constants';
 
 // utils
-import {getFromAndSize} from './utils';
+import {getFromAndSize, noop} from './utils';
 
 /**
  * @function getInitialState
@@ -53,14 +52,19 @@ export const createComponentDidUpdate = (instance) => {
    * @returns {void}
    */
   return () => {
-    if (instance.unstable) {
+    if (instance.unstableTimeoutId || ++instance.updateCounter > MAX_SYNC_UPDATES) {
+      clearTimeout(instance.unstableTimeoutId);
+
+      if (!instance.unstableTimeoutId) {
+        console.error(UNSTABLE_MESSAGE); // eslint-disable-line no-console
+      }
+
+      instance.unstableTimeoutId = setTimeout(() => {
+        instance.unstableTimeoutId = null;
+        instance.updateCounter = 0;
+      }, UNSTABLE_TIMEOUT);
+
       return;
-    }
-
-    if (++instance.updateCounter > MAX_SYNC_UPDATES) {
-      instance.unstable = true;
-
-      return console.error(UNSTABLE_MESSAGE); // eslint-disable-line no-console
     }
 
     if (!instance.updateCounterTimeoutId) {

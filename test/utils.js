@@ -9,6 +9,75 @@ import sinon from 'sinon';
 import * as utils from 'src/utils';
 import * as constants from 'src/constants';
 
+test('if isFunction will return correctly when a function and when not a function', (t) => {
+  const array = [];
+  const bool = true;
+  const func = () => {};
+  const nan = NaN;
+  const number = 123;
+  const object = {};
+  const regexp = /regexp/;
+  const string = 'string';
+
+  t.false(utils.isFunction(array));
+  t.false(utils.isFunction(bool));
+  t.false(utils.isFunction(nan));
+  t.false(utils.isFunction(number));
+  t.false(utils.isFunction(object));
+  t.false(utils.isFunction(regexp));
+  t.false(utils.isFunction(string));
+
+  t.true(utils.isFunction(func));
+});
+
+test('if isNAN will return correctly when a NaN and when not a NaN', (t) => {
+  const array = [];
+  const bool = true;
+  const func = () => {};
+  const nan = NaN;
+  const number = 123;
+  const object = {};
+  const regexp = /regexp/;
+  const string = 'string';
+
+  t.false(utils.isNAN(array));
+  t.false(utils.isNAN(bool));
+  t.false(utils.isNAN(func));
+  t.false(utils.isNAN(number));
+  t.false(utils.isNAN(object));
+  t.false(utils.isNAN(regexp));
+  t.false(utils.isNAN(string));
+
+  t.true(utils.isNAN(nan));
+});
+
+test('if isNumber will return correctly when a number and when not a number', (t) => {
+  const array = [];
+  const bool = true;
+  const func = () => {};
+  const nan = NaN;
+  const number = 123;
+  const object = {};
+  const regexp = /regexp/;
+  const string = 'string';
+
+  t.false(utils.isNumber(array));
+  t.false(utils.isNumber(bool));
+  t.false(utils.isNumber(func));
+  t.false(utils.isNumber(object));
+  t.false(utils.isNumber(regexp));
+  t.false(utils.isNumber(string));
+
+  t.true(utils.isNumber(nan));
+  t.true(utils.isNumber(number));
+});
+
+test('that noop returns nothing', (t) => {
+  const result = utils.noop('foo', 'bar', 'baz');
+
+  t.is(result, undefined);
+});
+
 test('if areStateValuesEqual will return true when the values from the nextPossibleState are equal to those in the currentState', (t) => {
   const currentState = {
     foo: 'bar',
@@ -77,21 +146,21 @@ test('if coalesceToZero returns the value if truthy, else zero', (t) => {
   t.is(utils.coalesceToZero(undef), 0);
 });
 
-test('if defaultItemRenderer will render the item', (t) => {
+test('if DefaultItemRenderer will render the item', (t) => {
   const index = 2;
   const key = 'foo';
 
-  const element = utils.defaultItemRenderer(index, key);
+  const element = utils.DefaultItemRenderer(index, key);
   const wrapper = shallow(element);
 
   t.snapshot(toJson(wrapper));
 });
 
-test('if defaultContainerRenderer will render the item', (t) => {
+test('if DefaultContainerRenderer will render the item', (t) => {
   const items = ['foo', 'bar', 'baz'];
   const ref = sinon.spy();
 
-  const element = utils.defaultContainerRenderer(items, ref);
+  const element = utils.DefaultContainerRenderer(items, ref);
   const wrapper = shallow(element);
 
   t.snapshot(toJson(wrapper));
@@ -462,6 +531,30 @@ test('if getFromAndSizeFromListItemSize will return currentState if size calcula
   t.is(result, state);
 });
 
+test('if getFromAndSizeFromListItemSize will return the correct size if itemSize is not a number', (t) => {
+  const startAndend = {
+    end: 150,
+    start: 50
+  };
+  const props = {
+    length: 1000,
+    pageSize: 10
+  };
+  const state = {
+    from: 0,
+    size: 10
+  };
+  const listItemSize = undefined;
+  const getSizeOfListItem = sinon.stub().returns(listItemSize);
+
+  const result = utils.getFromAndSizeFromListItemSize(startAndend, props, getSizeOfListItem, state);
+
+  t.deepEqual(result, {
+    from: state.from,
+    size: Math.min(state.size, props.length - state.from)
+  });
+});
+
 test('if getListContainerStyle will return the correct style object when usePosition is true and the axis is x', (t) => {
   const axis = 'x';
   const usePosition = true;
@@ -581,6 +674,15 @@ test('if getScrollSize will get the scroll size of the element if the element is
   const result = utils.getScrollSize(element, axis);
 
   t.is(result, element[key]);
+});
+
+test('if getViewportSize will return 0 if element does not exist', (t) => {
+  const axis = 'y';
+  const element = null;
+
+  const result = utils.getViewportSize(element, axis);
+
+  t.is(result, 0);
 });
 
 test('if getViewportSize will get the window value for the right key if the element is the window', (t) => {

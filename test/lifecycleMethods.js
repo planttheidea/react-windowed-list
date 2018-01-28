@@ -1,7 +1,6 @@
 // test
 import test from 'ava';
 import _ from 'lodash';
-import noop from 'lodash/noop';
 import raf from 'raf';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
@@ -84,7 +83,7 @@ test('if createComponentDidUpdate will not fire anything if unstable', async (t)
     props: {
       isHidden: false
     },
-    unstable: true,
+    unstableTimeoutId: 123,
     updateCounter: initialUpdateCounter,
     updateCounterTimeoutId: initialUpdateCounterTimeoutId,
     updateFrame: sinon.spy()
@@ -94,6 +93,8 @@ test('if createComponentDidUpdate will not fire anything if unstable', async (t)
 
   t.true(_.isFunction(componentDidUpdate));
 
+  const clearTimeoutStub = sinon.stub(global, 'clearTimeout');
+  const setTimeoutStub = sinon.stub(global, 'setTimeout').returns(234);
   const consoleErrorStub = sinon.stub(console, 'error');
 
   componentDidUpdate();
@@ -102,11 +103,22 @@ test('if createComponentDidUpdate will not fire anything if unstable', async (t)
 
   consoleErrorStub.restore();
 
-  await waitForRaf();
+  t.true(clearTimeoutStub.calledOnce);
+  t.true(clearTimeoutStub.calledWith(123));
 
-  t.true(instance.unstable);
-  t.is(instance.updateCounter, initialUpdateCounter);
-  t.is(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
+  clearTimeoutStub.restore();
+
+  t.true(setTimeoutStub.calledOnce);
+  const [fn, timeoutValue] = setTimeoutStub.args[0];
+
+  fn();
+
+  t.is(instance.unstableTimeoutId, null);
+  t.is(instance.updateCounter, 0);
+
+  t.is(timeoutValue, constants.UNSTABLE_TIMEOUT);
+
+  setTimeoutStub.restore();
 
   await waitForRaf();
 
@@ -121,7 +133,7 @@ test('if createComponentDidUpdate will set unstable to true and fire the console
     props: {
       isHidden: false
     },
-    unstable: false,
+    unstableTimeoutId: null,
     updateCounter: initialUpdateCounter,
     updateCounterTimeoutId: initialUpdateCounterTimeoutId,
     updateFrame: sinon.spy()
@@ -131,6 +143,8 @@ test('if createComponentDidUpdate will set unstable to true and fire the console
 
   t.true(_.isFunction(componentDidUpdate));
 
+  const clearTimeoutStub = sinon.stub(global, 'clearTimeout');
+  const setTimeoutStub = sinon.stub(global, 'setTimeout').returns(234);
   const consoleErrorStub = sinon.stub(console, 'error');
 
   componentDidUpdate();
@@ -140,11 +154,22 @@ test('if createComponentDidUpdate will set unstable to true and fire the console
 
   consoleErrorStub.restore();
 
-  await waitForRaf();
+  t.true(clearTimeoutStub.calledOnce);
+  t.true(clearTimeoutStub.calledWith(null));
 
-  t.true(instance.unstable);
-  t.is(instance.updateCounter, initialUpdateCounter + 1);
-  t.is(instance.updateCounterTimeoutId, initialUpdateCounterTimeoutId);
+  clearTimeoutStub.restore();
+
+  t.true(setTimeoutStub.calledOnce);
+  const [fn, timeoutValue] = setTimeoutStub.args[0];
+
+  fn();
+
+  t.is(instance.unstableTimeoutId, null);
+  t.is(instance.updateCounter, 0);
+
+  t.is(timeoutValue, constants.UNSTABLE_TIMEOUT);
+
+  setTimeoutStub.restore();
 
   await waitForRaf();
 
@@ -411,7 +436,7 @@ test('if createComponentWillUnmount will call removeEventListener on the scroll 
 
   const secondCallArgs = instance.scrollParent.removeEventListener.getCall(1).args;
 
-  t.deepEqual([...secondCallArgs], ['mousewheel', noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
+  t.deepEqual([...secondCallArgs], ['mousewheel', utils.noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
 });
 
 test('if getInitialState returns the correct state', (t) => {
