@@ -11,6 +11,8 @@ If you are migrating from `ReactList`, the following props have changed names:
 * `itemSizeGetter` => `getItemSize`
 * `scrollParentGetter` => `getScrollParent`
 
+## Table of contents
+
 * [Usage](#usage)
 * [Available props](#available-props)
   * [axis](#axis)
