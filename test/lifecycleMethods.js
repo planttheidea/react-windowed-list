@@ -1,6 +1,5 @@
 // test
 import test from 'ava';
-import _ from 'lodash';
 import raf from 'raf';
 import ReactDOM from 'react-dom';
 import sinon from 'sinon';
@@ -9,14 +8,41 @@ import sinon from 'sinon';
 import * as methods from 'src/lifecycleMethods';
 import * as constants from 'src/constants';
 import * as utils from 'src/utils';
+import {getDerivedStateFromProps} from '../src/lifecycleMethods';
 
-const waitForRaf = () => {
-  return new Promise((resolve) => {
-    raf(resolve);
+const waitForRaf = () => new Promise(raf);
+
+test('if onConstruct will set the state with the right object', (t) => {
+  const instance = {
+    props: {
+      initialIndex: 0
+    },
+    setReconcileFrameAfterUpdate: sinon.spy(),
+    state: {}
+  };
+
+  const fromAndSize = {
+    from: 'foo',
+    size: 'bar'
+  };
+
+  const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
+
+  methods.onConstruct(instance);
+
+  t.true(getFromAndSizeStub.calledOnce);
+  t.true(getFromAndSizeStub.calledWith(instance.props.initialIndex, 0, 1, instance.props));
+
+  getFromAndSizeStub.restore();
+
+  t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
+  t.deepEqual(instance.state, {
+    ...fromAndSize,
+    itemsPerRow: 1
   });
-};
+});
 
-test('if createComponentDidMount will create a method that will fire updateFrame on the next animationFrame', async (t) => {
+test('if componentDidMount will fire updateFrame on the next animationFrame', async (t) => {
   const instance = {
     props: {
       isHidden: false
@@ -26,11 +52,7 @@ test('if createComponentDidMount will create a method that will fire updateFrame
   };
   const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns({});
 
-  const componentDidMount = methods.createComponentDidMount(instance);
-
-  t.true(_.isFunction(componentDidMount));
-
-  componentDidMount();
+  methods.componentDidMount(instance);
 
   t.true(findDOMNodeStub.calledOnce);
   t.true(findDOMNodeStub.calledWith(instance));
@@ -46,7 +68,7 @@ test('if createComponentDidMount will create a method that will fire updateFrame
   t.true(instance.updateFrame.calledWith(instance.scrollTo));
 });
 
-test('if createComponentDidMount will not fire updateFrame if hidden', async (t) => {
+test('if componentDidMount will not fire updateFrame if hidden', async (t) => {
   const instance = {
     props: {
       isHidden: true
@@ -56,11 +78,7 @@ test('if createComponentDidMount will not fire updateFrame if hidden', async (t)
   };
   const findDOMNodeStub = sinon.stub(ReactDOM, 'findDOMNode').returns({});
 
-  const componentDidMount = methods.createComponentDidMount(instance);
-
-  t.true(_.isFunction(componentDidMount));
-
-  componentDidMount();
+  methods.componentDidMount(instance);
 
   t.true(findDOMNodeStub.calledOnce);
   t.true(findDOMNodeStub.calledWith(instance));
@@ -75,7 +93,176 @@ test('if createComponentDidMount will not fire updateFrame if hidden', async (t)
   t.true(instance.updateFrame.notCalled);
 });
 
-test('if createComponentDidUpdate will not fire anything if unstable', async (t) => {
+test('if getDerivedStateFromProps will return the next state if from has changed', (t) => {
+  const nextProps = {
+    isLazy: false,
+    length: 100,
+    minSize: 1,
+    pageSize: 10,
+    type: 'variable'
+  };
+  const prevState = {
+    from: nextProps.length + 1,
+    itemsPerRow: 1,
+    size: 10
+  };
+
+  const result = getDerivedStateFromProps(nextProps, prevState);
+
+  t.deepEqual(result, {
+    from: 90,
+    size: 10
+  });
+});
+
+test('if getDerivedStateFromProps will return null if nothing has changed', (t) => {
+  const nextProps = {
+    isLazy: false,
+    length: 100,
+    minSize: 1,
+    pageSize: 10,
+    type: 'variable'
+  };
+  const prevState = {
+    from: 0,
+    itemsPerRow: 1,
+    size: 10
+  };
+
+  const result = getDerivedStateFromProps(nextProps, prevState);
+
+  t.is(result, null);
+});
+
+test('if getDerivedStateFromProps will return the next state if size has changed', (t) => {
+  const nextProps = {
+    isLazy: false,
+    length: 100,
+    minSize: 1,
+    pageSize: 10,
+    type: 'variable'
+  };
+  const prevState = {
+    from: 0,
+    itemsPerRow: 1,
+    size: 5
+  };
+
+  const result = getDerivedStateFromProps(nextProps, prevState);
+
+  t.deepEqual(result, {
+    from: 0,
+    size: 10
+  });
+});
+
+test('if componentWillReceiveProps will fire setStateIfAppropriate with the result from getFromAndSize', (t) => {
+  const instance = {
+    props: {},
+    setStateIfAppropriate: sinon.spy(),
+    state: {
+      from: 'foo',
+      itemsPerRow: 'bar',
+      size: 'baz'
+    }
+  };
+
+  const fromAndSize = {
+    from: 'foo',
+    size: 'bar'
+  };
+
+  const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
+
+  const nextProps = {
+    foo: 'bar'
+  };
+
+  methods.componentWillReceiveProps(instance, [nextProps]);
+
+  t.true(getFromAndSizeStub.calledOnce);
+  t.true(
+    getFromAndSizeStub.calledWith(instance.state.from, instance.state.size, instance.state.itemsPerRow, nextProps)
+  );
+
+  getFromAndSizeStub.restore();
+
+  t.true(instance.setStateIfAppropriate.calledOnce);
+  t.true(instance.setStateIfAppropriate.calledWith(fromAndSize));
+});
+
+test('if componentWillReceiveProps will fire setReconcileFrameAfterUpdate if debounceReconciler has changed', (t) => {
+  const instance = {
+    props: {},
+    setReconcileFrameAfterUpdate: sinon.spy(),
+    setStateIfAppropriate: sinon.spy(),
+    state: {
+      from: 'foo',
+      itemsPerRow: 'bar',
+      size: 'baz'
+    }
+  };
+
+  const fromAndSize = {
+    from: 'foo',
+    size: 'baz'
+  };
+
+  const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
+
+  const nextProps = {
+    debounceReconciler: 123
+  };
+
+  methods.componentWillReceiveProps(instance, [nextProps]);
+
+  t.true(getFromAndSizeStub.calledOnce);
+  t.true(
+    getFromAndSizeStub.calledWith(instance.state.from, instance.state.size, instance.state.itemsPerRow, nextProps)
+  );
+
+  getFromAndSizeStub.restore();
+
+  t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
+
+  t.true(instance.setStateIfAppropriate.calledOnce);
+  t.true(instance.setStateIfAppropriate.calledWith(fromAndSize));
+});
+
+test('if getSnapshotBeforeUpdate will set the reconcile frame if debounceReconciler has changed', (t) => {
+  const instance = {
+    props: {
+      debounceReconciler: 100
+    },
+    setReconcileFrameAfterUpdate: sinon.spy()
+  };
+  const previousProps = {
+    ...instance.props,
+    debounceReconciler: 50
+  };
+
+  methods.getSnapshotBeforeUpdate(instance, [previousProps]);
+
+  t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
+});
+
+test('if getSnapshotBeforeUpdate will not set the reconcile frame if debounceReconciler has not changed', (t) => {
+  const instance = {
+    props: {
+      debounceReconciler: 100
+    },
+    setReconcileFrameAfterUpdate: sinon.spy()
+  };
+  const previousProps = {
+    ...instance.props
+  };
+
+  methods.getSnapshotBeforeUpdate(instance, [previousProps]);
+
+  t.true(instance.setReconcileFrameAfterUpdate.notCalled);
+});
+
+test('if componentDidUpdate will not fire anything if unstable', async (t) => {
   const initialUpdateCounter = constants.MAX_SYNC_UPDATES + 1;
   const initialUpdateCounterTimeoutId = 1;
 
@@ -89,15 +276,11 @@ test('if createComponentDidUpdate will not fire anything if unstable', async (t)
     updateFrame: sinon.spy()
   };
 
-  const componentDidUpdate = methods.createComponentDidUpdate(instance);
-
-  t.true(_.isFunction(componentDidUpdate));
-
   const clearTimeoutStub = sinon.stub(global, 'clearTimeout');
   const setTimeoutStub = sinon.stub(global, 'setTimeout').returns(234);
   const consoleErrorStub = sinon.stub(console, 'error');
 
-  componentDidUpdate();
+  methods.componentDidUpdate(instance);
 
   t.true(consoleErrorStub.notCalled);
 
@@ -125,7 +308,7 @@ test('if createComponentDidUpdate will not fire anything if unstable', async (t)
   t.true(instance.updateFrame.notCalled);
 });
 
-test('if createComponentDidUpdate will set unstable to true and fire the console if the counter is over the MAX_SYNC_UPDATES', async (t) => {
+test('if componentDidUpdate will set unstable to true and fire the console if the counter is over the MAX_SYNC_UPDATES', async (t) => {
   const initialUpdateCounter = constants.MAX_SYNC_UPDATES;
   const initialUpdateCounterTimeoutId = 1;
 
@@ -139,15 +322,11 @@ test('if createComponentDidUpdate will set unstable to true and fire the console
     updateFrame: sinon.spy()
   };
 
-  const componentDidUpdate = methods.createComponentDidUpdate(instance);
-
-  t.true(_.isFunction(componentDidUpdate));
-
   const clearTimeoutStub = sinon.stub(global, 'clearTimeout');
   const setTimeoutStub = sinon.stub(global, 'setTimeout').returns(234);
   const consoleErrorStub = sinon.stub(console, 'error');
 
-  componentDidUpdate();
+  methods.componentDidUpdate(instance);
 
   t.true(consoleErrorStub.calledOnce);
   t.true(consoleErrorStub.calledWith(constants.UNSTABLE_MESSAGE));
@@ -176,7 +355,7 @@ test('if createComponentDidUpdate will set unstable to true and fire the console
   t.true(instance.updateFrame.notCalled);
 });
 
-test('if createComponentDidUpdate will set the updateCounterTimeoutId if is falsy', async (t) => {
+test('if componentDidUpdate will set the updateCounterTimeoutId if is falsy', async (t) => {
   const initialUpdateCounter = 3;
   const initialUpdateCounterTimeoutId = null;
 
@@ -191,13 +370,9 @@ test('if createComponentDidUpdate will set the updateCounterTimeoutId if is fals
     updateFrame: sinon.spy()
   };
 
-  const componentDidUpdate = methods.createComponentDidUpdate(instance);
-
-  t.true(_.isFunction(componentDidUpdate));
-
   const consoleErrorStub = sinon.stub(console, 'error');
 
-  componentDidUpdate();
+  methods.componentDidUpdate(instance);
 
   t.true(consoleErrorStub.notCalled);
 
@@ -216,7 +391,7 @@ test('if createComponentDidUpdate will set the updateCounterTimeoutId if is fals
   t.true(instance.reconcileFrameAfterUpdate.calledWith(instance.updateFrame));
 });
 
-test('if createComponentDidUpdate will just call updateFrame if there is an updateCounterTimeoutId', async (t) => {
+test('if componentDidUpdate will just call updateFrame if there is an updateCounterTimeoutId', async (t) => {
   const initialUpdateCounter = 3;
   const initialUpdateCounterTimeoutId = 2;
 
@@ -231,13 +406,9 @@ test('if createComponentDidUpdate will just call updateFrame if there is an upda
     updateFrame: sinon.spy()
   };
 
-  const componentDidUpdate = methods.createComponentDidUpdate(instance);
-
-  t.true(_.isFunction(componentDidUpdate));
-
   const consoleErrorStub = sinon.stub(console, 'error');
 
-  componentDidUpdate();
+  methods.componentDidUpdate(instance);
 
   t.true(consoleErrorStub.notCalled);
 
@@ -253,7 +424,7 @@ test('if createComponentDidUpdate will just call updateFrame if there is an upda
   t.true(instance.reconcileFrameAfterUpdate.calledWith(instance.updateFrame));
 });
 
-test('if createComponentDidUpdate will not call updateFrame if hidden', async (t) => {
+test('if componentDidUpdate will not call updateFrame if hidden', async (t) => {
   const initialUpdateCounter = 3;
   const initialUpdateCounterTimeoutId = 2;
 
@@ -268,13 +439,9 @@ test('if createComponentDidUpdate will not call updateFrame if hidden', async (t
     updateFrame: sinon.spy()
   };
 
-  const componentDidUpdate = methods.createComponentDidUpdate(instance);
-
-  t.true(_.isFunction(componentDidUpdate));
-
   const consoleErrorStub = sinon.stub(console, 'error');
 
-  componentDidUpdate();
+  methods.componentDidUpdate(instance);
 
   t.true(consoleErrorStub.notCalled);
 
@@ -289,132 +456,7 @@ test('if createComponentDidUpdate will not call updateFrame if hidden', async (t
   t.true(instance.reconcileFrameAfterUpdate.notCalled);
 });
 
-test('if createComponentWillMount will call setState with the right object', (t) => {
-  const instance = {
-    props: {
-      initialIndex: 0
-    },
-    setReconcileFrameAfterUpdate: sinon.spy(),
-    setState: sinon.spy()
-  };
-
-  const componentWillMount = methods.createComponentWillMount(instance);
-
-  t.true(_.isFunction(componentWillMount));
-
-  const fromAndSize = {
-    from: 'foo',
-    size: 'bar'
-  };
-
-  const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
-
-  componentWillMount();
-
-  t.true(getFromAndSizeStub.calledOnce);
-  t.true(getFromAndSizeStub.calledWith(instance.props.initialIndex, 0, 1, instance.props));
-
-  getFromAndSizeStub.restore();
-
-  t.true(instance.setState.calledOnce);
-
-  const args = instance.setState.getCall(0).args;
-
-  t.deepEqual(
-    [...args],
-    [
-      {
-        ...fromAndSize,
-        itemsPerRow: 1
-      }
-    ]
-  );
-
-  t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
-});
-
-test('if createComponentWillReceiveProps will fire setStateIfAppropriate with the result from getFromAndSize', (t) => {
-  const instance = {
-    props: {},
-    setStateIfAppropriate: sinon.spy(),
-    state: {
-      from: 'foo',
-      itemsPerRow: 'bar',
-      size: 'baz'
-    }
-  };
-
-  const componentWillReceiveProps = methods.createComponentWillReceiveProps(instance);
-
-  t.true(_.isFunction(componentWillReceiveProps));
-
-  const fromAndSize = {
-    from: 'foo',
-    size: 'bar'
-  };
-
-  const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
-
-  const nextProps = {
-    foo: 'bar'
-  };
-
-  componentWillReceiveProps(nextProps);
-
-  t.true(getFromAndSizeStub.calledOnce);
-  t.true(
-    getFromAndSizeStub.calledWith(instance.state.from, instance.state.size, instance.state.itemsPerRow, nextProps)
-  );
-
-  getFromAndSizeStub.restore();
-
-  t.true(instance.setStateIfAppropriate.calledOnce);
-  t.true(instance.setStateIfAppropriate.calledWith(fromAndSize));
-});
-
-test('if createComponentWillReceiveProps will fire setReconcileFrameAfterUpdate if debounceReconciler has changed', (t) => {
-  const instance = {
-    props: {},
-    setReconcileFrameAfterUpdate: sinon.spy(),
-    setStateIfAppropriate: sinon.spy(),
-    state: {
-      from: 'foo',
-      itemsPerRow: 'bar',
-      size: 'baz'
-    }
-  };
-
-  const componentWillReceiveProps = methods.createComponentWillReceiveProps(instance);
-
-  t.true(_.isFunction(componentWillReceiveProps));
-
-  const fromAndSize = {
-    from: 'foo',
-    size: 'baz'
-  };
-
-  const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
-
-  const nextProps = {
-    debounceReconciler: 123
-  };
-
-  componentWillReceiveProps(nextProps);
-
-  t.true(getFromAndSizeStub.calledOnce);
-  t.true(
-    getFromAndSizeStub.calledWith(instance.state.from, instance.state.size, instance.state.itemsPerRow, nextProps)
-  );
-
-  getFromAndSizeStub.restore();
-
-  t.true(instance.setReconcileFrameAfterUpdate.calledOnce);
-
-  t.true(instance.setStateIfAppropriate.calledOnce);
-  t.true(instance.setStateIfAppropriate.calledWith(fromAndSize));
-});
-
-test('if createComponentWillUnmount will call removeEventListener on the scroll parent', (t) => {
+test('if componentWillUnmount will call removeEventListener on the scroll parent', (t) => {
   const instance = {
     scrollParent: {
       removeEventListener: sinon.spy()
@@ -422,11 +464,7 @@ test('if createComponentWillUnmount will call removeEventListener on the scroll 
     updateFrame() {}
   };
 
-  const componentWillUnmount = methods.createComponentWillUnmount(instance);
-
-  t.true(_.isFunction(componentWillUnmount));
-
-  componentWillUnmount();
+  methods.componentWillUnmount(instance);
 
   t.true(instance.scrollParent.removeEventListener.calledTwice);
 
@@ -437,14 +475,4 @@ test('if createComponentWillUnmount will call removeEventListener on the scroll 
   const secondCallArgs = instance.scrollParent.removeEventListener.getCall(1).args;
 
   t.deepEqual([...secondCallArgs], ['mousewheel', utils.noop, constants.ADD_EVENT_LISTENER_OPTIONS]);
-});
-
-test('if getInitialState returns the correct state', (t) => {
-  const result = methods.getInitialState();
-
-  t.deepEqual(result, {
-    from: 0,
-    itemsPerRow: 0,
-    size: 0
-  });
 });

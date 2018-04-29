@@ -15,6 +15,8 @@ module.exports = {
 
   externals: ['react', 'react-dom', 'remeasure'],
 
+  mode: 'development',
+
   module: {
     rules: [
       {

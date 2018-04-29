@@ -294,36 +294,42 @@ test('if getCalculatedItemSizeAndItemsPerRow returns an empty object when there 
   t.deepEqual(result, {});
 });
 
-test('if getContainerStyle returns the DEFAULT_CONTAINER_STYLE when there is no size', (t) => {
+test('if getInnerContainerStyle returns the DEFAULT_CONTAINER_STYLE when there is no size', (t) => {
   const axis = 'y';
-  const size = 0;
+  const length = 123;
+  const itemsPerRow = 1;
+  const getSize = sinon.stub().returns(0);
 
-  const result = utils.getContainerStyle(axis, size);
+  const result = utils.getInnerContainerStyle(axis, length, itemsPerRow, getSize);
 
   t.is(result, constants.DEFAULT_CONTAINER_STYLE);
 });
 
-test('if getContainerStyle returns the correct style when there is size and the axis is y', (t) => {
+test('if getInnerContainerStyle returns the correct style when there is size and the axis is y', (t) => {
   const axis = 'y';
-  const size = 500;
+  const length = 123;
+  const itemsPerRow = 1;
+  const getSize = sinon.stub().returns(500);
 
-  const result = utils.getContainerStyle(axis, size);
+  const result = utils.getInnerContainerStyle(axis, length, itemsPerRow, getSize);
 
   t.deepEqual(result, {
     ...constants.DEFAULT_CONTAINER_STYLE,
-    [constants.SIZE_KEYS[axis]]: size
+    [constants.SIZE_KEYS[axis]]: 500
   });
 });
 
-test('if getContainerStyle returns the correct style when there is size and the axis is x', (t) => {
+test('if getInnerContainerStyle returns the correct style when there is size and the axis is x', (t) => {
   const axis = 'x';
-  const size = 500;
+  const length = 123;
+  const itemsPerRow = 1;
+  const getSize = sinon.stub().returns(500);
 
-  const result = utils.getContainerStyle(axis, size);
+  const result = utils.getInnerContainerStyle(axis, length, itemsPerRow, getSize);
 
   t.deepEqual(result, {
     ...constants.DEFAULT_CONTAINER_STYLE,
-    [constants.SIZE_KEYS[axis]]: size,
+    [constants.SIZE_KEYS[axis]]: 500,
     overflowX: 'hidden'
   });
 });
@@ -559,9 +565,11 @@ test('if getListContainerStyle will return the correct style object when usePosi
   const axis = 'x';
   const usePosition = true;
   const useTranslate3d = false;
+  const firstIndex = 0;
   const offset = 100;
+  const getOffset = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, firstIndex, getOffset);
 
   t.deepEqual(result, {
     left: offset,
@@ -574,9 +582,11 @@ test('if getListContainerStyle will return the correct style object when usePosi
   const axis = 'y';
   const usePosition = true;
   const useTranslate3d = false;
+  const firstIndex = 0;
   const offset = 100;
+  const getOffset = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, firstIndex, getOffset);
 
   t.deepEqual(result, {
     left: 0,
@@ -589,9 +599,11 @@ test('if getListContainerStyle will return the correct style object when useTran
   const axis = 'x';
   const usePosition = false;
   const useTranslate3d = true;
+  const firstIndex = 0;
   const offset = 100;
+  const getOffset = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, firstIndex, getOffset);
 
   const expectedTransform = `translate3d(${offset}px, 0px, 0)`;
 
@@ -606,9 +618,11 @@ test('if getListContainerStyle will return the correct style object when useTran
   const axis = 'y';
   const usePosition = false;
   const useTranslate3d = true;
+  const firstIndex = 0;
   const offset = 100;
+  const getOffset = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, firstIndex, getOffset);
 
   const expectedTransform = `translate3d(0px, ${offset}px, 0)`;
 
@@ -623,9 +637,11 @@ test('if getListContainerStyle will return the correct style object when useTran
   const axis = 'x';
   const usePosition = false;
   const useTranslate3d = false;
+  const firstIndex = 0;
   const offset = 100;
+  const getOffset = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, firstIndex, getOffset);
 
   const expectedTransform = `translate(${offset}px, 0px)`;
 
@@ -640,9 +656,11 @@ test('if getListContainerStyle will return the correct style object when useTran
   const axis = 'y';
   const usePosition = false;
   const useTranslate3d = false;
+  const firstIndex = 0;
   const offset = 100;
+  const getOffset = sinon.stub().returns(offset);
 
-  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, offset);
+  const result = utils.getListContainerStyle(axis, usePosition, useTranslate3d, firstIndex, getOffset);
 
   const expectedTransform = `translate(0px, ${offset}px)`;
 
