@@ -727,23 +727,23 @@ test('if getViewportSize will get the value for the right key if the element is 
 
 test('if hasDeterminateSize returns true if uniform', (t) => {
   const type = constants.VALID_TYPES.UNIFORM;
-  const itemSizeGetter = () => {};
+  const getItemSize = () => {};
 
-  t.true(utils.hasDeterminateSize(type, itemSizeGetter));
+  t.true(utils.hasDeterminateSize(type, getItemSize));
 });
 
-test('if hasDeterminateSize returns true if itemSizeGetter is a function', (t) => {
+test('if hasDeterminateSize returns true if getItemSize is a function', (t) => {
   const type = constants.VALID_TYPES.VARIABLE;
-  const itemSizeGetter = () => {};
+  const getItemSize = () => {};
 
-  t.true(utils.hasDeterminateSize(type, itemSizeGetter));
+  t.true(utils.hasDeterminateSize(type, getItemSize));
 });
 
 test('if hasDeterminateSize returns false otherwise', (t) => {
   const type = constants.VALID_TYPES.VARIABLE;
-  const itemSizeGetter = null;
+  const getItemSize = null;
 
-  t.false(utils.hasDeterminateSize(type, itemSizeGetter));
+  t.false(utils.hasDeterminateSize(type, getItemSize));
 });
 
 test('if setCacheSizes will assign the values from the children to cache', (t) => {

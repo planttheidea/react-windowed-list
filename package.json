@@ -7,6 +7,7 @@
     "require": ["babel-register", "test/helpers/setup-browser-env.js"],
     "verbose": true
   },
+  "browserslist": ["defaults", "Explorer >= 11", "Safari >= 10", "iOS >= 10"],
   "bugs": {
     "url": "https://github.com/planttheidea/react-windowed-list/issues"
   },

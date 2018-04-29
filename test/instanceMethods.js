@@ -192,7 +192,7 @@ test('if getScrollOffset will get the offset of the scrollParent when it is the 
   getOffsetStub.restore();
 });
 
-test('if getScrollParent will return immediately if there is a scrollParentGetter', (t) => {
+test('if getScrollParent will return immediately if there is a getScrollParent', (t) => {
   const element = {
     parentElement: {}
   };
@@ -201,7 +201,7 @@ test('if getScrollParent will return immediately if there is a scrollParentGette
     getDomNode: sinon.stub().returns(element),
     props: {
       axis: 'y',
-      scrollParentGetter: sinon.stub().returns(scrollGetterElement)
+      getScrollParent: sinon.stub().returns(scrollGetterElement)
     }
   };
 
@@ -209,7 +209,7 @@ test('if getScrollParent will return immediately if there is a scrollParentGette
 
   const result = methods.getScrollParent(instance);
 
-  t.true(instance.props.scrollParentGetter.calledOnce);
+  t.true(instance.props.getScrollParent.calledOnce);
 
   t.true(getComputedStyleStub.notCalled);
 
@@ -225,7 +225,7 @@ test('if getScrollParent will return null if there is no outerContainer', (t) =>
     outerContainer: null,
     props: {
       axis: 'y',
-      scrollParentGetter: null
+      getScrollParent: null
     }
   };
 
@@ -249,7 +249,7 @@ test.skip('if getScrollParent will return the window if the overflowStyleKey is 
     },
     props: {
       axis: 'y',
-      scrollParentGetter: null
+      getScrollParent: null
     }
   };
 
@@ -276,7 +276,7 @@ test.skip('if getScrollParent will return the element if the overflowStyleKey is
     },
     props: {
       axis,
-      scrollParentGetter: null
+      getScrollParent: null
     }
   };
 
@@ -300,8 +300,8 @@ test('if getSizeOfListItem will return the itemSize if it exists', (t) => {
     getDomNode: sinon.stub().returns(fakeDomNode),
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.spy(),
-      itemSizeGetter: sinon.spy(),
+      getEstimatedItemSize: sinon.spy(),
+      getItemSize: sinon.spy(),
       type: constants.VALID_TYPES.SIMPLE
     },
     state: {
@@ -315,16 +315,16 @@ test('if getSizeOfListItem will return the itemSize if it exists', (t) => {
 
   const result = methods.getSizeOfListItem(instance, [index]);
 
-  t.true(instance.props.itemSizeGetter.notCalled);
+  t.true(instance.props.getItemSize.notCalled);
 
   t.true(instance.getDomNode.notCalled);
 
-  t.true(instance.props.itemSizeEstimator.notCalled);
+  t.true(instance.props.getEstimatedItemSize.notCalled);
 
   t.is(result, instance.state.itemSize);
 });
 
-test('if getSizeOfListItem will call the itemSizeGetter if it exists', (t) => {
+test('if getSizeOfListItem will call the getItemSize if it exists', (t) => {
   const estimatedSize = 30;
   const fakeDomNode = {
     children: []
@@ -335,8 +335,8 @@ test('if getSizeOfListItem will call the itemSizeGetter if it exists', (t) => {
     getDomNode: sinon.stub().returns(fakeDomNode),
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.stub().returns(estimatedSize),
-      itemSizeGetter: sinon.stub().returns(gottenSize),
+      getEstimatedItemSize: sinon.stub().returns(estimatedSize),
+      getItemSize: sinon.stub().returns(gottenSize),
       type: constants.VALID_TYPES.SIMPLE
     },
     state: {
@@ -349,12 +349,12 @@ test('if getSizeOfListItem will call the itemSizeGetter if it exists', (t) => {
 
   const result = methods.getSizeOfListItem(instance, [index]);
 
-  t.true(instance.props.itemSizeGetter.calledOnce);
-  t.true(instance.props.itemSizeGetter.calledWith(index));
+  t.true(instance.props.getItemSize.calledOnce);
+  t.true(instance.props.getItemSize.calledWith(index));
 
   t.true(instance.getDomNode.notCalled);
 
-  t.true(instance.props.itemSizeEstimator.notCalled);
+  t.true(instance.props.getEstimatedItemSize.notCalled);
 
   t.is(result, gottenSize);
 });
@@ -376,8 +376,8 @@ test('if getSizeOfListItem will pull from cache if the value exists', (t) => {
     items: [],
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.stub().returns(estimatedSize),
-      itemSizeGetter: null,
+      getEstimatedItemSize: sinon.stub().returns(estimatedSize),
+      getItemSize: null,
       type: constants.VALID_TYPES.SIMPLE
     },
     state: {
@@ -392,7 +392,7 @@ test('if getSizeOfListItem will pull from cache if the value exists', (t) => {
 
   t.true(instance.getDomNode.notCalled);
 
-  t.true(instance.props.itemSizeEstimator.notCalled);
+  t.true(instance.props.getEstimatedItemSize.notCalled);
 
   t.is(result, instance.cache[0]);
 });
@@ -410,8 +410,8 @@ test('if getSizeOfListItem will get the DOM node style key', (t) => {
     },
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.stub().returns(estimatedSize),
-      itemSizeGetter: null,
+      getEstimatedItemSize: sinon.stub().returns(estimatedSize),
+      getItemSize: null,
       type: constants.VALID_TYPES.VARIABLE
     },
     state: {
@@ -424,8 +424,8 @@ test('if getSizeOfListItem will get the DOM node style key', (t) => {
 
   const result = methods.getSizeOfListItem(instance, [index]);
 
-  t.true(instance.props.itemSizeEstimator.calledOnce);
-  t.true(instance.props.itemSizeEstimator.calledWith(index, instance.cache));
+  t.true(instance.props.getEstimatedItemSize.calledOnce);
+  t.true(instance.props.getEstimatedItemSize.calledWith(index, instance.cache));
 
   t.is(result, estimatedSize);
 });
@@ -442,8 +442,8 @@ test('if getSizeOfListItem will return undefined if none of the techniques work'
     },
     props: {
       axis: 'y',
-      itemSizeEstimator: null,
-      itemSizeGetter: null,
+      getEstimatedItemSize: null,
+      getItemSize: null,
       type: constants.VALID_TYPES.VARIABLE
     },
     state: {
@@ -562,7 +562,7 @@ test('if getStartAndEnd will calculate start and end when hasDeterminateSize is 
   getViewportSizeStub.restore();
 
   t.true(hasDeterminateSizeStub.calledOnce);
-  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.itemSizeGetter));
+  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.getItemSize));
 
   hasDeterminateSizeStub.restore();
 
@@ -604,7 +604,7 @@ test('if getStartAndEnd will calculate start and end when hasDeterminateSize is 
   getViewportSizeStub.restore();
 
   t.true(hasDeterminateSizeStub.calledOnce);
-  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.itemSizeGetter));
+  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.getItemSize));
 
   hasDeterminateSizeStub.restore();
 
@@ -1291,7 +1291,7 @@ test('if updateVariableFrame will call setStateIfAppropriate with the new from a
     items: {},
     props: {
       axis: 'y',
-      itemSizeGetter() {}
+      getItemSize() {}
     },
     setStateIfAppropriate: sinon.spy(),
     state: {
@@ -1323,7 +1323,7 @@ test('if updateVariableFrame will call setStateIfAppropriate with the new from a
   t.true(instance.setStateIfAppropriate.calledWith(fromAndSize, callback));
 });
 
-test('if updateVariableFrame will call setStateIfAppropriate and setCacheSizes if no itemSizeGetter exists', (t) => {
+test('if updateVariableFrame will call setStateIfAppropriate and setCacheSizes if no getItemSize exists', (t) => {
   const startAndEnd = {};
   const instance = {
     cache: {},
