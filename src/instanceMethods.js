@@ -91,12 +91,12 @@ export const getScrollOffset = ({outerContainer, props: {axis}, scrollParent}) =
  *
  * @param {HTMLElement} outerContainer the outer container
  * @param {string} axis the axis being scrolled on
- * @param {function} scrollParentGetter the method to get the scrollParent
+ * @param {function} getScrollParent the method to get the scrollParent
  * @returns {HTMLElement} the scroll parent
  */
-export const getScrollParent = ({outerContainer, props: {axis, scrollParentGetter}}) => {
-  if (isFunction(scrollParentGetter)) {
-    return scrollParentGetter();
+export const getScrollParent = ({outerContainer, props: {axis, getScrollParent}}) => {
+  if (isFunction(getScrollParent)) {
+    return getScrollParent();
   }
 
   if (!outerContainer) {
@@ -125,8 +125,8 @@ export const getScrollParent = ({outerContainer, props: {axis, scrollParentGette
  * @param {Object} cache the current cache in state
  * @param {Array<ReactElement>} items the items rendered
  * @param {string} axis the axis being scrolled on
- * @param {function} itemSizeEstimator the method used to estimate the item size
- * @param {function} itemSizeGetter the method used to get the item size
+ * @param {function} getEstimatedItemSize the method used to estimate the item size
+ * @param {function} getItemSize the method used to get the item size
  * @param {string} type the list type
  * @param {number} from the first index being rendered
  * @param {number} itemSize the size of each item
@@ -135,7 +135,7 @@ export const getScrollParent = ({outerContainer, props: {axis, scrollParentGette
  * @returns {number} the size of the list item
  */
 export const getSizeOfListItem = (
-  {cache, items, props: {axis, itemSizeEstimator, itemSizeGetter, type}, state: {from, itemSize, size}},
+  {cache, items, props: {axis, getEstimatedItemSize, getItemSize, type}, state: {from, itemSize, size}},
   [index]
 ) => {
   // Try the static itemSize.
@@ -143,9 +143,9 @@ export const getSizeOfListItem = (
     return itemSize;
   }
 
-  // Try the itemSizeGetter.
-  if (isFunction(itemSizeGetter)) {
-    return itemSizeGetter(index);
+  // Try the getItemSize.
+  if (isFunction(getItemSize)) {
+    return getItemSize(index);
   }
 
   // Try the cache.
@@ -166,9 +166,9 @@ export const getSizeOfListItem = (
     }
   }
 
-  // Try the itemSizeEstimator.
-  if (isFunction(itemSizeEstimator)) {
-    return itemSizeEstimator(index, cache);
+  // Try the getEstimatedItemSize.
+  if (isFunction(getEstimatedItemSize)) {
+    return getEstimatedItemSize(index, cache);
   }
 };
 
@@ -206,7 +206,7 @@ export const getSpaceBefore = ({getSizeOfListItem, state: {itemSize, itemsPerRow
  * @param {function} getScrollOffset the method to get the scroll offset
  * @param {function} getSpaceBefore the method to get the space before the first rendered item
  * @param {string} axis the scroll axis
- * @param {function} itemSizeGetter the method used to get the item size
+ * @param {function} getItemSize the method used to get the item size
  * @param {number} length the number of total items
  * @param {number} defaultThreshold the threshold value
  * @param {string} type the type of renderer used
@@ -217,7 +217,7 @@ export const getStartAndEnd = (
   {
     getScrollOffset,
     getSpaceBefore,
-    props: {axis, itemSizeGetter, length, threshold: defaultThreshold, type},
+    props: {axis, getItemSize, length, threshold: defaultThreshold, type},
     scrollParent
   },
   [threshold = defaultThreshold]
@@ -226,7 +226,7 @@ export const getStartAndEnd = (
   const calculatedEnd = scroll + getViewportSize(scrollParent, axis) + threshold;
 
   return {
-    end: hasDeterminateSize(type, itemSizeGetter) ? Math.min(calculatedEnd, getSpaceBefore(length)) : calculatedEnd,
+    end: hasDeterminateSize(type, getItemSize) ? Math.min(calculatedEnd, getSpaceBefore(length)) : calculatedEnd,
     start: Math.max(0, scroll - threshold)
   };
 };
@@ -521,7 +521,7 @@ export const updateVariableFrame = (
     return;
   }
 
-  if (!props.itemSizeGetter) {
+  if (!props.getItemSize) {
     setCacheSizes(currentFrom, items, props.axis, cache);
   }
 

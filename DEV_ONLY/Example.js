@@ -2,98 +2,72 @@ import React, {PureComponent} from 'react';
 import WindowedList from '../src';
 import uuid from 'uuid/v4';
 
-const renderItem = (index, key) => {
-  return (
-    <div
-      className={`item${index % 2 ? '' : ' even'}`}
-      key={key}
-    >
-      {index}
-    </div>
-  );
-};
+const renderItem = (index, key) => (
+  <div
+    className={`item${index % 2 ? '' : ' even'}`}
+    key={key}
+  >
+    {index}
+  </div>
+);
 
-renderItem.toJSON = () => {
-  return renderItem.toString();
-};
+renderItem.toJSON = () => renderItem.toString();
 
-const renderSquareItem = (index, key) => {
-  return (
-    <div
-      className={`square-item${index % 2 ? '' : ' even'}`}
-      key={key}
-    >
-      {index}
-    </div>
-  );
-};
+const renderSquareItem = (index, key) => (
+  <div
+    className={`square-item${index % 2 ? '' : ' even'}`}
+    key={key}
+  >
+    {index}
+  </div>
+);
 
-renderSquareItem.toJSON = () => {
-  return renderSquareItem.toString();
-};
+renderSquareItem.toJSON = () => renderSquareItem.toString();
 
-const getHeight = (index) => {
-  return 30 + 10 * (index % 10);
-};
+const getHeight = (index) => 30 + 10 * (index % 10);
 
-getHeight.toJSON = () => {
-  return getHeight.toString();
-};
+getHeight.toJSON = () => getHeight.toString();
 
-const getWidth = (index) => {
-  return 100 + 10 * (index % 10);
-};
+const getWidth = (index) => 100 + 10 * (index % 10);
 
-getWidth.toJSON = () => {
-  return getWidth.toString();
-};
+getWidth.toJSON = () => getWidth.toString();
 
-const renderVariableHeightItem = (index, key) => {
-  return (
-    <div
-      className={`item${index % 2 ? '' : ' even'}`}
-      key={key}
-      style={{
-        lineHeight: `${getHeight(index)}px`
-      }}
-    >
-      {index}
-    </div>
-  );
-};
+const renderVariableHeightItem = (index, key) => (
+  <div
+    className={`item${index % 2 ? '' : ' even'}`}
+    key={key}
+    style={{
+      lineHeight: `${getHeight(index)}px`
+    }}
+  >
+    {index}
+  </div>
+);
 
-renderVariableHeightItem.toJSON = () => {
-  return renderVariableHeightItem.toString();
-};
+renderVariableHeightItem.toJSON = () => renderVariableHeightItem.toString();
 
-const renderVariableWidthItem = (index, key) => {
-  return (
-    <div
-      className={`item${index % 2 ? '' : ' even'}`}
-      key={key}
-      style={{
-        width: `${getWidth(index)}px`
-      }}
-    >
-      {index}
-    </div>
-  );
-};
+const renderVariableWidthItem = (index, key) => (
+  <div
+    className={`item${index % 2 ? '' : ' even'}`}
+    key={key}
+    style={{
+      width: `${getWidth(index)}px`
+    }}
+  >
+    {index}
+  </div>
+);
 
-renderVariableWidthItem.toJSON = () => {
-  return renderVariableWidthItem.toString();
-};
+renderVariableWidthItem.toJSON = () => renderVariableWidthItem.toString();
 
 const renderGridLine = (row, key) => {
-  const gridLineItemRenderer = (column, key) => {
-    return renderSquareItem(column + 10000 * row, key);
-  };
+  const gridLineItemRenderer = (column, key) => renderSquareItem(column + 10000 * row, key);
 
   return (
     /* eslint-disable prettier */
     <WindowedList
       axis="x"
-      itemRenderer={gridLineItemRenderer}
+      itemRenderer={gridLineItemRenderer} // eslint-disable-line
       key={key}
       length={10000}
       type="uniform"
@@ -102,16 +76,12 @@ const renderGridLine = (row, key) => {
   );
 };
 
-renderGridLine.toJSON = () => {
-  return renderGridLine.toString();
-};
+renderGridLine.toJSON = () => renderGridLine.toString();
 
-const differentKeyItems = new Array(10000).fill('foo').map(() => {
-  return {
-    id: uuid(),
-    height: 100 + Math.floor(Math.random() * 100)
-  };
-});
+const differentKeyItems = new Array(10000).fill('foo').map(() => ({
+  id: uuid(),
+  height: 100 + Math.floor(Math.random() * 100)
+}));
 
 const differentKeyRenderer = (index) => {
   const item = differentKeyItems[index];
@@ -130,9 +100,7 @@ const differentKeyRenderer = (index) => {
   );
 };
 
-differentKeyRenderer.toJSON = () => {
-  return differentKeyRenderer.toString();
-};
+differentKeyRenderer.toJSON = () => differentKeyRenderer.toString();
 
 const examples = [
   {
@@ -258,19 +226,15 @@ class Example extends PureComponent {
   };
 
   onClickToggleIsRendered = () => {
-    this.setState(({isRendered: wasRendered}) => {
-      return {
-        isRendered: !wasRendered
-      };
-    });
+    this.setState(({isRendered: wasRendered}) => ({
+      isRendered: !wasRendered
+    }));
   };
 
   onClickToggleIsVisible = () => {
-    this.setState(({isVisible: wasVisible}) => {
-      return {
-        isVisible: !wasVisible
-      };
-    });
+    this.setState(({isVisible: wasVisible}) => ({
+      isVisible: !wasVisible
+    }));
   };
 
   setRef = (element) => {

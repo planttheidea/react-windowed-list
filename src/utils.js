@@ -67,13 +67,7 @@ export const noop = () => {};
  * @returns {boolean} should the state be updated
  */
 export const areStateValuesEqual = (currentState, nextPossibleState) => {
-  const nextStateKeys = Object.keys(nextPossibleState);
-
-  let key;
-
-  for (let index = 0; index < nextStateKeys.length; index++) {
-    key = nextStateKeys[index];
-
+  for (let key in nextPossibleState) {
     if (currentState[key] !== nextPossibleState[key]) {
       return false;
     }
@@ -437,10 +431,10 @@ export const getViewportSize = (element, axis) =>
  * does the element have a predetermined size calculator
  *
  * @param {string} type the type of the component
- * @param {function} [itemSizeGetter] the function to calculate the item size
+ * @param {function} [getItemSize] the function to calculate the item size
  * @returns {boolean} is the size automatically determined
  */
-export const hasDeterminateSize = (type, itemSizeGetter) => type === VALID_TYPES.UNIFORM || isFunction(itemSizeGetter);
+export const hasDeterminateSize = (type, getItemSize) => type === VALID_TYPES.UNIFORM || isFunction(getItemSize);
 
 /**
  * @function setCacheSizes

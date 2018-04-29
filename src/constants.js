@@ -1,9 +1,6 @@
 // external dependencies
 import React from 'react';
 
-// utils
-import {noop} from './utils';
-
 /**
  * @constant {boolean} ADD_EVENT_LISTENER_OPTIONS
  * @default
@@ -16,7 +13,7 @@ export const ADD_EVENT_LISTENER_OPTIONS = (() => {
   let hasSupport = false;
 
   try {
-    document.createElement('div').addEventListener('test', noop, {
+    document.createElement('div').addEventListener('test', () => {}, {
       get passive() {
         hasSupport = true;
 
