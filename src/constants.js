@@ -1,5 +1,5 @@
-// utils
-import {noop} from './utils';
+// external dependencies
+import React from 'react';
 
 /**
  * @constant {boolean} ADD_EVENT_LISTENER_OPTIONS
@@ -13,7 +13,7 @@ export const ADD_EVENT_LISTENER_OPTIONS = (() => {
   let hasSupport = false;
 
   try {
-    document.createElement('div').addEventListener('test', noop, {
+    document.createElement('div').addEventListener('test', () => {}, {
       get passive() {
         hasSupport = true;
 
@@ -131,9 +131,7 @@ export const VALID_AXES = {
 /**
  * @constant {Array<string>} VALID_AXIS_VALUES
  */
-export const VALID_AXIS_VALUES = Object.keys(VALID_AXES).map((key) => {
-  return VALID_AXES[key];
-});
+export const VALID_AXIS_VALUES = Object.keys(VALID_AXES).map((key) => VALID_AXES[key]);
 
 /**
  * @constant {Object} VALID_TYPES
@@ -147,9 +145,7 @@ export const VALID_TYPES = {
 /**
  * @constant {Array<string>} VALID_TYPE_VALUES
  */
-export const VALID_TYPE_VALUES = Object.keys(VALID_TYPES).map((key) => {
-  return VALID_TYPES[key];
-});
+export const VALID_TYPE_VALUES = Object.keys(VALID_TYPES).map((key) => VALID_TYPES[key]);
 
 /**
  * @constant {string} DEFAULT_AXIS
@@ -177,3 +173,16 @@ export const DEFAULT_CONTAINER_STYLE = {
  * @constant {number} UNSTABLE_TIMEOUT
  */
 export const UNSTABLE_TIMEOUT = 250;
+
+/**
+ * @constant {number} REACT_MINOR_VERSION
+ */
+export const REACT_MINOR_VERSION = +React.version
+  .split('.')
+  .slice(0, 2)
+  .join('.');
+
+/**
+ * @constant {boolean} HAS_NEW_LIFECYCLE_METHODS
+ */
+export const HAS_NEW_LIFECYCLE_METHODS = REACT_MINOR_VERSION >= 16.3;

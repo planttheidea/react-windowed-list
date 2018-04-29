@@ -1,5 +1,18 @@
 # react-windowed-list CHANGELOG
 
+## 3.0.0
+
+* Complete refactor under-the-hood to leverage `react-parm`
+* Uses new lifecycle methods available in React 16.3, falling back to the pre-existing unsafe lifecycle methods
+* Uses `rollup` for `dist` builds instead of `webpack` for smaller filesize
+* No longer uses `PureComponent` for maximum performance and use-case coverage
+
+#### BREAKING CHANGES
+
+* `itemSizeEstimator` prop is now `getEstimatedItemSize`
+* `itemSizeGetter` prop is now `getItemSize`
+* `scrollParentGetter` prop is now `getScrollParent`
+
 ## 2.0.0
 
 * Remove `lodash` and `moize` dependencies (smaller footprint)

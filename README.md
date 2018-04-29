@@ -2,17 +2,23 @@
 
 A fast, versatile virtual-render list component for React.
 
-This component was originally forked from [ReactList](https://github.com/orgsync/react-list), so credit for the core functionality all goes to [orgsync](https://github.com/orgsync). I have re-architected it to be more modular, fixed some of the rendering issues, added additional options, and added code coverage.
+This component was originally forked from [`ReactList`](https://github.com/orgsync/react-list), so credit for the core functionality goes to [orgsync](https://github.com/orgsync). I have re-architected it to be more modular, fixed some of the rendering issues, added additional options, and added code coverage.
 
-If you are migrating from `ReactList`, the only prop that has changed is `itemsRenderer`, which has been renamed to `containerRenderer`. The list itself now uses `PureComponent` instead of `Component` for optimized performance, so if you are relying on mutated props causing render updates, you may be impacted. The simple solution to that is to create new objects instead of mutating the current ones.
+If you are migrating from `ReactList`, the following props have changed names:
 
-## Table of contents
+* `itemsRenderer` => `containerRenderer`
+* `itemSizeEstimator` => `getEstimatedItemSize`
+* `itemSizeGetter` => `getItemSize`
+* `scrollParentGetter` => `getScrollParent`
 
 * [Usage](#usage)
 * [Available props](#available-props)
   * [axis](#axis)
   * [containerRenderer](#containerrenderer)
   * [debounceReconciler](#debouncereconciler)
+  * [getEstimatedItemSize](#getestimateditemsize)
+  * [getItemSize](#getitemsize)
+  * [getScrollParent](#getscrollparent)
   * [initialIndex](#initialindex)
   * [isHidden](#ishidden)
   * [isLazy](#islazy)
@@ -20,12 +26,11 @@ If you are migrating from `ReactList`, the only prop that has changed is `itemsR
   * [length](#length)
   * [minSize](#minsize)
   * [pageSize](#pageSize)
-  * [scrollParentGetter](#scrollparentgetter)
   * [threshold](#threshold)
   * [type](#type)
   * [usePosition](#useposition)
   * [useTranslate3d](#usetranslate3d)
-* [Methods](#methods)
+* [Instance methods](#instance-methods)
   * [getVisibleRange](#getvisiblerange)
   * [scrollAround](#scrollaround)
   * [scrollTo](#scrollto)
@@ -35,28 +40,34 @@ If you are migrating from `ReactList`, the only prop that has changed is `itemsR
 ## Usage
 
 ```javascript
-import React, {PureComponent} from 'react';
-import WindowedList from 'react-windowed-list';
+import React, { PureComponent } from "react";
+import WindowedList from "react-windowed-list";
 
 const CONTAINER_STYLE = {
   height: 500,
-  overflow: 'auto'
+  overflow: "auto"
 };
 
 class MyComponent extends PureComponent {
   renderItem = (index, key) => {
-    return <div key={key}>I am rendering stuff for the item at index {index}!</div>;
+    return (
+      <div key={key}>I am rendering stuff for the item at index {index}!</div>
+    );
   };
 
   render() {
-    const {items} = this.props;
+    const { items } = this.props;
 
     return (
       <div>
         <h1>List example</h1>
 
         <div style={CONTAINER_STYLE}>
-          <WindowedList itemRenderer={this.renderItem} length={items.length} type="uniform" />
+          <WindowedList
+            itemRenderer={this.renderItem}
+            length={items.length}
+            type="uniform"
+          />
         </div>
       </div>
     );
@@ -106,6 +117,22 @@ The number in milliseconds to debounce the reconciliation call to the frame upda
 
 Internally, `updateFrame` is called upon all scroll actions, and upon component update an additional reconciliation call to it is performed to ensure that the frame is at the correct scroll location. While extremely rare, there are edge cases where the eagerness of this reconciliation may cause a render loop. Applying a `debounceReconciler` should ensure that a stable state is reached before attempting reconciliation. This is not usually necessary, and has potential performance ramifications, so only apply as needed.
 
+#### getEstimatedItemSize
+
+A function that should return the estimated size for the element. It receives both the `index` of the element and the internal `cache` of existing elements as parameters.
+
+**NOTE**: This method is only called if no other technique to determine the item size is possible (including through the DOM).
+
+#### getItemSize
+
+A function that should return the size of the element. It receives the `index` of the element as the only parameter.
+
+#### getScrollParent
+
+_defaults to finding the nearest scrollable container_
+
+A function that returns a DOM element or `window` that will be treated as the scrolling container for the list. In most cases, this does not need to be set for the list to work as intended. It is exposed as a prop for more complicated uses where the scrolling container may not initially have an overflow property that enables scrolling, or if you want to specify a container higher up in the DOM tree.
+
 #### initialIndex
 
 The index to scroll to after mounting.
@@ -124,7 +151,7 @@ A function that receives `index` and `key` and returns the content to be rendere
 
 ```javascript
 renderItem = (index, key) => {
-  const {items} = this.props;
+  const { items } = this.props;
 
   return <div key={key}>{items[index]}</div>;
 };
@@ -133,8 +160,8 @@ renderItem = (index, key) => {
 It is also possible to use your own custom `key` property
 
 ```javascript
-renderItem = (index) => {
-  const {items} = this.props;
+renderItem = index => {
+  const { items } = this.props;
 
   return <div key={items[index].id}>{items[index]}</div>;
 };
@@ -159,12 +186,6 @@ The minimum number of items to render in the list at any given time.
 _defaults to `10`_
 
 The number of items to batch up for new renders.
-
-#### scrollParentGetter
-
-_defaults to finding the nearest scrollable container_
-
-A function that returns a DOM element or `window` that will be treated as the scrolling container for the list. In most cases, this does not need to be set for the list to work as intended. It is exposed as a prop for more complicated uses where the scrolling container may not initially have an overflow property that enables scrolling, or if you want to specify a container higher up in the DOM tree.
 
 #### threshold
 
@@ -202,7 +223,7 @@ Set to `true` if you choose to not use `transform` CSS property, instead opting 
 
 Set to `true` if you want to use `translate3d` instead of the default `translate` value for the `transform` property. This can be more performant (especially on mobile devices), but is supported by fewer browsers.
 
-## Methods
+## Instance methods
 
 #### getVisibleRange
 

@@ -1,5 +1,4 @@
 // external dependencies
-import memoize from 'micro-memoize';
 import React from 'react';
 
 // constants
@@ -25,9 +24,7 @@ import {
  * @param {*} object the object to test
  * @returns {boolean} is teh object a function
  */
-export const isFunction = (object) => {
-  return typeof object === 'function';
-};
+export const isFunction = (object) => typeof object === 'function';
 
 /**
  * @function isNAN
@@ -38,9 +35,7 @@ export const isFunction = (object) => {
  * @param {*} object the object to test
  * @returns {boolean} is teh object a NaN
  */
-export const isNAN = (object) => {
-  return object !== object;
-};
+export const isNAN = (object) => object !== object;
 
 /**
  * @function isNumber
@@ -51,9 +46,7 @@ export const isNAN = (object) => {
  * @param {*} object the object to test
  * @returns {boolean} is teh object a number
  */
-export const isNumber = (object) => {
-  return typeof object === 'number';
-};
+export const isNumber = (object) => typeof object === 'number';
 
 /**
  * @function noop
@@ -74,13 +67,7 @@ export const noop = () => {};
  * @returns {boolean} should the state be updated
  */
 export const areStateValuesEqual = (currentState, nextPossibleState) => {
-  const nextStateKeys = Object.keys(nextPossibleState);
-
-  let key;
-
-  for (let index = 0; index < nextStateKeys.length; index++) {
-    key = nextStateKeys[index];
-
+  for (let key in nextPossibleState) {
     if (currentState[key] !== nextPossibleState[key]) {
       return false;
     }
@@ -98,9 +85,7 @@ export const areStateValuesEqual = (currentState, nextPossibleState) => {
  * @param {*} value the value to compare
  * @returns {*} the value or zero
  */
-export const coalesceToZero = (value) => {
-  return value || 0;
-};
+export const coalesceToZero = (value) => value || 0;
 
 /**
  * @function DefaultItemRenderer
@@ -112,9 +97,7 @@ export const coalesceToZero = (value) => {
  * @param {number} key the key to provide to the item
  * @returns {ReactElement} the generated element
  */
-export const DefaultItemRenderer = (index, key) => {
-  return <div key={key}>{index}</div>;
-};
+export const DefaultItemRenderer = (index, key) => <div key={key}>{index}</div>;
 
 /**
  * @function DefaultContainerRenderer
@@ -126,9 +109,7 @@ export const DefaultItemRenderer = (index, key) => {
  * @param {function} ref the ref to provide to the list container
  * @returns {ReactElement} the generated element
  */
-export const DefaultContainerRenderer = (items, ref) => {
-  return <div ref={ref}>{items}</div>;
-};
+export const DefaultContainerRenderer = (items, ref) => <div ref={ref}>{items}</div>;
 
 /**
  * @function getOffset
@@ -252,39 +233,26 @@ export const getCalculatedItemSizeAndItemsPerRow = (elements, axis, currentItemS
   };
 };
 
-/**
- * @function getContainerStyle
- *
- * @description
- * get the style object to apply to the container
- *
- * @param {string} axis the axis of the component
- * @param {number} size the total size of the axis property to apply
- * @returns {Object} the style for the container
- */
-export const getContainerStyle = memoize(
-  (axis, size) => {
-    if (!size) {
-      return DEFAULT_CONTAINER_STYLE;
-    }
+export const getInnerContainerStyle = (axis, length, itemsPerRow, getSize) => {
+  const size = getSize(Math.ceil(length / itemsPerRow) * itemsPerRow, {});
 
-    const axisKey = SIZE_KEYS[axis];
-
-    return axis !== VALID_AXES.X
-      ? {
-        ...DEFAULT_CONTAINER_STYLE,
-        [axisKey]: size
-      }
-      : {
-        ...DEFAULT_CONTAINER_STYLE,
-        [axisKey]: size,
-        overflowX: 'hidden'
-      };
-  },
-  {
-    maxSize: 250
+  if (!size) {
+    return DEFAULT_CONTAINER_STYLE;
   }
-);
+
+  const axisKey = SIZE_KEYS[axis];
+
+  return axis !== VALID_AXES.X
+    ? {
+      ...DEFAULT_CONTAINER_STYLE,
+      [axisKey]: size
+    }
+    : {
+      ...DEFAULT_CONTAINER_STYLE,
+      [axisKey]: size,
+      overflowX: 'hidden'
+    };
+};
 
 /**
  * @function getFromAndSize
@@ -402,11 +370,12 @@ export const getFromAndSizeFromListItemSize = ({end, start}, {length, pageSize},
  * @param {string} axis the axis of the component
  * @param {string} usePosition should position be used instead of the transform
  * @param {string} useTranslate3d should translate3d be used for the transform
- * @param {number} offset the amount of offset to apply to the chosen axis
- * @param {function} getSpaceBefore the method to get the space before
+ * @param {number} firstIndex the first index being rendered
+ * @param {function} getOffset the method to get the offset value
  * @returns {Object} the style object for the list container
  */
-export const getListContainerStyle = (axis, usePosition, useTranslate3d, offset) => {
+export const getListContainerStyle = (axis, usePosition, useTranslate3d, firstIndex, getOffset) => {
+  const offset = getOffset(firstIndex, {});
   const x = axis === VALID_AXES.X ? offset : 0;
   const y = axis === VALID_AXES.Y ? offset : 0;
 
@@ -437,11 +406,10 @@ export const getListContainerStyle = (axis, usePosition, useTranslate3d, offset)
  * @param {string} axis the axis of the component
  * @returns {number} the scroll size of the element
  */
-export const getScrollSize = (element, axis) => {
-  const key = SCROLL_SIZE_KEYS[axis];
-
-  return element === window ? Math.max(document.body[key], document.documentElement[key]) : element[key];
-};
+export const getScrollSize = (element, axis) =>
+  element === window
+    ? Math.max(document.body[SCROLL_SIZE_KEYS[axis]], document.documentElement[SCROLL_SIZE_KEYS[axis]])
+    : element[SCROLL_SIZE_KEYS[axis]];
 
 /**
  * @function getViewportSize
@@ -453,13 +421,8 @@ export const getScrollSize = (element, axis) => {
  * @param {string} axis the axis of the component
  * @returns {number} the viewport size of the element
  */
-export const getViewportSize = (element, axis) => {
-  if (!element) {
-    return 0;
-  }
-
-  return element === window ? window[INNER_SIZE_KEYS[axis]] : element[CLIENT_SIZE_KEYS[axis]];
-};
+export const getViewportSize = (element, axis) =>
+  element ? (element === window ? window[INNER_SIZE_KEYS[axis]] : element[CLIENT_SIZE_KEYS[axis]]) : 0;
 
 /**
  * @function hasDeterminateSize
@@ -468,12 +431,10 @@ export const getViewportSize = (element, axis) => {
  * does the element have a predetermined size calculator
  *
  * @param {string} type the type of the component
- * @param {function} [itemSizeGetter] the function to calculate the item size
+ * @param {function} [getItemSize] the function to calculate the item size
  * @returns {boolean} is the size automatically determined
  */
-export const hasDeterminateSize = (type, itemSizeGetter) => {
-  return type === VALID_TYPES.UNIFORM || isFunction(itemSizeGetter);
-};
+export const hasDeterminateSize = (type, getItemSize) => type === VALID_TYPES.UNIFORM || isFunction(getItemSize);
 
 /**
  * @function setCacheSizes

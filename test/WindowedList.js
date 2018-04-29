@@ -21,9 +21,7 @@ test('if getVisibleRange will execute the same method on the original component'
     }
   };
 
-  const getVisibleRange = component.createGetVisibleRange(instance);
-
-  const result = getVisibleRange();
+  const result = component.getVisibleRange(instance);
 
   t.true(instance.ref.originalComponent.getVisibleRange.calledOnce);
 
@@ -35,9 +33,7 @@ test('if getVisibleRange will return a default when originalComponent does not e
     ref: {}
   };
 
-  const getVisibleRange = component.createGetVisibleRange(instance);
-
-  const result = getVisibleRange();
+  const result = component.getVisibleRange(instance);
 
   t.deepEqual(result, [0, 0]);
 });
@@ -45,9 +41,7 @@ test('if getVisibleRange will return a default when originalComponent does not e
 test('if getVisibleRange will return a default when the ref does not exist', (t) => {
   const instance = {};
 
-  const getVisibleRange = component.createGetVisibleRange(instance);
-
-  const result = getVisibleRange();
+  const result = component.getVisibleRange(instance);
 
   t.deepEqual(result, [0, 0]);
 });
@@ -63,9 +57,7 @@ test('if scrollAround will execute the same method on the original component', (
     }
   };
 
-  const scrollAround = component.createScrollAround(instance);
-
-  scrollAround(index);
+  component.scrollAround(instance, [index]);
 
   t.true(instance.ref.originalComponent.scrollAround.calledOnce);
   t.true(instance.ref.originalComponent.scrollAround.calledWith(index));
@@ -78,10 +70,8 @@ test('if scrollAround will not throw when there is no original component', (t) =
     ref: {}
   };
 
-  const scrollAround = component.createScrollAround(instance);
-
   t.notThrows(() => {
-    scrollAround(index);
+    component.scrollAround(instance, [index]);
   });
 });
 
@@ -90,10 +80,8 @@ test('if scrollAround will not throw when there is no ref', (t) => {
 
   const instance = {};
 
-  const scrollAround = component.createScrollAround(instance);
-
   t.notThrows(() => {
-    scrollAround(index);
+    component.scrollAround(instance, [index]);
   });
 });
 
@@ -108,9 +96,7 @@ test('if scrollTo will execute the same method on the original component', (t) =
     }
   };
 
-  const scrollTo = component.createScrollTo(instance);
-
-  scrollTo(index);
+  component.scrollTo(instance, [index]);
 
   t.true(instance.ref.originalComponent.scrollTo.calledOnce);
   t.true(instance.ref.originalComponent.scrollTo.calledWith(index));
@@ -123,10 +109,8 @@ test('if scrollTo will not throw when there is no original component', (t) => {
     ref: {}
   };
 
-  const scrollTo = component.createScrollTo(instance);
-
   t.notThrows(() => {
-    scrollTo(index);
+    component.scrollTo(instance, [index]);
   });
 });
 
@@ -135,25 +119,9 @@ test('if scrollTo will not throw when there is no ref', (t) => {
 
   const instance = {};
 
-  const scrollTo = component.createScrollTo(instance);
-
   t.notThrows(() => {
-    scrollTo(index);
+    component.scrollTo(instance, [index]);
   });
-});
-
-test('if setRef will set the component passed to the ref on the instance', (t) => {
-  const instance = {
-    ref: null
-  };
-
-  const setRef = component.createSetRef(instance);
-
-  const windowedList = {};
-
-  setRef(windowedList);
-
-  t.is(instance.ref, windowedList);
 });
 
 test('if WindowedList renders correctly with default props', (t) => {

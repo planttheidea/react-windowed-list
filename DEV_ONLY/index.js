@@ -3,20 +3,16 @@ import {render} from 'react-dom';
 
 import Example from './Example';
 
-const renderItem = (index, key) => {
-  return (
-    <div
-      className={`item${index % 2 ? '' : ' even'}`}
-      key={key}
-    >
-      {index}
-    </div>
-  );
-};
+const renderItem = (index, key) => (
+  <div
+    className={`item${index % 2 ? '' : ' even'}`}
+    key={key}
+  >
+    {index}
+  </div>
+);
 
-renderItem.toJSON = () => {
-  return renderItem.toString();
-};
+renderItem.toJSON = () => renderItem.toString();
 
 const div = document.createElement('div');
 const style = document.createElement('style');

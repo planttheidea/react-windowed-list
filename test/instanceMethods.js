@@ -9,48 +9,7 @@ import * as methods from 'src/instanceMethods';
 import * as constants from 'src/constants';
 import * as utils from 'src/utils';
 
-test('if createGetContainerStyle creates a method that will call getContainerStyle with the right axis and size', (t) => {
-  const bottom = 0;
-  const size = 100;
-
-  const instance = {
-    getSpaceBefore: sinon.stub().returns(size),
-    props: {
-      axis: 'y',
-      length: 1000
-    },
-    state: {
-      itemsPerRow: 1
-    }
-  };
-
-  const getContainerStyle = methods.createGetContainerStyle(instance);
-
-  t.true(_.isFunction(getContainerStyle));
-
-  const mathCeilStub = sinon.stub(Math, 'ceil').returns(bottom);
-  const getStyleStub = sinon.stub(utils, 'getContainerStyle');
-
-  getContainerStyle();
-
-  t.true(mathCeilStub.calledOnce);
-  t.true(mathCeilStub.calledWith(instance.props.length / instance.state.itemsPerRow));
-
-  mathCeilStub.restore();
-
-  t.true(instance.getSpaceBefore.calledOnce);
-
-  const args = instance.getSpaceBefore.firstCall.args;
-
-  t.deepEqual(args, [bottom, {}]);
-
-  t.true(getStyleStub.calledOnce);
-  t.true(getStyleStub.calledWith(instance.props.axis, size));
-
-  getStyleStub.restore();
-});
-
-test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if they exist and useStaticSize is true', (t) => {
+test('if getItemSizeAndItemsPerRow will return itemSize and itemsPerRow if they exist and useStaticSize is true', (t) => {
   const instance = {
     props: {
       axis: 'y',
@@ -62,10 +21,6 @@ test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if
     }
   };
 
-  const getItemSizeAndItemsPerRow = methods.createGetItemSizeAndItemsPerRow(instance);
-
-  t.true(_.isFunction(getItemSizeAndItemsPerRow));
-
   const fakeItemSizeAndItemsPerRow = {
     itemSize: 40,
     itemsPerRow: 2
@@ -75,7 +30,7 @@ test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if
     .stub(utils, 'getCalculatedItemSizeAndItemsPerRow')
     .returns(fakeItemSizeAndItemsPerRow);
 
-  const result = getItemSizeAndItemsPerRow();
+  const result = methods.getItemSizeAndItemsPerRow(instance);
 
   t.true(getCalculatedItemSizeAndItemsPerRowStub.notCalled);
 
@@ -87,7 +42,7 @@ test('if createGetItemSizeAndItemsPerRow will return itemSize and itemsPerRow if
   });
 });
 
-test('if createGetItemSizeAndItemsPerRow will return an empty object if useStaticSize is false and there are no children', (t) => {
+test('if getItemSizeAndItemsPerRow will return an empty object if useStaticSize is false and there are no children', (t) => {
   const instance = {
     props: {
       axis: 'y',
@@ -99,10 +54,6 @@ test('if createGetItemSizeAndItemsPerRow will return an empty object if useStati
     }
   };
 
-  const getItemSizeAndItemsPerRow = methods.createGetItemSizeAndItemsPerRow(instance);
-
-  t.true(_.isFunction(getItemSizeAndItemsPerRow));
-
   const fakeItemSizeAndItemsPerRow = {
     itemSize: 40,
     itemsPerRow: 2
@@ -112,7 +63,7 @@ test('if createGetItemSizeAndItemsPerRow will return an empty object if useStati
     .stub(utils, 'getCalculatedItemSizeAndItemsPerRow')
     .returns(fakeItemSizeAndItemsPerRow);
 
-  const result = getItemSizeAndItemsPerRow();
+  const result = methods.getItemSizeAndItemsPerRow(instance);
 
   t.true(getCalculatedItemSizeAndItemsPerRowStub.notCalled);
 
@@ -122,7 +73,7 @@ test('if createGetItemSizeAndItemsPerRow will return an empty object if useStati
 });
 
 test(
-  'if createGetItemSizeAndItemsPerRow will return the object from getCalculatedItemSizeAndItemsPerRow ' +
+  'if getItemSizeAndItemsPerRow will return the object from getCalculatedItemSizeAndItemsPerRow ' +
     'if useStaticSize is false and there are children',
   (t) => {
     const instance = {
@@ -139,10 +90,6 @@ test(
       }
     };
 
-    const getItemSizeAndItemsPerRow = methods.createGetItemSizeAndItemsPerRow(instance);
-
-    t.true(_.isFunction(getItemSizeAndItemsPerRow));
-
     const fakeItemSizeAndItemsPerRow = {
       itemSize: 40,
       itemsPerRow: 2
@@ -152,7 +99,7 @@ test(
       .stub(utils, 'getCalculatedItemSizeAndItemsPerRow')
       .returns(fakeItemSizeAndItemsPerRow);
 
-    const result = getItemSizeAndItemsPerRow();
+    const result = methods.getItemSizeAndItemsPerRow(instance);
 
     t.true(getCalculatedItemSizeAndItemsPerRowStub.calledOnce);
     t.true(
@@ -169,44 +116,7 @@ test(
   }
 );
 
-test('if createGetListContainerStyle calls getListContainerStyle with the calculated offset', (t) => {
-  const offset = 100;
-
-  const instance = {
-    getSpaceBefore: sinon.stub().returns(offset),
-    props: {
-      axis: 'y',
-      usePosition: false,
-      useTranslate3d: false
-    },
-    state: {
-      from: 0
-    }
-  };
-
-  const getListContainerStyle = methods.createGetListContainerStyle(instance);
-
-  t.true(_.isFunction(getListContainerStyle));
-
-  const getStyleStub = sinon.stub(utils, 'getListContainerStyle');
-
-  getListContainerStyle();
-
-  t.true(instance.getSpaceBefore.calledOnce);
-
-  const args = instance.getSpaceBefore.firstCall.args;
-
-  t.deepEqual(args, [instance.state.from, {}]);
-
-  t.true(getStyleStub.calledOnce);
-  t.true(
-    getStyleStub.calledWith(instance.props.axis, instance.props.usePosition, instance.props.useTranslate3d, offset)
-  );
-
-  getStyleStub.restore();
-});
-
-test('if createGetScrollOffset will get the offset of the scrollParent when it is not the window', (t) => {
+test('if getScrollOffset will get the offset of the scrollParent when it is not the window', (t) => {
   const instance = {
     outerContainer: {},
     props: {
@@ -215,15 +125,11 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
     scrollParent: {}
   };
 
-  const getScrollOffset = methods.createGetScrollOffset(instance);
-
-  t.true(_.isFunction(getScrollOffset));
-
   const getOffsetStub = sinon.stub(utils, 'getOffset').returns(50);
   const getScrollSizeStub = sinon.stub(utils, 'getScrollSize').returns(100);
   const getViewportSizeStub = sinon.stub(utils, 'getViewportSize').returns(10);
 
-  getScrollOffset();
+  methods.getScrollOffset(instance);
 
   t.true(getScrollSizeStub.calledOnce);
   t.true(getScrollSizeStub.calledWith(instance.scrollParent, instance.props.axis));
@@ -248,7 +154,7 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
   getOffsetStub.restore();
 });
 
-test('if createGetScrollOffset will get the offset of the scrollParent when it is the window', (t) => {
+test('if getScrollOffset will get the offset of the scrollParent when it is the window', (t) => {
   const instance = {
     outerContainer: {},
     props: {
@@ -257,15 +163,11 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
     scrollParent: window
   };
 
-  const getScrollOffset = methods.createGetScrollOffset(instance);
-
-  t.true(_.isFunction(getScrollOffset));
-
   const getOffsetStub = sinon.stub(utils, 'getOffset').returns(50);
   const getScrollSizeStub = sinon.stub(utils, 'getScrollSize').returns(100);
   const getViewportSizeStub = sinon.stub(utils, 'getViewportSize').returns(10);
 
-  getScrollOffset();
+  methods.getScrollOffset(instance);
 
   t.true(getScrollSizeStub.calledOnce);
   t.true(getScrollSizeStub.calledWith(instance.scrollParent, instance.props.axis));
@@ -290,7 +192,7 @@ test('if createGetScrollOffset will get the offset of the scrollParent when it i
   getOffsetStub.restore();
 });
 
-test('if createGetScrollParent will return immediately if there is a scrollParentGetter', (t) => {
+test('if getScrollParent will return immediately if there is a getScrollParent', (t) => {
   const element = {
     parentElement: {}
   };
@@ -299,19 +201,15 @@ test('if createGetScrollParent will return immediately if there is a scrollParen
     getDomNode: sinon.stub().returns(element),
     props: {
       axis: 'y',
-      scrollParentGetter: sinon.stub().returns(scrollGetterElement)
+      getScrollParent: sinon.stub().returns(scrollGetterElement)
     }
   };
 
-  const getScrollParent = methods.createGetScrollParent(instance);
-
-  t.true(_.isFunction(getScrollParent));
-
   const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns({});
 
-  const result = getScrollParent();
+  const result = methods.getScrollParent(instance);
 
-  t.true(instance.props.scrollParentGetter.calledOnce);
+  t.true(instance.props.getScrollParent.calledOnce);
 
   t.true(getComputedStyleStub.notCalled);
 
@@ -320,24 +218,20 @@ test('if createGetScrollParent will return immediately if there is a scrollParen
   t.is(result, scrollGetterElement);
 });
 
-test('if createGetScrollParent will return null if there is no outerContainer', (t) => {
+test('if getScrollParent will return null if there is no outerContainer', (t) => {
   const element = {};
   const instance = {
     getDomNode: sinon.stub().returns(element),
     outerContainer: null,
     props: {
       axis: 'y',
-      scrollParentGetter: null
+      getScrollParent: null
     }
   };
 
-  const getScrollParent = methods.createGetScrollParent(instance);
-
-  t.true(_.isFunction(getScrollParent));
-
   const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns({});
 
-  const result = getScrollParent();
+  const result = methods.getScrollParent(instance);
 
   t.true(getComputedStyleStub.notCalled);
 
@@ -346,7 +240,7 @@ test('if createGetScrollParent will return null if there is no outerContainer', 
   t.is(result, null);
 });
 
-test.skip('if createGetScrollParent will return the window if the overflowStyleKey is not found on the element', (t) => {
+test.skip('if getScrollParent will return the window if the overflowStyleKey is not found on the element', (t) => {
   const element = {};
   const scrollGetterElement = {};
   const instance = {
@@ -355,17 +249,13 @@ test.skip('if createGetScrollParent will return the window if the overflowStyleK
     },
     props: {
       axis: 'y',
-      scrollParentGetter: null
+      getScrollParent: null
     }
   };
 
-  const getScrollParent = methods.createGetScrollParent(instance);
-
-  t.true(_.isFunction(getScrollParent));
-
   const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns({});
 
-  const result = getScrollParent();
+  const result = methods.getScrollParent(instance);
 
   t.true(getComputedStyleStub.calledOnce);
 
@@ -374,7 +264,7 @@ test.skip('if createGetScrollParent will return the window if the overflowStyleK
   getComputedStyleStub.restore();
 });
 
-test.skip('if createGetScrollParent will return the element if the overflowStyleKey is found on the element', (t) => {
+test.skip('if getScrollParent will return the element if the overflowStyleKey is found on the element', (t) => {
   const axis = 'y';
   const element = {
     [constants.OVERFLOW_KEYS[axis]]: 'auto'
@@ -386,17 +276,13 @@ test.skip('if createGetScrollParent will return the element if the overflowStyle
     },
     props: {
       axis,
-      scrollParentGetter: null
+      getScrollParent: null
     }
   };
 
-  const getScrollParent = methods.createGetScrollParent(instance);
-
-  t.true(_.isFunction(getScrollParent));
-
   const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns({});
 
-  const result = getScrollParent();
+  const result = methods.getScrollParent(instance);
 
   t.true(getComputedStyleStub.notCalled);
 
@@ -405,7 +291,7 @@ test.skip('if createGetScrollParent will return the element if the overflowStyle
   getComputedStyleStub.restore();
 });
 
-test('if createGetSizeOfListItem will return the itemSize if it exists', (t) => {
+test('if getSizeOfListItem will return the itemSize if it exists', (t) => {
   const fakeDomNode = {
     children: []
   };
@@ -414,8 +300,8 @@ test('if createGetSizeOfListItem will return the itemSize if it exists', (t) => 
     getDomNode: sinon.stub().returns(fakeDomNode),
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.spy(),
-      itemSizeGetter: sinon.spy(),
+      getEstimatedItemSize: sinon.spy(),
+      getItemSize: sinon.spy(),
       type: constants.VALID_TYPES.SIMPLE
     },
     state: {
@@ -425,24 +311,20 @@ test('if createGetSizeOfListItem will return the itemSize if it exists', (t) => 
     }
   };
 
-  const getSizeOfListItem = methods.createGetSizeOfListItem(instance);
-
-  t.true(_.isFunction(getSizeOfListItem));
-
   const index = 0;
 
-  const result = getSizeOfListItem(index);
+  const result = methods.getSizeOfListItem(instance, [index]);
 
-  t.true(instance.props.itemSizeGetter.notCalled);
+  t.true(instance.props.getItemSize.notCalled);
 
   t.true(instance.getDomNode.notCalled);
 
-  t.true(instance.props.itemSizeEstimator.notCalled);
+  t.true(instance.props.getEstimatedItemSize.notCalled);
 
   t.is(result, instance.state.itemSize);
 });
 
-test('if createGetSizeOfListItem will call the itemSizeGetter if it exists', (t) => {
+test('if getSizeOfListItem will call the getItemSize if it exists', (t) => {
   const estimatedSize = 30;
   const fakeDomNode = {
     children: []
@@ -453,8 +335,8 @@ test('if createGetSizeOfListItem will call the itemSizeGetter if it exists', (t)
     getDomNode: sinon.stub().returns(fakeDomNode),
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.stub().returns(estimatedSize),
-      itemSizeGetter: sinon.stub().returns(gottenSize),
+      getEstimatedItemSize: sinon.stub().returns(estimatedSize),
+      getItemSize: sinon.stub().returns(gottenSize),
       type: constants.VALID_TYPES.SIMPLE
     },
     state: {
@@ -463,25 +345,21 @@ test('if createGetSizeOfListItem will call the itemSizeGetter if it exists', (t)
     }
   };
 
-  const getSizeOfListItem = methods.createGetSizeOfListItem(instance);
-
-  t.true(_.isFunction(getSizeOfListItem));
-
   const index = 0;
 
-  const result = getSizeOfListItem(index);
+  const result = methods.getSizeOfListItem(instance, [index]);
 
-  t.true(instance.props.itemSizeGetter.calledOnce);
-  t.true(instance.props.itemSizeGetter.calledWith(index));
+  t.true(instance.props.getItemSize.calledOnce);
+  t.true(instance.props.getItemSize.calledWith(index));
 
   t.true(instance.getDomNode.notCalled);
 
-  t.true(instance.props.itemSizeEstimator.notCalled);
+  t.true(instance.props.getEstimatedItemSize.notCalled);
 
   t.is(result, gottenSize);
 });
 
-test('if createGetSizeOfListItem will pull from cache if the value exists', (t) => {
+test('if getSizeOfListItem will pull from cache if the value exists', (t) => {
   const estimatedSize = 30;
   const fakeDomNode = {
     children: [
@@ -498,8 +376,8 @@ test('if createGetSizeOfListItem will pull from cache if the value exists', (t) 
     items: [],
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.stub().returns(estimatedSize),
-      itemSizeGetter: null,
+      getEstimatedItemSize: sinon.stub().returns(estimatedSize),
+      getItemSize: null,
       type: constants.VALID_TYPES.SIMPLE
     },
     state: {
@@ -508,22 +386,18 @@ test('if createGetSizeOfListItem will pull from cache if the value exists', (t) 
     }
   };
 
-  const getSizeOfListItem = methods.createGetSizeOfListItem(instance);
-
-  t.true(_.isFunction(getSizeOfListItem));
-
   const index = 0;
 
-  const result = getSizeOfListItem(index);
+  const result = methods.getSizeOfListItem(instance, [index]);
 
   t.true(instance.getDomNode.notCalled);
 
-  t.true(instance.props.itemSizeEstimator.notCalled);
+  t.true(instance.props.getEstimatedItemSize.notCalled);
 
   t.is(result, instance.cache[0]);
 });
 
-test('if createGetSizeOfListItem will get the DOM node style key', (t) => {
+test('if getSizeOfListItem will get the DOM node style key', (t) => {
   const estimatedSize = 30;
   const instance = {
     cache: {},
@@ -536,8 +410,8 @@ test('if createGetSizeOfListItem will get the DOM node style key', (t) => {
     },
     props: {
       axis: 'y',
-      itemSizeEstimator: sinon.stub().returns(estimatedSize),
-      itemSizeGetter: null,
+      getEstimatedItemSize: sinon.stub().returns(estimatedSize),
+      getItemSize: null,
       type: constants.VALID_TYPES.VARIABLE
     },
     state: {
@@ -546,21 +420,17 @@ test('if createGetSizeOfListItem will get the DOM node style key', (t) => {
     }
   };
 
-  const getSizeOfListItem = methods.createGetSizeOfListItem(instance);
-
-  t.true(_.isFunction(getSizeOfListItem));
-
   const index = 0;
 
-  const result = getSizeOfListItem(index);
+  const result = methods.getSizeOfListItem(instance, [index]);
 
-  t.true(instance.props.itemSizeEstimator.calledOnce);
-  t.true(instance.props.itemSizeEstimator.calledWith(index, instance.cache));
+  t.true(instance.props.getEstimatedItemSize.calledOnce);
+  t.true(instance.props.getEstimatedItemSize.calledWith(index, instance.cache));
 
   t.is(result, estimatedSize);
 });
 
-test('if createGetSizeOfListItem will return undefined if none of the techniques work', (t) => {
+test('if getSizeOfListItem will return undefined if none of the techniques work', (t) => {
   const instance = {
     cache: {},
     items: {
@@ -572,8 +442,8 @@ test('if createGetSizeOfListItem will return undefined if none of the techniques
     },
     props: {
       axis: 'y',
-      itemSizeEstimator: null,
-      itemSizeGetter: null,
+      getEstimatedItemSize: null,
+      getItemSize: null,
       type: constants.VALID_TYPES.VARIABLE
     },
     state: {
@@ -582,28 +452,20 @@ test('if createGetSizeOfListItem will return undefined if none of the techniques
     }
   };
 
-  const getSizeOfListItem = methods.createGetSizeOfListItem(instance);
-
-  t.true(_.isFunction(getSizeOfListItem));
-
   const index = 0;
 
-  const result = getSizeOfListItem(index);
+  const result = methods.getSizeOfListItem(instance, [index]);
 
   t.is(result, undefined);
 });
 
-test('if createGetSpaceBefore will return the item in cache if defined', (t) => {
+test('if getSpaceBefore will return the item in cache if defined', (t) => {
   const instance = {
     state: {
       itemSize: 100,
       itemsPerRow: 1
     }
   };
-
-  const getSpaceBefore = methods.createGetSpaceBefore(instance);
-
-  t.true(_.isFunction(getSpaceBefore));
 
   const fakeResult = 123;
 
@@ -614,7 +476,7 @@ test('if createGetSpaceBefore will return the item in cache if defined', (t) => 
     2: 100
   };
 
-  const result = getSpaceBefore(index, cache);
+  const result = methods.getSpaceBefore(instance, [index, cache]);
 
   t.true(getCalculatedSpaceBeforeStub.notCalled);
 
@@ -623,17 +485,13 @@ test('if createGetSpaceBefore will return the item in cache if defined', (t) => 
   t.is(result, cache[2]);
 });
 
-test('if createGetSpaceBefore will not call getCalculatedSpaceBefore if there is an itemSize', (t) => {
+test('if getSpaceBefore will not call getCalculatedSpaceBefore if there is an itemSize', (t) => {
   const instance = {
     state: {
       itemSize: 100,
       itemsPerRow: 1
     }
   };
-
-  const getSpaceBefore = methods.createGetSpaceBefore(instance);
-
-  t.true(_.isFunction(getSpaceBefore));
 
   const fakeResult = 'bar';
 
@@ -642,7 +500,7 @@ test('if createGetSpaceBefore will not call getCalculatedSpaceBefore if there is
   const index = 0;
   const cache = {};
 
-  const result = getSpaceBefore(index, cache);
+  const result = methods.getSpaceBefore(instance, [index, cache]);
 
   t.true(getCalculatedSpaceBeforeStub.notCalled);
 
@@ -651,7 +509,7 @@ test('if createGetSpaceBefore will not call getCalculatedSpaceBefore if there is
   t.is(result, 0);
 });
 
-test('if createGetSpaceBefore will call getCalculatedSpaceBefore if there is no itemSize', (t) => {
+test('if getSpaceBefore will call getCalculatedSpaceBefore if there is no itemSize', (t) => {
   const instance = {
     getSizeOfListItem() {},
     state: {
@@ -660,10 +518,6 @@ test('if createGetSpaceBefore will call getCalculatedSpaceBefore if there is no 
     }
   };
 
-  const getSpaceBefore = methods.createGetSpaceBefore(instance);
-
-  t.true(_.isFunction(getSpaceBefore));
-
   const fakeResult = 'bar';
 
   const getCalculatedSpaceBeforeStub = sinon.stub(utils, 'getCalculatedSpaceBefore').returns(fakeResult);
@@ -671,7 +525,7 @@ test('if createGetSpaceBefore will call getCalculatedSpaceBefore if there is no 
   const index = 0;
   const cache = {};
 
-  const result = getSpaceBefore(index, cache);
+  const result = methods.getSpaceBefore(instance, [index, cache]);
 
   t.true(getCalculatedSpaceBeforeStub.calledOnce);
   t.true(getCalculatedSpaceBeforeStub.calledWith(cache, index, instance.getSizeOfListItem));
@@ -681,7 +535,7 @@ test('if createGetSpaceBefore will call getCalculatedSpaceBefore if there is no 
   t.is(result, fakeResult);
 });
 
-test('if createGetStartAndEnd will calculate start and end when hasDeterminateSize is false', (t) => {
+test('if getStartAndEnd will calculate start and end when hasDeterminateSize is false', (t) => {
   const instance = {
     getScrollOffset: sinon.stub().returns(0),
     getSpaceBefore: sinon.stub().returns(50),
@@ -694,15 +548,11 @@ test('if createGetStartAndEnd will calculate start and end when hasDeterminateSi
     scrollParent: {}
   };
 
-  const getStartAndEnd = methods.createGetStartAndEnd(instance);
-
-  t.true(_.isFunction(getStartAndEnd));
-
   const getViewportSizeStub = sinon.stub(utils, 'getViewportSize').returns(100);
   const hasDeterminateSizeStub = sinon.stub(utils, 'hasDeterminateSize').returns(false);
   const mathMinSpy = sinon.spy(Math, 'min');
 
-  const result = getStartAndEnd();
+  const result = methods.getStartAndEnd(instance, []);
 
   t.true(instance.getScrollOffset.calledOnce);
 
@@ -712,7 +562,7 @@ test('if createGetStartAndEnd will calculate start and end when hasDeterminateSi
   getViewportSizeStub.restore();
 
   t.true(hasDeterminateSizeStub.calledOnce);
-  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.itemSizeGetter));
+  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.getItemSize));
 
   hasDeterminateSizeStub.restore();
 
@@ -727,7 +577,7 @@ test('if createGetStartAndEnd will calculate start and end when hasDeterminateSi
   });
 });
 
-test('if createGetStartAndEnd will calculate start and end when hasDeterminateSize is true', (t) => {
+test('if getStartAndEnd will calculate start and end when hasDeterminateSize is true', (t) => {
   const instance = {
     getScrollOffset: sinon.stub().returns(0),
     getSpaceBefore: sinon.stub().returns(50),
@@ -740,15 +590,11 @@ test('if createGetStartAndEnd will calculate start and end when hasDeterminateSi
     scrollParent: {}
   };
 
-  const getStartAndEnd = methods.createGetStartAndEnd(instance);
-
-  t.true(_.isFunction(getStartAndEnd));
-
   const getViewportSizeStub = sinon.stub(utils, 'getViewportSize').returns(100);
   const hasDeterminateSizeStub = sinon.stub(utils, 'hasDeterminateSize').returns(true);
   const mathMinSpy = sinon.spy(Math, 'min');
 
-  const result = getStartAndEnd();
+  const result = methods.getStartAndEnd(instance, []);
 
   t.true(instance.getScrollOffset.calledOnce);
 
@@ -758,7 +604,7 @@ test('if createGetStartAndEnd will calculate start and end when hasDeterminateSi
   getViewportSizeStub.restore();
 
   t.true(hasDeterminateSizeStub.calledOnce);
-  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.itemSizeGetter));
+  t.true(hasDeterminateSizeStub.calledWith(instance.props.type, instance.props.getItemSize));
 
   hasDeterminateSizeStub.restore();
 
@@ -775,13 +621,11 @@ test('if createGetStartAndEnd will calculate start and end when hasDeterminateSi
   });
 });
 
-test('if createGetVisibleRange will return the first and last indices of visible items', (t) => {
+test('if getVisibleRange will return the first and last indices of visible items', (t) => {
   const itemSize = 30;
   const instance = {
     getSizeOfListItem: sinon.stub().returns(itemSize),
-    getSpaceBefore: sinon.stub().callsFake((index) => {
-      return index * itemSize;
-    }),
+    getSpaceBefore: sinon.stub().callsFake((index) => index * itemSize),
     getStartAndEnd: sinon.stub().returns({
       end: 1000,
       start: 15
@@ -792,11 +636,7 @@ test('if createGetVisibleRange will return the first and last indices of visible
     }
   };
 
-  const getVisibleRange = methods.createGetVisibleRange(instance);
-
-  t.true(_.isFunction(getVisibleRange));
-
-  const result = getVisibleRange();
+  const result = methods.getVisibleRange(instance);
 
   const viewport = 1000 - 15;
   const items = Math.round(viewport / itemSize);
@@ -804,7 +644,7 @@ test('if createGetVisibleRange will return the first and last indices of visible
   t.deepEqual(result, [instance.state.from, items]);
 });
 
-test('if createRenderItems will call itemRenderer for the length of size, and call containerRenderer with the result', (t) => {
+test('if renderItems will call itemRenderer for the length of size, and call containerRenderer with the result', (t) => {
   const instance = {
     props: {
       itemRenderer: sinon.spy(),
@@ -816,11 +656,7 @@ test('if createRenderItems will call itemRenderer for the length of size, and ca
     }
   };
 
-  const renderItems = methods.createRenderItems(instance);
-
-  t.true(_.isFunction(renderItems));
-
-  renderItems();
+  methods.renderItems(instance);
 
   t.is(instance.props.itemRenderer.callCount, instance.state.size);
 
@@ -840,7 +676,7 @@ test('if createRenderItems will call itemRenderer for the length of size, and ca
   t.true(_.isFunction(itemsArgs[1]));
 });
 
-test('if createScrollAround will call setScroll with the correct value when the current is at most the min', (t) => {
+test('if scrollAround will call setScroll with the correct value when the current is at most the min', (t) => {
   const index = 4;
   const scrollOffset = 100;
   const listItemSize = 30;
@@ -855,17 +691,13 @@ test('if createScrollAround will call setScroll with the correct value when the 
     setScroll: sinon.spy()
   };
 
-  const scrollAround = methods.createScrollAround(instance);
-
-  t.true(_.isFunction(scrollAround));
-
-  scrollAround(index);
+  methods.scrollAround(instance, [index]);
 
   t.true(instance.setScroll.calledOnce);
   t.true(instance.setScroll.calledWith(spaceBefore - viewportSize + listItemSize));
 });
 
-test('if createScrollAround will call setScroll with the correct value when the current is greater than the max', (t) => {
+test('if scrollAround will call setScroll with the correct value when the current is greater than the max', (t) => {
   const index = 4;
   const scrollOffset = 1000;
   const listItemSize = 30;
@@ -880,17 +712,13 @@ test('if createScrollAround will call setScroll with the correct value when the 
     setScroll: sinon.spy()
   };
 
-  const scrollAround = methods.createScrollAround(instance);
-
-  t.true(_.isFunction(scrollAround));
-
-  scrollAround(index);
+  methods.scrollAround(instance, [index]);
 
   t.true(instance.setScroll.calledOnce);
   t.true(instance.setScroll.calledWith(spaceBefore));
 });
 
-test('if createScrollTo will call setScroll if initialIndex is a number', (t) => {
+test('if scrollTo will call setScroll if initialIndex is a number', (t) => {
   const spaceBefore = 123;
   const instance = {
     getSpaceBefore: sinon.stub().returns(spaceBefore),
@@ -900,11 +728,7 @@ test('if createScrollTo will call setScroll if initialIndex is a number', (t) =>
     setScroll: sinon.spy()
   };
 
-  const scrollTo = methods.createScrollTo(instance);
-
-  t.true(_.isFunction(scrollTo));
-
-  scrollTo();
+  methods.scrollTo(instance, []);
 
   t.true(instance.getSpaceBefore.calledOnce);
   t.true(instance.getSpaceBefore.calledWith(instance.props.initialIndex));
@@ -913,7 +737,7 @@ test('if createScrollTo will call setScroll if initialIndex is a number', (t) =>
   t.true(instance.setScroll.calledWith(spaceBefore));
 });
 
-test('if createScrollTo will do nothing if initialIndex is not a number', (t) => {
+test('if scrollTo will do nothing if initialIndex is not a number', (t) => {
   const spaceBefore = 123;
   const instance = {
     getSpaceBefore: sinon.stub().returns(spaceBefore),
@@ -923,17 +747,13 @@ test('if createScrollTo will do nothing if initialIndex is not a number', (t) =>
     setScroll: sinon.spy()
   };
 
-  const scrollTo = methods.createScrollTo(instance);
-
-  t.true(_.isFunction(scrollTo));
-
-  scrollTo();
+  methods.scrollTo(instance, []);
 
   t.true(instance.getSpaceBefore.notCalled);
   t.true(instance.setScroll.notCalled);
 });
 
-test('if createSetReconcileFrameAfterUpdate will assign raf when debounceReconciler is not a number', (t) => {
+test('if setReconcileFrameAfterUpdate will assign raf when debounceReconciler is not a number', (t) => {
   const instance = {
     props: {
       debounceReconciler: 'foo'
@@ -942,16 +762,12 @@ test('if createSetReconcileFrameAfterUpdate will assign raf when debounceReconci
     updateFrame() {}
   };
 
-  const setReconcileFrameAfterUpdate = methods.createSetReconcileFrameAfterUpdate(instance);
-
-  t.true(_.isFunction(setReconcileFrameAfterUpdate));
-
-  setReconcileFrameAfterUpdate();
+  methods.setReconcileFrameAfterUpdate(instance);
 
   t.is(instance.reconcileFrameAfterUpdate, raf);
 });
 
-test('if createSetReconcileFrameAfterUpdate will assign a debounced method when debounceReconciler is a number', async (t) => {
+test('if setReconcileFrameAfterUpdate will assign a debounced method when debounceReconciler is a number', async (t) => {
   const instance = {
     props: {
       debounceReconciler: 123
@@ -960,11 +776,7 @@ test('if createSetReconcileFrameAfterUpdate will assign a debounced method when 
     updateFrame: sinon.spy()
   };
 
-  const setReconcileFrameAfterUpdate = methods.createSetReconcileFrameAfterUpdate(instance);
-
-  t.true(_.isFunction(setReconcileFrameAfterUpdate));
-
-  setReconcileFrameAfterUpdate();
+  methods.setReconcileFrameAfterUpdate(instance);
 
   t.not(instance.reconcileFrameAfterUpdate, raf);
   t.is(instance.reconcileFrameAfterUpdate.name, 'debounced');
@@ -980,7 +792,7 @@ test('if createSetReconcileFrameAfterUpdate will assign a debounced method when 
   t.true(instance.updateFrame.calledOnce);
 });
 
-test('if createSetScroll will return immediately if there is no scrollParent', (t) => {
+test('if setScroll will return immediately if there is no scrollParent', (t) => {
   const fakeDomNode = {};
   const instance = {
     getDomNode: sinon.stub().returns(fakeDomNode),
@@ -990,16 +802,12 @@ test('if createSetScroll will return immediately if there is no scrollParent', (
     scrollParent: null
   };
 
-  const setScroll = methods.createSetScroll(instance);
-
-  t.true(_.isFunction(setScroll));
-
   const scrollToStub = sinon.stub(window, 'scrollTo');
   const getOffsetStub = sinon.stub(utils, 'getOffset').returns(0);
 
   const currentOffset = 10;
 
-  setScroll(currentOffset);
+  methods.setScroll(instance, [currentOffset]);
 
   t.true(scrollToStub.notCalled);
 
@@ -1010,7 +818,7 @@ test('if createSetScroll will return immediately if there is no scrollParent', (
   getOffsetStub.restore();
 });
 
-test('if createSetScroll will set the specific axis offset if the scrollParent is not the window', (t) => {
+test('if setScroll will set the specific axis offset if the scrollParent is not the window', (t) => {
   const instance = {
     outerContainer: {},
     props: {
@@ -1019,16 +827,12 @@ test('if createSetScroll will set the specific axis offset if the scrollParent i
     scrollParent: {}
   };
 
-  const setScroll = methods.createSetScroll(instance);
-
-  t.true(_.isFunction(setScroll));
-
   const scrollToStub = sinon.stub(window, 'scrollTo');
   const getOffsetStub = sinon.stub(utils, 'getOffset').returns(1);
 
   const currentOffset = 10;
 
-  setScroll(currentOffset);
+  methods.setScroll(instance, [currentOffset]);
 
   t.true(scrollToStub.notCalled);
 
@@ -1051,7 +855,7 @@ test('if createSetScroll will set the specific axis offset if the scrollParent i
   });
 });
 
-test('if createSetScroll will call scrollTo when the scrollParent is the window', (t) => {
+test('if setScroll will call scrollTo when the scrollParent is the window', (t) => {
   const instance = {
     outerContainer: {},
     props: {
@@ -1060,16 +864,12 @@ test('if createSetScroll will call scrollTo when the scrollParent is the window'
     scrollParent: window
   };
 
-  const setScroll = methods.createSetScroll(instance);
-
-  t.true(_.isFunction(setScroll));
-
   const scrollToStub = sinon.stub(window, 'scrollTo');
   const getOffsetStub = sinon.stub(utils, 'getOffset').returns(1);
 
   const currentOffset = 10;
 
-  setScroll(currentOffset);
+  methods.setScroll(instance, [currentOffset]);
 
   t.true(scrollToStub.calledOnce);
   t.true(scrollToStub.calledWith(0, 11));
@@ -1082,22 +882,18 @@ test('if createSetScroll will call scrollTo when the scrollParent is the window'
   getOffsetStub.restore();
 });
 
-test('if createSetStateIfAppropriate will only call the callback when state values are equal', (t) => {
+test('if setStateIfAppropriate will only call the callback when state values are equal', (t) => {
   const instance = {
     setState: sinon.spy(),
     state: {}
   };
-
-  const setStateIfAppropriate = methods.createSetStateIfAppropriate(instance);
-
-  t.true(_.isFunction(setStateIfAppropriate));
 
   const nextState = {};
   const callback = sinon.spy();
 
   const areStateValuesEqualStub = sinon.stub(utils, 'areStateValuesEqual').returns(true);
 
-  setStateIfAppropriate(nextState, callback);
+  methods.setStateIfAppropriate(instance, [nextState, callback]);
 
   t.true(areStateValuesEqualStub.calledOnce);
   t.true(areStateValuesEqualStub.calledWith(instance.state, nextState));
@@ -1109,22 +905,18 @@ test('if createSetStateIfAppropriate will only call the callback when state valu
   t.true(instance.setState.notCalled);
 });
 
-test('if createSetStateIfAppropriate will call setState when the state values are not equal', (t) => {
+test('if setStateIfAppropriate will call setState when the state values are not equal', (t) => {
   const instance = {
     setState: sinon.spy(),
     state: {}
   };
-
-  const setStateIfAppropriate = methods.createSetStateIfAppropriate(instance);
-
-  t.true(_.isFunction(setStateIfAppropriate));
 
   const nextState = {};
   const callback = sinon.spy();
 
   const areStateValuesEqualStub = sinon.stub(utils, 'areStateValuesEqual').returns(false);
 
-  setStateIfAppropriate(nextState, callback);
+  methods.setStateIfAppropriate(instance, [nextState, callback]);
 
   t.true(areStateValuesEqualStub.calledOnce);
   t.true(areStateValuesEqualStub.calledWith(instance.state, nextState));
@@ -1137,7 +929,7 @@ test('if createSetStateIfAppropriate will call setState when the state values ar
   t.true(instance.setState.calledWith(nextState, callback));
 });
 
-test('if createUpdateFrame will call the uniform method when type is uniform', (t) => {
+test('if updateFrame will call the uniform method when type is uniform', (t) => {
   const instance = {
     props: {
       type: constants.VALID_TYPES.UNIFORM
@@ -1148,13 +940,9 @@ test('if createUpdateFrame will call the uniform method when type is uniform', (
     updateVariableFrame: sinon.spy()
   };
 
-  const updateFrame = methods.createUpdateFrame(instance);
-
-  t.true(_.isFunction(updateFrame));
-
   const callback = sinon.spy();
 
-  updateFrame(callback);
+  methods.updateFrame(instance, [callback]);
 
   t.true(instance.updateScrollParent.calledOnce);
 
@@ -1166,7 +954,7 @@ test('if createUpdateFrame will call the uniform method when type is uniform', (
   t.true(instance.updateSimpleFrame.notCalled);
 });
 
-test('if createUpdateFrame will call the variable method when type is variable', (t) => {
+test('if updateFrame will call the variable method when type is variable', (t) => {
   const instance = {
     props: {
       type: constants.VALID_TYPES.VARIABLE
@@ -1177,13 +965,9 @@ test('if createUpdateFrame will call the variable method when type is variable',
     updateVariableFrame: sinon.spy()
   };
 
-  const updateFrame = methods.createUpdateFrame(instance);
-
-  t.true(_.isFunction(updateFrame));
-
   const callback = sinon.spy();
 
-  updateFrame(callback);
+  methods.updateFrame(instance, [callback]);
 
   t.true(instance.updateScrollParent.calledOnce);
 
@@ -1195,7 +979,7 @@ test('if createUpdateFrame will call the variable method when type is variable',
   t.true(instance.updateSimpleFrame.notCalled);
 });
 
-test('if createUpdateFrame will call the simple method when type is not uniform or variable', (t) => {
+test('if updateFrame will call the simple method when type is not uniform or variable', (t) => {
   const instance = {
     props: {
       type: 'foo'
@@ -1206,13 +990,9 @@ test('if createUpdateFrame will call the simple method when type is not uniform 
     updateVariableFrame: sinon.spy()
   };
 
-  const updateFrame = methods.createUpdateFrame(instance);
-
-  t.true(_.isFunction(updateFrame));
-
   const callback = sinon.spy();
 
-  updateFrame(callback);
+  methods.updateFrame(instance, [callback]);
 
   t.true(instance.updateScrollParent.calledOnce);
 
@@ -1224,7 +1004,7 @@ test('if createUpdateFrame will call the simple method when type is not uniform 
   t.true(instance.updateSimpleFrame.calledWith(callback));
 });
 
-test('if createUpdateFrame will coalesce the callback to utils.noop when not a function', (t) => {
+test('if updateFrame will coalesce the callback to utils.noop when not a function', (t) => {
   const instance = {
     props: {
       type: 'foo'
@@ -1235,13 +1015,9 @@ test('if createUpdateFrame will coalesce the callback to utils.noop when not a f
     updateVariableFrame: sinon.spy()
   };
 
-  const updateFrame = methods.createUpdateFrame(instance);
-
-  t.true(_.isFunction(updateFrame));
-
   const callback = 'NOT_A_FUNCTION';
 
-  updateFrame(callback);
+  methods.updateFrame(instance, [callback]);
 
   t.true(instance.updateScrollParent.calledOnce);
 
@@ -1253,7 +1029,7 @@ test('if createUpdateFrame will coalesce the callback to utils.noop when not a f
   t.true(instance.updateSimpleFrame.calledWith(utils.noop));
 });
 
-test('if createUpdateScrollParent will do nothing if the current scrollParent is the same as the new', (t) => {
+test('if updateScrollParent will do nothing if the current scrollParent is the same as the new', (t) => {
   const scrollParent = {
     addEventListener: sinon.spy(),
     removeEventListener: sinon.spy()
@@ -1264,11 +1040,7 @@ test('if createUpdateScrollParent will do nothing if the current scrollParent is
     updateFrame: sinon.spy()
   };
 
-  const updateScrollParent = methods.createUpdateScrollParent(instance);
-
-  t.true(_.isFunction(updateScrollParent));
-
-  updateScrollParent();
+  methods.updateScrollParent(instance);
 
   t.true(instance.getScrollParent.calledOnce);
 
@@ -1276,7 +1048,7 @@ test('if createUpdateScrollParent will do nothing if the current scrollParent is
   t.true(instance.scrollParent.removeEventListener.notCalled);
 });
 
-test('if createUpdateScrollParent will call addEventListener if there is not current scrollParent', (t) => {
+test('if updateScrollParent will call addEventListener if there is not current scrollParent', (t) => {
   const scrollParent = {
     addEventListener: sinon.spy(),
     removeEventListener: sinon.spy()
@@ -1287,11 +1059,7 @@ test('if createUpdateScrollParent will call addEventListener if there is not cur
     updateFrame: sinon.spy()
   };
 
-  const updateScrollParent = methods.createUpdateScrollParent(instance);
-
-  t.true(_.isFunction(updateScrollParent));
-
-  updateScrollParent();
+  methods.updateScrollParent(instance);
 
   t.true(instance.getScrollParent.calledOnce);
 
@@ -1308,7 +1076,7 @@ test('if createUpdateScrollParent will call addEventListener if there is not cur
   t.true(instance.scrollParent.removeEventListener.notCalled);
 });
 
-test('if createUpdateScrollParent will call removeEventListener and then addEventListener if there is a current scrollParent', (t) => {
+test('if updateScrollParent will call removeEventListener and then addEventListener if there is a current scrollParent', (t) => {
   const scrollParent = {
     addEventListener: sinon.spy(),
     removeEventListener: sinon.spy()
@@ -1323,11 +1091,7 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
     updateFrame: sinon.spy()
   };
 
-  const updateScrollParent = methods.createUpdateScrollParent(instance);
-
-  t.true(_.isFunction(updateScrollParent));
-
-  updateScrollParent();
+  methods.updateScrollParent(instance);
 
   t.true(instance.getScrollParent.calledOnce);
 
@@ -1354,7 +1118,7 @@ test('if createUpdateScrollParent will call removeEventListener and then addEven
   t.deepEqual([...secondRemoveArgs], ['mousewheel', utils.noop]);
 });
 
-test('if createUpdateSimpleFrame will not set state if the element end is greater than the end', (t) => {
+test('if updateSimpleFrame will not set state if the element end is greater than the end', (t) => {
   const instance = {
     items: {
       children: ['foo']
@@ -1373,14 +1137,10 @@ test('if createUpdateSimpleFrame will not set state if the element end is greate
     setStateIfAppropriate: sinon.spy()
   };
 
-  const updateSimpleFrame = methods.createUpdateSimpleFrame(instance);
-
-  t.true(_.isFunction(updateSimpleFrame));
-
   const callback = sinon.spy();
   const getCalculatedElementEndStub = sinon.stub(utils, 'getCalculatedElementEnd').returns(11);
 
-  updateSimpleFrame(callback);
+  methods.updateSimpleFrame(instance, [callback]);
 
   t.true(getCalculatedElementEndStub.calledOnce);
   t.true(getCalculatedElementEndStub.calledWith(instance.items.children, instance.props));
@@ -1392,7 +1152,7 @@ test('if createUpdateSimpleFrame will not set state if the element end is greate
   t.true(instance.setStateIfAppropriate.notCalled);
 });
 
-test('if createUpdateSimpleFrame will set state if the element end is not greater than the end', (t) => {
+test('if updateSimpleFrame will set state if the element end is not greater than the end', (t) => {
   const instance = {
     items: {
       children: ['foo']
@@ -1411,14 +1171,10 @@ test('if createUpdateSimpleFrame will set state if the element end is not greate
     setStateIfAppropriate: sinon.spy()
   };
 
-  const updateSimpleFrame = methods.createUpdateSimpleFrame(instance);
-
-  t.true(_.isFunction(updateSimpleFrame));
-
   const callback = sinon.spy();
   const getCalculatedElementEndStub = sinon.stub(utils, 'getCalculatedElementEnd').returns(11);
 
-  updateSimpleFrame(callback);
+  methods.updateSimpleFrame(instance, [callback]);
 
   t.true(getCalculatedElementEndStub.calledOnce);
   t.true(getCalculatedElementEndStub.calledWith(instance.items.children, instance.props));
@@ -1439,7 +1195,7 @@ test('if createUpdateSimpleFrame will set state if the element end is not greate
   t.is(args[1], callback);
 });
 
-test('if createUpdateUniformFrame will not set state if there is no itemSize or itemsPerRow', (t) => {
+test('if updateUniformFrame will not set state if there is no itemSize or itemsPerRow', (t) => {
   const itemSizeAndItemsPerRow = {
     itemSize: 0,
     itemsPerRow: 1
@@ -1455,10 +1211,6 @@ test('if createUpdateUniformFrame will not set state if there is no itemSize or 
     setStateIfAppropriate: sinon.spy()
   };
 
-  const updateUniformFrame = methods.createUpdateUniformFrame(instance);
-
-  t.true(_.isFunction(updateUniformFrame));
-
   const callback = sinon.spy();
   const fromAndSize = {
     from: 0,
@@ -1467,7 +1219,7 @@ test('if createUpdateUniformFrame will not set state if there is no itemSize or 
 
   const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
 
-  updateUniformFrame(callback);
+  methods.updateUniformFrame(instance, [callback]);
 
   t.true(instance.getItemSizeAndItemsPerRow.calledOnce);
 
@@ -1482,7 +1234,7 @@ test('if createUpdateUniformFrame will not set state if there is no itemSize or 
   t.true(instance.setStateIfAppropriate.notCalled);
 });
 
-test('if createUpdateUniformFrame will set state if there is itemSize or itemsPerRow', (t) => {
+test('if updateUniformFrame will set state if there is itemSize or itemsPerRow', (t) => {
   const itemSizeAndItemsPerRow = {
     itemSize: 100,
     itemsPerRow: 1
@@ -1498,10 +1250,6 @@ test('if createUpdateUniformFrame will set state if there is itemSize or itemsPe
     setStateIfAppropriate: sinon.spy()
   };
 
-  const updateUniformFrame = methods.createUpdateUniformFrame(instance);
-
-  t.true(_.isFunction(updateUniformFrame));
-
   const callback = sinon.spy();
   const fromAndSize = {
     from: 0,
@@ -1510,7 +1258,7 @@ test('if createUpdateUniformFrame will set state if there is itemSize or itemsPe
 
   const getFromAndSizeStub = sinon.stub(utils, 'getFromAndSize').returns(fromAndSize);
 
-  updateUniformFrame(callback);
+  methods.updateUniformFrame(instance, [callback]);
 
   t.true(instance.getItemSizeAndItemsPerRow.calledOnce);
 
@@ -1534,7 +1282,7 @@ test('if createUpdateUniformFrame will set state if there is itemSize or itemsPe
   t.is(args[1], callback);
 });
 
-test('if createUpdateVariableFrame will call setStateIfAppropriate with the new from and size', (t) => {
+test('if updateVariableFrame will call setStateIfAppropriate with the new from and size', (t) => {
   const startAndEnd = {};
   const instance = {
     cache: {},
@@ -1543,17 +1291,13 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate with the new 
     items: {},
     props: {
       axis: 'y',
-      itemSizeGetter() {}
+      getItemSize() {}
     },
     setStateIfAppropriate: sinon.spy(),
     state: {
       from: 5
     }
   };
-
-  const updateVariableFrame = methods.createUpdateVariableFrame(instance);
-
-  t.true(_.isFunction(updateVariableFrame));
 
   const callback = sinon.spy();
 
@@ -1562,7 +1306,7 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate with the new 
   const setCacheSizesStub = sinon.stub(utils, 'setCacheSizes');
   const getFromAndSizeFromListItemSizeStub = sinon.stub(utils, 'getFromAndSizeFromListItemSize').returns(fromAndSize);
 
-  updateVariableFrame(callback);
+  methods.updateVariableFrame(instance, [callback]);
 
   t.true(setCacheSizesStub.notCalled);
 
@@ -1579,7 +1323,7 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate with the new 
   t.true(instance.setStateIfAppropriate.calledWith(fromAndSize, callback));
 });
 
-test('if createUpdateVariableFrame will call setStateIfAppropriate and setCacheSizes if no itemSizeGetter exists', (t) => {
+test('if updateVariableFrame will call setStateIfAppropriate and setCacheSizes if no getItemSize exists', (t) => {
   const startAndEnd = {};
   const instance = {
     cache: {},
@@ -1595,10 +1339,6 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate and setCacheS
     }
   };
 
-  const updateVariableFrame = methods.createUpdateVariableFrame(instance);
-
-  t.true(_.isFunction(updateVariableFrame));
-
   const callback = sinon.spy();
 
   const fromAndSize = {};
@@ -1606,7 +1346,7 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate and setCacheS
   const setCacheSizesStub = sinon.stub(utils, 'setCacheSizes');
   const getFromAndSizeFromListItemSizeStub = sinon.stub(utils, 'getFromAndSizeFromListItemSize').returns(fromAndSize);
 
-  updateVariableFrame(callback);
+  methods.updateVariableFrame(instance, [callback]);
 
   t.true(setCacheSizesStub.calledOnce);
   t.true(setCacheSizesStub.calledWith(instance.state.from, instance.items, instance.props.axis, instance.cache));
@@ -1624,7 +1364,7 @@ test('if createUpdateVariableFrame will call setStateIfAppropriate and setCacheS
   t.true(instance.setStateIfAppropriate.calledWith(fromAndSize, callback));
 });
 
-test('if createUpdateVariableFrame will do nothing if there are no items', (t) => {
+test('if updateVariableFrame will do nothing if there are no items', (t) => {
   const startAndEnd = {};
   const instance = {
     cache: {},
@@ -1640,10 +1380,6 @@ test('if createUpdateVariableFrame will do nothing if there are no items', (t) =
     }
   };
 
-  const updateVariableFrame = methods.createUpdateVariableFrame(instance);
-
-  t.true(_.isFunction(updateVariableFrame));
-
   const callback = sinon.spy();
 
   const fromAndSize = {};
@@ -1651,7 +1387,7 @@ test('if createUpdateVariableFrame will do nothing if there are no items', (t) =
   const setCacheSizesStub = sinon.stub(utils, 'setCacheSizes');
   const getFromAndSizeFromListItemSizeStub = sinon.stub(utils, 'getFromAndSizeFromListItemSize').returns(fromAndSize);
 
-  updateVariableFrame(callback);
+  methods.updateVariableFrame(instance, [callback]);
 
   t.true(setCacheSizesStub.notCalled);
 

@@ -1,101 +1,64 @@
 // external dependencies
-import React, {Component} from 'react';
+import React from 'react';
+import {createComponent, createComponentRef} from 'react-parm';
 
 // classes
 import WindowedListRenderer from './WindowedListRenderer';
 
-export const createGetVisibleRange = (instance) => {
-  /**
-   * @function getVisibleRange
-   *
-   * @description
-   * get the visible range on the windowed list component
-   *
-   * @returns {Array<number>}
-   */
-  return () => {
-    if (!instance.ref || !instance.ref.originalComponent) {
-      return [0, 0];
-    }
+/**
+ * @function getVisibleRange
+ *
+ * @description
+ * get the visible range on the windowed list component
+ *
+ * @param {ReactComponent} ref the WindowedList component
+ * @returns {Array<number>}
+ */
+export const getVisibleRange = ({ref}) =>
+  ref && ref.originalComponent ? ref.originalComponent.getVisibleRange() : [0, 0];
 
-    return instance.ref.originalComponent.getVisibleRange();
-  };
-};
+/**
+ * @function scrollAround
+ *
+ * @description
+ * scroll around the index passed on the windowed list component
+ *
+ * @param {ReactComponent} ref the WindowedList component
+ * @param {number} index the index to scroll around
+ * @returns {Array<number>}
+ */
+export const scrollAround = ({ref}, [index]) =>
+  ref && ref.originalComponent ? ref.originalComponent.scrollAround(index) : null;
 
-export const createScrollAround = (instance) => {
-  /**
-   * @function scrollAround
-   *
-   * @description
-   * scroll around the index passed on the windowed list component
-   *
-   * @param {number} index the index to scroll around
-   * @returns {Array<number>}
-   */
-  return (index) => {
-    if (!instance.ref || !instance.ref.originalComponent) {
-      return;
-    }
+/**
+ * @function scrollTo
+ *
+ * @description
+ * scroll to the index passed on the windowed list component
+ *
+ * @param {ReactComponent} ref the WindowedList component
+ * @param {number} index the index to scroll to
+ * @returns {Array<number>}
+ */
+export const scrollTo = ({ref}, [index]) =>
+  ref && ref.originalComponent ? ref.originalComponent.scrollTo(index) : null;
 
-    return instance.ref.originalComponent.scrollAround(index);
-  };
-};
+const WindowedList = (props, instance) => (
+  /* eslint-disable prettier */
+  <WindowedListRenderer
+    {...props}
+    ref={createComponentRef(instance, 'ref')}
+  />
+  /* eslint-enable */
+);
 
-export const createScrollTo = (instance) => {
-  /**
-   * @function scrollTo
-   *
-   * @description
-   * scroll to the index passed on the windowed list component
-   *
-   * @param {number} index the index to scroll to
-   * @returns {Array<number>}
-   */
-  return (index) => {
-    if (!instance.ref || !instance.ref.originalComponent) {
-      return;
-    }
+WindowedList.displayName = 'WindowedList';
 
-    return instance.ref.originalComponent.scrollTo(index);
-  };
-};
-
-export const createSetRef = (instance) => {
-  /**
-   * @function setRef
-   *
-   * @description
-   * set the ref of the original instance
-   *
-   * @param {ReactComponent} component the WindowedListRenderer component
-   */
-  return (component) => {
-    instance.ref = component;
-  };
-};
-
-class WindowedList extends Component {
-  static displayName = 'WindowedList';
-
+export default createComponent(WindowedList, {
   // instance values
-  ref = null;
-
+  ref: null,
   // instance methods
-  getVisibleRange = createGetVisibleRange(this);
-  scrollAround = createScrollAround(this);
-  scrollTo = createScrollTo(this);
-  setRef = createSetRef(this);
-
-  render() {
-    return (
-      /* eslint-disable prettier */
-      <WindowedListRenderer
-        {...this.props}
-        ref={this.setRef}
-      />
-      /* eslint-enable */
-    );
-  }
-}
-
-export default WindowedList;
+  getVisibleRange,
+  scrollAround,
+  scrollTo
+});

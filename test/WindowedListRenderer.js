@@ -7,7 +7,6 @@ import React from 'react';
 // src
 import * as component from 'src/WindowedListRenderer';
 import * as constants from 'src/constants';
-import * as utils from 'src/utils';
 
 const WindowedListRenderer = component.WindowedListRenderer;
 
@@ -41,9 +40,15 @@ test('if WindowedListRenderer renders correctly when type is not simple', (t) =>
     .children()
     .children();
 
-  t.deepEqual(container.prop('style'), utils.getContainerStyle('y', 0));
+  t.deepEqual(container.prop('style'), {
+    position: 'relative'
+  });
 
   const listContainer = container.children();
 
-  t.deepEqual(listContainer.prop('style'), utils.getListContainerStyle('y', false, false, 0));
+  t.deepEqual(listContainer.prop('style'), {
+    msTransform: 'translate(0px, 0px)',
+    transform: 'translate(0px, 0px)',
+    WebkitTransform: 'translate(0px, 0px)'
+  });
 });
