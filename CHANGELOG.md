@@ -1,5 +1,9 @@
 # react-windowed-list CHANGELOG
 
+## 3.0.1
+
+* Fix glaring README issue
+
 ## 3.0.0
 
 * Complete refactor under-the-hood to leverage `react-parm`
